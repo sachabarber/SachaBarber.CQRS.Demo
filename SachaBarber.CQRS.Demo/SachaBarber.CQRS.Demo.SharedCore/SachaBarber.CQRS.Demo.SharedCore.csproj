@@ -64,7 +64,6 @@
     <Compile Include="..\SolutionInfo.cs">
       <Link>Properties\SolutionInfo.cs</Link>
     </Compile>
-    <Compile Include="ChannelFactoryManager.cs" />
     <Compile Include="Exceptions\BusinessLogicException.cs" />
     <Compile Include="ExtensionMethods\CastleExtensions.cs" />
     <Compile Include="Faults\BusinessLogicFault.cs" />
@@ -72,7 +71,6 @@
     <Compile Include="Faults\IFault.cs" />
     <Compile Include="Faults\StandardFaultsAttribute.cs" />
     <Compile Include="IOC\LifestyleApplier.cs" />
-    <Compile Include="ServiceInvokerBase.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="WCF\ErrorHandler.cs" />
     <Compile Include="WCF\ErrorHandlerBehaviorExtension.cs" />

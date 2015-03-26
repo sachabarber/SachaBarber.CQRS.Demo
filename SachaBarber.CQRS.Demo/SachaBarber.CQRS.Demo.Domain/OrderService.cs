@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.ServiceModel;
-
+using System.Threading.Tasks;
 using SachaBarber.CQRS.Demo.Orders.Commands;
 using SachaBarber.CQRS.Demo.Orders.Domain.Commands;
 using SachaBarber.CQRS.Demo.SharedCore.Exceptions;
@@ -22,17 +22,17 @@ namespace SachaBarber.CQRS.Demo.Orders.Domain
             this.commandHandlers = commandHandlers;
         }
 
-        public bool SendCommand(Command command)
+        public async Task<bool> SendCommand(Command command)
         {
-            var meth = (from m in typeof(OrderCommandHandlers).GetMethods(BindingFlags.Public | BindingFlags.Instance)
-                        let prms = m.GetParameters()
-                        where prms.Count() == 1 && prms[0].ParameterType == command.GetType()
-                        select m).FirstOrDefault();
+            //var meth = (from m in typeof(OrderCommandHandlers).GetMethods(BindingFlags.Public | BindingFlags.Instance)
+            //            let prms = m.GetParameters()
+            //            where prms.Count() == 1 && prms[0].ParameterType == command.GetType()
+            //            select m).FirstOrDefault();
 
-            if (meth == null)
-                throw new BusinessLogicException(string.Format("Handler for {0} could not be found", command.GetType().Name));
+            //if (meth == null)
+            //    throw new BusinessLogicException(string.Format("Handler for {0} could not be found", command.GetType().Name));
 
-            meth.Invoke(commandHandlers, new[] { command });
+            //meth.Invoke(commandHandlers, new[] { command });
             return true;
         }
     }

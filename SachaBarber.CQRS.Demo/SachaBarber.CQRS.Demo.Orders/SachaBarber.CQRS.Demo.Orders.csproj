@@ -50,6 +50,7 @@
     <Compile Include="Commands\RenameOrderCommand.cs" />
     <Compile Include="DTOs\OrderItem.cs" />
     <Compile Include="IOrderService.cs" />
+    <Compile Include="OrderServiceClient.cs" />
     <Compile Include="OrderServiceInvoker.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

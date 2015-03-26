@@ -15,6 +15,6 @@ namespace SachaBarber.CQRS.Demo.Orders
     public interface IOrderService
     {
         [OperationContract]
-        bool SendCommand(Command command);
+        Task<bool> SendCommand(Command command);
     }
 }

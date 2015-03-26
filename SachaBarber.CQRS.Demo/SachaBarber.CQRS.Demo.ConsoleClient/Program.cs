@@ -12,30 +12,51 @@ namespace SachaBarber.CQRS.Demo.ConsoleClient
 {
     class Program
     {
-        static void Main(string[] args)
-        {
 
+        public async Task Run()
+        {
             Guid id = Guid.NewGuid();
 
 
-            IOrderService invoker = new OrderServiceInvoker();
-            invoker.SendCommand(new CreateOrderCommand()
-                                {
-                                    ExpectedVersion = 1,
-                                    Id = id,
-                                    Address = "This is the address",
-                                    Description = "Description1",
-                                    OrderItems = new List<OrderItem>()
-                                });
+
+            var x = await new OrderServiceInvoker().CallService(service => 
+                service.SendCommand(new CreateOrderCommand()
+                {
+                    ExpectedVersion = 1,
+                    Id = id,
+                    Address = "This is the address",
+                    Description = "Description1",
+                    OrderItems = new List<OrderItem>()
+                }));
+            
+
+            //var x = await new OrderServiceClient().SendCommand(new CreateOrderCommand()
+            //{
+            //    ExpectedVersion = 1,
+            //    Id = id,
+            //    Address = "This is the address",
+            //    Description = "Description1",
+            //    OrderItems = new List<OrderItem>()
+            //});
 
 
-            invoker.SendCommand(new RenameOrderCommand()
-            {
-                ExpectedVersion = 1,
-                Id = id,
-                NewOrderDescription = "CHANGED New Order A"
-            });
+            var y = 54554;
 
+            //invoker.SendCommand(new RenameOrderCommand()
+            //{
+            //    ExpectedVersion = 1,
+            //    Id = id,
+            //    NewOrderDescription = "CHANGED New Order A"
+            //});
+
+        }
+
+
+        static void Main(string[] args)
+        {
+            Program p = new Program();
+            p.Run().Wait();
+           
 
 
             Console.ReadLine();

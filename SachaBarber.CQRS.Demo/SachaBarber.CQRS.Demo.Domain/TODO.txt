@@ -1,4 +1,8 @@
 ﻿1. We should come up with a new EventStore other than InMemory
+2. Move all CQRS stuff into Common dll, and make sure to change app.configs for new
+   contract interface location, swap it out to use async await codebase for WCF
+   http://www.dotnetcurry.com/showarticle.aspx?ID=983
+
 2. In the Repository.Save where it Publishes out, 
    we should have preregistered handlers in main service something like
 
