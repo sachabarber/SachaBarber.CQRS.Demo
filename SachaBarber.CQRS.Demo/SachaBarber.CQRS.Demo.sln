@@ -1,0 +1,87 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2013
+VisualStudioVersion = 12.0.31101.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SachaBarber.CQRS.Demo.Orders.Domain", "SachaBarber.CQRS.Demo.Domain\SachaBarber.CQRS.Demo.Orders.Domain.csproj", "{65357DC1-482E-4EBA-8588-6012240E6954}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SachaBarber.CQRS.Demo.Orders", "SachaBarber.CQRS.Demo.Orders\SachaBarber.CQRS.Demo.Orders.csproj", "{2702523E-1D79-4854-8F2F-AC5D6B2ACD94}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SachaBarber.CQRS.Demo.SharedCore", "SachaBarber.CQRS.Demo.SharedCore\SachaBarber.CQRS.Demo.SharedCore.csproj", "{F97FE1C8-53BF-4C69-8694-6A8A6776D86A}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Properties", "Properties", "{5BBAA4F6-5DCD-40AA-9C23-32A492765475}"
+	ProjectSection(SolutionItems) = preProject
+		SolutionInfo.cs = SolutionInfo.cs
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "WriteModel", "WriteModel", "{2F30307F-809A-4FCE-AF7D-3C33D4A33F87}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Common", "Common", "{B7D20C7E-C365-4E0F-B1CC-E4EA4C98AB6B}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Client", "Client", "{77BE359B-1975-46D9-8E4A-7987534E5206}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SachaBarber.CQRS.Demo.ConsoleClient", "SachaBarber.CQRS.Demo.ConsoleClient\SachaBarber.CQRS.Demo.ConsoleClient.csproj", "{7877C916-1A88-4367-BF5B-613D4E48AA0B}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "CQRS Framework", "CQRS Framework", "{4507460F-83D4-4C4A-B0D0-F9A7ACB0276B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CQRSlite", "CQRSlite\CQRSlite.csproj", "{DAFD2A8A-D6B0-4433-8DDF-B98460C64EC6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SachaBarber.CQRS.Demo.WPFClient", "SachaBarber.CQRS.Demo.WPFClient\SachaBarber.CQRS.Demo.WPFClient.csproj", "{07D50F29-6482-49EA-A165-66F487F8E128}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "NOTES", "NOTES", "{09300BEB-6AD6-4C11-9A0C-D642D368F729}"
+	ProjectSection(SolutionItems) = preProject
+		README.txt = README.txt
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ReadModel", "ReadModel", "{45FCFD30-F3B7-465C-B238-74ED32357A4A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SachaBarber.CQRS.Demo.Orders.ReadModel", "SachaBarber.CQRS.Demo.Orders.ReadModel\SachaBarber.CQRS.Demo.Orders.ReadModel.csproj", "{7EB95C96-8F69-46A1-B810-BFEABA0B2973}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{65357DC1-482E-4EBA-8588-6012240E6954}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{65357DC1-482E-4EBA-8588-6012240E6954}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{65357DC1-482E-4EBA-8588-6012240E6954}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{65357DC1-482E-4EBA-8588-6012240E6954}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2702523E-1D79-4854-8F2F-AC5D6B2ACD94}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2702523E-1D79-4854-8F2F-AC5D6B2ACD94}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2702523E-1D79-4854-8F2F-AC5D6B2ACD94}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2702523E-1D79-4854-8F2F-AC5D6B2ACD94}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F97FE1C8-53BF-4C69-8694-6A8A6776D86A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F97FE1C8-53BF-4C69-8694-6A8A6776D86A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F97FE1C8-53BF-4C69-8694-6A8A6776D86A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F97FE1C8-53BF-4C69-8694-6A8A6776D86A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7877C916-1A88-4367-BF5B-613D4E48AA0B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7877C916-1A88-4367-BF5B-613D4E48AA0B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7877C916-1A88-4367-BF5B-613D4E48AA0B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7877C916-1A88-4367-BF5B-613D4E48AA0B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DAFD2A8A-D6B0-4433-8DDF-B98460C64EC6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DAFD2A8A-D6B0-4433-8DDF-B98460C64EC6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DAFD2A8A-D6B0-4433-8DDF-B98460C64EC6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DAFD2A8A-D6B0-4433-8DDF-B98460C64EC6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{07D50F29-6482-49EA-A165-66F487F8E128}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{07D50F29-6482-49EA-A165-66F487F8E128}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{07D50F29-6482-49EA-A165-66F487F8E128}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{07D50F29-6482-49EA-A165-66F487F8E128}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7EB95C96-8F69-46A1-B810-BFEABA0B2973}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7EB95C96-8F69-46A1-B810-BFEABA0B2973}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7EB95C96-8F69-46A1-B810-BFEABA0B2973}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7EB95C96-8F69-46A1-B810-BFEABA0B2973}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{65357DC1-482E-4EBA-8588-6012240E6954} = {2F30307F-809A-4FCE-AF7D-3C33D4A33F87}
+		{2702523E-1D79-4854-8F2F-AC5D6B2ACD94} = {2F30307F-809A-4FCE-AF7D-3C33D4A33F87}
+		{F97FE1C8-53BF-4C69-8694-6A8A6776D86A} = {B7D20C7E-C365-4E0F-B1CC-E4EA4C98AB6B}
+		{7877C916-1A88-4367-BF5B-613D4E48AA0B} = {77BE359B-1975-46D9-8E4A-7987534E5206}
+		{DAFD2A8A-D6B0-4433-8DDF-B98460C64EC6} = {4507460F-83D4-4C4A-B0D0-F9A7ACB0276B}
+		{07D50F29-6482-49EA-A165-66F487F8E128} = {77BE359B-1975-46D9-8E4A-7987534E5206}
+		{7EB95C96-8F69-46A1-B810-BFEABA0B2973} = {45FCFD30-F3B7-465C-B238-74ED32357A4A}
+	EndGlobalSection
+EndGlobal

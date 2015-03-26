@@ -1,0 +1,3 @@
+﻿1. We should come up with a new EventStore other than InMemory
+2. In the Repository.Save where it Publishes out, we should change that to be a different type of Bus, or swap it out such that there is an external
+   thing that Polls the EventStore for events to be processed, which are then fed into the read model

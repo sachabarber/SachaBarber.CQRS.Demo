@@ -1,0 +1,169 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:controls="clr-namespace:SachaBarber.CQRS.Demo.WPFClient.Controls"
+                    xmlns:system="clr-namespace:System;assembly=mscorlib">
+
+
+
+
+    <DataTemplate x:Key="ErrorTemplate">
+        <Border
+            Background="White">
+            <Grid
+                Margin="10"
+                HorizontalAlignment="Stretch"
+                VerticalAlignment="Stretch"
+                Background="White">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+
+                <StackPanel
+                    Orientation="Horizontal"
+                    HorizontalAlignment="Stretch"
+                    Background="White">
+                    <!-- Warning icon -->
+                    <Viewbox Width="50" Height="50" Margin="5">
+                        <Grid>
+                            <Grid Name="backgroundGrid" Width="48" Height="48" Visibility="Visible">
+                                <Path Data="M50.5,4.7500001C25.232973,4.75 4.75,25.232973 4.7500001,50.5 4.75,75.767029 25.232973,96.25 50.5,96.25 75.767029,96.25 96.25,75.767029 96.25,50.5 96.25,25.232973 75.767029,4.75 50.5,4.7500001z M50.5,0C78.390381,0 101,22.609621 101,50.5 101,78.390381 78.390381,101 50.5,101 22.609621,101 0,78.390381 0,50.5 0,22.609621 22.609621,0 50.5,0z" Stretch="Fill" Fill="#FFF70000" Name="Stroke" Visibility="Visible" />
+                            </Grid>
+                            <Path Data="F1M874.094,289.369L854.3,254.63C854.028,254.151 853.515,253.856 852.958,253.856 852.403,253.856 851.89,254.151 851.617,254.63L831.824,289.369C831.555,289.84 831.559,290.416 831.835,290.883 832.111,291.348 832.618,291.634 833.165,291.634L872.752,291.634C873.299,291.634 873.805,291.348 874.081,290.883 874.357,290.416 874.361,289.84 874.094,289.369 M855.653,287.189L850.264,287.189 850.264,282.745 855.653,282.745 855.653,287.189z M855.653,279.41L850.264,279.41 850.264,266.077 855.653,266.077 855.653,279.41z" Stretch="Uniform" Fill="#FFFF0B0B" Width="26" Height="26" Margin="0,0,0,0" RenderTransformOrigin="0.5,0.5">
+                            </Path>
+                        </Grid>
+                    </Viewbox>
+
+                    <Label Style="{DynamicResource threadingFailedLabelStyle}"
+                        Content="OPERATIONAL FAILURE" />
+                </StackPanel>
+
+                <TextBox Grid.Row="1" 
+                     TextWrapping="Wrap" 
+                     BorderThickness="0"
+                     Foreground="Black"   
+                     FontSize="12"                     
+                     FontFamily="Segoe UI"
+                     FontWeight="Regular"
+                     Margin="5"
+                     BorderBrush="Transparent" 
+                     Background="Transparent"
+                     IsReadOnly="True" 
+                     HorizontalAlignment="Stretch" 
+                     VerticalAlignment="Stretch"
+                     Text="THE FOLLOWING ERROR OCCURRED WHILST TRYING TO OBTAIN/SAVE THE DATA:"/>
+
+                <ScrollViewer Grid.Row="2" 
+                              HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
+                    <ContentPresenter 
+                    Content="{Binding}">
+                        <ContentPresenter.ContentTemplate>
+                            <DataTemplate DataType="system:String">
+                                <TextBox
+                                Text="{Binding Mode=OneTime}"
+                                TextWrapping="Wrap" 
+                                BorderThickness="0" 
+                                Margin="5"
+                                FontSize="12"                     
+                                FontFamily="Segoe UI"
+                                Foreground="Black"                     
+                                BorderBrush="Transparent" 
+                                Background="Transparent"
+                                IsReadOnly="True"
+                                HorizontalAlignment="Stretch" 
+                                VerticalAlignment="Stretch" />
+                            </DataTemplate>
+                        </ContentPresenter.ContentTemplate>
+                    </ContentPresenter>
+                </ScrollViewer>
+            </Grid>
+        </Border>
+    </DataTemplate>
+
+    <DataTemplate x:Key="BusyTemplate">
+        <Border Background="White">
+            <Grid Margin="10" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" 
+              Background="White">
+                <StackPanel Orientation="Vertical" HorizontalAlignment="Center" VerticalAlignment="Center">
+                    <Label
+                        FontSize="12"                     
+                        FontFamily="Segoe UI"
+                        Content="{Binding}"
+                        HorizontalAlignment="Center"
+                        HorizontalContentAlignment="Center"
+                        Foreground="Black"
+                        VerticalAlignment="Bottom"
+                        VerticalContentAlignment="Bottom" />
+                    <Viewbox Width="70" Height="70" Margin="10" HorizontalAlignment="Center" VerticalAlignment="Center">
+                        <controls:Spinner />
+                    </Viewbox>
+                </StackPanel>
+            </Grid>
+        </Border>
+    </DataTemplate>
+
+    <Style TargetType="controls:AsyncHostControl">
+        <Setter Property="ErrorTemplate" Value="{StaticResource ErrorTemplate}" />
+        <Setter Property="BusyTemplate" Value="{StaticResource BusyTemplate}" />
+        <Setter Property="FocusVisualStyle" Value="{x:Null}" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="controls:AsyncHostControl">
+                    <Grid>
+                        <ContentPresenter
+                            Content="{TemplateBinding Content}" ContentTemplate="{TemplateBinding ContentTemplate}">
+                            <ContentPresenter.Style>
+                                <Style TargetType="ContentPresenter">
+                                    <Setter Property="Visibility" Value="Hidden"/>
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=ShouldCollapse}" Value="True">
+                                            <Setter Property="Visibility" Value="Collapsed"/>
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=AsyncState}" Value="Content">
+                                            <Setter Property="Visibility" Value="Visible"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </ContentPresenter.Style>
+                        </ContentPresenter>
+                        <ContentPresenter Content="{TemplateBinding ErrorContent}" ContentTemplate="{TemplateBinding ErrorTemplate}">
+                            <ContentPresenter.Style>
+                                <Style TargetType="ContentPresenter">
+                                    <Setter Property="Visibility" Value="Hidden"/>
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=ShouldCollapse}" Value="True">
+                                            <Setter Property="Visibility" Value="Collapsed"/>
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=AsyncState}" Value="Error">
+                                            <Setter Property="Visibility" Value="Visible"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </ContentPresenter.Style>
+
+                        </ContentPresenter>
+                        <ContentPresenter Content="{TemplateBinding BusyContent}" ContentTemplate="{TemplateBinding BusyTemplate}">
+                            <ContentPresenter.Style>
+                                <Style TargetType="ContentPresenter">
+                                    <Setter Property="Visibility" Value="Hidden"/>
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=ShouldCollapse}" Value="True">
+                                            <Setter Property="Visibility" Value="Collapsed"/>
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=AsyncState}" Value="Busy">
+                                            <Setter Property="Visibility" Value="Visible"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </ContentPresenter.Style>
+                        </ContentPresenter>
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+
+
+</ResourceDictionary>
