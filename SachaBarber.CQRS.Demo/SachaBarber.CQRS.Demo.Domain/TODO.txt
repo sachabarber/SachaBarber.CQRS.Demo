@@ -1,3 +1,24 @@
 ﻿1. We should come up with a new EventStore other than InMemory
-2. In the Repository.Save where it Publishes out, we should change that to be a different type of Bus, or swap it out such that there is an external
-   thing that Polls the EventStore for events to be processed, which are then fed into the read model
+2. In the Repository.Save where it Publishes out, 
+   we should have preregistered handlers in main service something like
+
+    _bus = new InProcessBus();
+
+      var handler = new TestAggregateDidSomethingHandler();
+      _bus.RegisterHandler<TestAggregateDidSomething>(handler.Handle);
+
+	  if we find that the event handlers need to the read model they may have to have factories
+
+
+	  public class TestAggregateDidSomethingHandler : IEventHandler<TestAggregateDidSomething>
+    {
+        public void Handle(TestAggregateDidSomething message)
+        {
+            lock (message)
+            {
+                TimesRun++;
+            }
+        }
+
+        public int TimesRun { get; private set; }
+    }

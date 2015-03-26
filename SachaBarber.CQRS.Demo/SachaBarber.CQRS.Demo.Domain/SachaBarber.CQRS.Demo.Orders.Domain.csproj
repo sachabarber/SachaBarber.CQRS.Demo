@@ -124,6 +124,7 @@
       <Link>Properties\SolutionInfo.cs</Link>
     </Compile>
     <Compile Include="Aggregates\Order.cs" />
+    <Compile Include="Aggregates\OrderItem.cs" />
     <Compile Include="Commands\Handlers\OrderCommandHandlers.cs" />
     <Compile Include="EventStore\InMemoryEventStore.cs" />
     <Compile Include="Events\OrderCreatedEvent.cs" />

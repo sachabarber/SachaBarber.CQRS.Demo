@@ -11,33 +11,42 @@ namespace SachaBarber.CQRS.Demo.Orders.Domain.Aggregates
 {
     public class Order : AggregateRoot
     {
-        private string orderDescription;
 
+        public string description { get; set; }
+        public string address { get; set; }
+        public List<OrderItem> orderItems { get; set; }
 
         private void Apply(OrderCreatedEvent e)
         {
-            orderDescription = e.OrderDescription;
+            description = e.Description;
+            address = e.Address;
+            orderItems = e.OrderItems;
         }
 
 
         private void Apply(OrderRenamedEvent e)
         {
-            orderDescription = e.NewOrderDescription;
+            description = e.NewOrderDescription;
         }
 
 
         public void RenameOrder(string newOrderDescription)
         {
-            if (string.IsNullOrEmpty(newOrderDescription)) throw new ArgumentException("newOrderDescription");
+            if (string.IsNullOrEmpty(newOrderDescription)) 
+                throw new ArgumentException("newOrderDescription");
             ApplyChange(new OrderRenamedEvent(Id, newOrderDescription));
         }
 
         private Order() { }
 
-        public Order(Guid id, string orderDescription)
+        public Order(
+            Guid id,
+            string description,
+            string address,
+            List<OrderItem> orderItems)
         {
             Id = id;
-            ApplyChange(new OrderCreatedEvent(id, orderDescription));
+            ApplyChange(new OrderCreatedEvent(id, description, address, orderItems));
         }
     }
 }

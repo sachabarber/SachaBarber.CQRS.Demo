@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 using SachaBarber.CQRS.Demo.Orders;
 using SachaBarber.CQRS.Demo.Orders.Commands;
+using SachaBarber.CQRS.Demo.Orders.DTOs;
 
 namespace SachaBarber.CQRS.Demo.ConsoleClient
 {
@@ -22,7 +23,9 @@ namespace SachaBarber.CQRS.Demo.ConsoleClient
                                 {
                                     ExpectedVersion = 1,
                                     Id = id,
-                                    OrderDescription = "New Order A"
+                                    Address = "This is the address",
+                                    Description = "Description1",
+                                    OrderItems = new List<OrderItem>()
                                 });
 
 

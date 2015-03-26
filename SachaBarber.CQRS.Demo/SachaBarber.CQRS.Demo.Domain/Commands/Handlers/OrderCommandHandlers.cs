@@ -24,7 +24,13 @@ namespace SachaBarber.CQRS.Demo.Orders.Domain.Commands
 
         public void Handle(CreateOrderCommand command)
         {
-            var item = new Order(command.Id, command.OrderDescription);
+            var item = new Order(command.Id,command.Description,command.Address,
+                command.OrderItems.Select(x=> new OrderItem()
+                {
+                    OrderId = x.OrderId,
+                    StoreItemDescription = x.StoreItemDescription,
+                    StoreItemId = x.StoreItemId
+                }).ToList());
             _session.Add(item);
             _session.Commit();
         }
