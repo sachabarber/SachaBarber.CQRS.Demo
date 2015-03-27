@@ -11,6 +11,8 @@ using Raven.Abstractions.Extensions;
 using SachaBarber.CQRS.Demo.Orders.ReadModel;
 using SachaBarber.CQRS.Demo.Orders.ReadModel.Models;
 using SachaBarber.CQRS.Demo.WPFClient.Controls;
+using System.Windows.Input;
+using SachaBarber.CQRS.Demo.WPFClient.Commands;
 
 namespace SachaBarber.CQRS.Demo.WPFClient.ViewModels.Shell
 {
@@ -24,7 +26,10 @@ namespace SachaBarber.CQRS.Demo.WPFClient.ViewModels.Shell
             this.readModelRepository = readModelRepository;
             StoreItems = new ObservableCollection<StoreItemViewModel>();
             BindingOperations.EnableCollectionSynchronization(StoreItems, syncLock);
-         
+
+            CreateNewOrderCommand = new SimpleCommand<object, object>(
+                CanExecuteCreateNewOrderCommand,
+                ExecuteCreateNewOrderCommand);
         }
 
 
@@ -49,7 +54,24 @@ namespace SachaBarber.CQRS.Demo.WPFClient.ViewModels.Shell
                 });
         }
 
+        public ICommand CreateNewOrderCommand { get; private set; }
+
         public ObservableCollection<StoreItemViewModel> StoreItems { get; private set; }
+
+
+        private bool CanExecuteCreateNewOrderCommand(object parameter)
+        {
+            return StoreItems.Any(x => x.IsSelected);
+        }
+
+        private void ExecuteCreateNewOrderCommand(object parameter)
+        {
+           //TODO
+           //TODO
+           //TODO
+           //TODO
+           //TODO
+        }
 
     }
 }

@@ -8,8 +8,10 @@ using SachaBarber.CQRS.Demo.Orders.ReadModel.Models;
 
 namespace SachaBarber.CQRS.Demo.WPFClient.ViewModels.Shell
 {
-    public class StoreItemViewModel
+    public class StoreItemViewModel : INPCBase
     {
+        private bool isSelected = false;
+
         public StoreItemViewModel(StoreItem item)
         {
             this.Id = item.Id;
@@ -20,5 +22,15 @@ namespace SachaBarber.CQRS.Demo.WPFClient.ViewModels.Shell
         public Guid Id { get; set; }
         public string Description { get; set; }
         public string ImageUrl { get; set; }
+
+
+        public bool IsSelected
+        {
+            get { return isSelected; }
+            set
+            {
+                RaiseAndSetIfChanged(ref isSelected, value, () => IsSelected);
+            }
+        }
     }
 }

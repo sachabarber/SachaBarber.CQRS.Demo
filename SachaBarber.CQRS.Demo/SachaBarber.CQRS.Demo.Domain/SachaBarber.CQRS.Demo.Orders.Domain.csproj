@@ -125,11 +125,14 @@
     </Compile>
     <Compile Include="Aggregates\Order.cs" />
     <Compile Include="Aggregates\OrderItem.cs" />
+    <Compile Include="Bus\IBusEventHandler.cs" />
+    <Compile Include="Bus\BusEventPublisher.cs" />
     <Compile Include="Commands\Handlers\OrderCommandHandlers.cs" />
     <Compile Include="EventStore\InMemoryEventStore.cs" />
+    <Compile Include="Events\Handlers\OrderRenamedEventHandler.cs" />
+    <Compile Include="Events\Handlers\OrderCreatedEventHandler.cs" />
     <Compile Include="Events\OrderCreatedEvent.cs" />
     <Compile Include="Events\OrderRenamedEvent.cs" />
-    <Compile Include="IOC\NSBInstaller.cs" />
     <Compile Include="Host\Program.cs" />
     <Compile Include="Host\Service.cs">
       <SubType>Component</SubType>
@@ -184,6 +187,10 @@
     <ProjectReference Include="..\CQRSlite\CQRSlite.csproj">
       <Project>{dafd2a8a-d6b0-4433-8ddf-b98460c64ec6}</Project>
       <Name>CQRSlite</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\SachaBarber.CQRS.Demo.Orders.ReadModel\SachaBarber.CQRS.Demo.Orders.ReadModel.csproj">
+      <Project>{7EB95C96-8F69-46A1-B810-BFEABA0B2973}</Project>
+      <Name>SachaBarber.CQRS.Demo.Orders.ReadModel</Name>
     </ProjectReference>
     <ProjectReference Include="..\SachaBarber.CQRS.Demo.Orders\SachaBarber.CQRS.Demo.Orders.csproj">
       <Project>{2702523e-1d79-4854-8f2f-ac5d6b2acd94}</Project>

@@ -7,9 +7,19 @@
     
     <Window.Resources>
         <DataTemplate x:Key="StoreItemTemplate">
-            <Grid Margin="5">
-                <Image Width="100" Height="150" Source="{Binding ImageUrl}"/>
+            <Grid x:Name="theGrid" Margin="5" Background="Black">
+                <StackPanel Orientation="Vertical">
+                    <CheckBox IsChecked="{Binding IsSelected}" Margin="10" 
+                              BorderThickness="3" BorderBrush="#ff656565" 
+                              VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                    <Image Width="100" Height="150" Source="{Binding ImageUrl}" Margin="10"/>
+                </StackPanel>
             </Grid>
+            <DataTemplate.Triggers>
+                <DataTrigger Binding="{Binding IsSelected}" Value="True">
+                    <Setter TargetName="theGrid" Property="Background" Value="OrangeRed"/>
+                </DataTrigger>
+            </DataTemplate.Triggers>
         </DataTemplate>
     </Window.Resources>
 
@@ -17,9 +27,12 @@
 
     <StackPanel Orientation="Vertical">
 
-       <Grid Height="100" Background="DarkGoldenrod" HorizontalAlignment="Stretch">
+       <Grid Height="100" Background="OrangeRed" HorizontalAlignment="Stretch">
            <Label FontFamily="Segoe UI" FontSize="40" FontWeight="Normal" Content="CREATE AND AMEND ORDERS"
                   VerticalAlignment="Center" VerticalContentAlignment="Center" Margin="10" Foreground="Black"></Label>
+       
+        <Button HorizontalAlignment="Right" Margin="10" VerticalAlignment="Center"
+                Command="{Binding CreateNewOrderCommand}" Content="Create New Order" ToolTip="Select some comics and click here to create a new order"/>
        </Grid>
 
 

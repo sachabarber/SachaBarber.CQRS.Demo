@@ -16,6 +16,12 @@ namespace SachaBarber.CQRS.Demo.Orders.Domain.Events
         public readonly string Address;
         public readonly List<OrderItem> OrderItems;
 
+
+        public OrderCreatedEvent()
+        {
+            
+        }
+
         public OrderCreatedEvent(
             Guid id, 
             string description,

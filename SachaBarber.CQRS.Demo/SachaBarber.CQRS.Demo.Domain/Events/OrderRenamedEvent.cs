@@ -12,6 +12,11 @@ namespace SachaBarber.CQRS.Demo.Orders.Domain.Events
     {
         public readonly string NewOrderDescription;
 
+        public OrderRenamedEvent()
+        {
+            
+        }
+
         public OrderRenamedEvent(Guid id, string newOrderDescription)
         {
             Id = id;

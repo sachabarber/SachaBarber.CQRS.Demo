@@ -22,17 +22,24 @@ namespace SachaBarber.CQRS.Demo.Orders.Domain
             this.commandHandlers = commandHandlers;
         }
 
+    
+
         public async Task<bool> SendCommand(Command command)
         {
-            //var meth = (from m in typeof(OrderCommandHandlers).GetMethods(BindingFlags.Public | BindingFlags.Instance)
-            //            let prms = m.GetParameters()
-            //            where prms.Count() == 1 && prms[0].ParameterType == command.GetType()
-            //            select m).FirstOrDefault();
+            await Task.Run(() =>
+            {
+                var meth = (from m in typeof(OrderCommandHandlers)
+                    .GetMethods(BindingFlags.Public | BindingFlags.Instance)
+                            let prms = m.GetParameters()
+                            where prms.Count() == 1 && prms[0].ParameterType == command.GetType()
+                            select m).FirstOrDefault();
 
-            //if (meth == null)
-            //    throw new BusinessLogicException(string.Format("Handler for {0} could not be found", command.GetType().Name));
+                if (meth == null)
+                    throw new BusinessLogicException(
+                        string.Format("Handler for {0} could not be found", command.GetType().Name));
 
-            //meth.Invoke(commandHandlers, new[] { command });
+                meth.Invoke(commandHandlers, new[] { command });
+            });
             return true;
         }
     }

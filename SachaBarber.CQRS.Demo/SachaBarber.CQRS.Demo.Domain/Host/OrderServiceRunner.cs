@@ -1,15 +1,15 @@
 ﻿using System;
+using System.ServiceModel;
 using System.ServiceModel.Dispatcher;
 using Castle.Facilities.WcfIntegration;
-using Castle.MicroKernel.Registration;
 using Castle.Windsor;
-using System.ServiceModel;
-
+using NLog;
+using SachaBarber.CQRS.Demo.Orders.Domain.Bus;
+using SachaBarber.CQRS.Demo.Orders.Domain.Events.Handlers;
 using SachaBarber.CQRS.Demo.Orders.Domain.IOC;
 using SachaBarber.CQRS.Demo.SharedCore;
 using SachaBarber.CQRS.Demo.SharedCore.ExtensionMethods;
 using SachaBarber.CQRS.Demo.SharedCore.IOC;
-using NLog;
 
 namespace SachaBarber.CQRS.Demo.Orders.Domain.Host
 {
@@ -27,7 +27,10 @@ namespace SachaBarber.CQRS.Demo.Orders.Domain.Host
             
             try
             {
-                container.Install(new IWindsorInstaller[] { new DomainInstaller(new WcfLifestyleApplier()) });
+
+
+                container.Install(
+                    new DomainInstaller(new WcfLifestyleApplier()));
                 container.CheckForPotentiallyMisconfiguredComponents();
 
                 CreateServiceHost<IOrderService>(ref dealingServiceHost, "OrderService");
@@ -70,13 +73,13 @@ namespace SachaBarber.CQRS.Demo.Orders.Domain.Host
         {
             try
             {
-                this.dealingServiceHost.Close();
-                this.dealingSearchServiceHost.Close();
+                dealingServiceHost.Close();
+                dealingSearchServiceHost.Close();
             }
             catch (Exception)
             {
-                this.dealingServiceHost.Abort();
-                this.dealingSearchServiceHost.Abort();
+                dealingServiceHost.Abort();
+                dealingSearchServiceHost.Abort();
                 throw;
             }
         }

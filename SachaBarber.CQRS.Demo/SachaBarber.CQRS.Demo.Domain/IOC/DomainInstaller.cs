@@ -1,4 +1,7 @@
-﻿using Castle.Facilities.WcfIntegration;
+﻿using System;
+using System.Linq;
+using System.Reflection;
+using Castle.Facilities.WcfIntegration;
 using Castle.MicroKernel.Registration;
 using Castle.MicroKernel.Resolvers.SpecializedResolvers;
 
@@ -7,15 +10,15 @@ using CQRSlite.Cache;
 using CQRSlite.Commands;
 using CQRSlite.Domain;
 using CQRSlite.Events;
-
-using NServiceBus;
-using System;
-using System.Reflection;
-
+using SachaBarber.CQRS.Demo.Orders.Domain.Bus;
 using SachaBarber.CQRS.Demo.Orders.Domain.Commands;
+using SachaBarber.CQRS.Demo.Orders.Domain.Events.Handlers;
 using SachaBarber.CQRS.Demo.Orders.Domain.EventStore;
+using SachaBarber.CQRS.Demo.Orders.ReadModel;
 using SachaBarber.CQRS.Demo.SharedCore.ExtensionMethods;
 using SachaBarber.CQRS.Demo.SharedCore.IOC;
+
+
 
 namespace SachaBarber.CQRS.Demo.Orders.Domain.IOC
 {
@@ -31,53 +34,36 @@ namespace SachaBarber.CQRS.Demo.Orders.Domain.IOC
         }
 
 
-
-        // CRQRS LITE setup
-        // CRQRS LITE setup
-        // CRQRS LITE setup
-        // CRQRS LITE setup
-        // CRQRS LITE setup
-
-        //  ObjectFactory.Initialize(x =>
-        //            {
-        //                      x.For<InProcessBus>().Singleton().Use<InProcessBus>();
-        //                      x.For<ICommandSender>().Use(y => y.GetInstance<InProcessBus>());
-        //                      x.For<IEventPublisher>().Use(y => y.GetInstance<InProcessBus>());
-        //                      x.For<IHandlerRegistrar>().Use(y => y.GetInstance<InProcessBus>());
-        //                      x.For<ISession>().HybridHttpOrThreadLocalScoped().Use<Session>();
-        //                      x.For<IEventStore>().Singleton().Use<InMemoryEventStore>();
-        //                x.For<IRepository>().HybridHttpOrThreadLocalScoped().Use(y =>
-        //                                                                         new CacheRepository(
-        //                                                                             new Repository(y.GetInstance<IEventStore>(),
-        //                                                                                            y.GetInstance<IEventPublisher>()),
-        //                                                                             y.GetInstance<IEventStore>()));
-
-        //                x.Scan(s =>
-        //                {
-        //                    s.TheCallingAssembly();
-        //                    s.AssemblyContainingType<ReadModelFacade>();
-        //                    s.Convention<FirstInterfaceConvention>();
-        //                });
-        //            });
-        //return ObjectFactory.Container;
-
-
         public void Install(Castle.Windsor.IWindsorContainer container, Castle.MicroKernel.SubSystems.Configuration.IConfigurationStore store)
         {
             container.Kernel.Resolver.AddSubResolver(new ArrayResolver(container.Kernel, true));
 
             // PerCall setup
             container.AddFacility<WcfFacility>()
-            .Register(
+                .Register(
 
-                //wcf client invokers
-                Component.For<IOrderService>().ImplementedBy<OrderService>().LifeStyle.ApplyLifeStyle(lifestyleApplier),
+                    //wcf services
+                    Component.For<IOrderService>()
+                        .ImplementedBy<OrderService>()
+                        .LifeStyle.ApplyLifeStyle(lifestyleApplier),
 
-                //CQRSLite stuff
-                Component.For<OrderCommandHandlers>().LifeStyle.ApplyLifeStyle(lifestyleApplier),
-                Component.For<IEventPublisher, ICommandSender, IHandlerRegistrar>().ImplementedBy<InProcessBus>().LifeStyle.ApplyLifeStyle(lifestyleApplier),
-                Component.For<ISession>().ImplementedBy<Session>().LifeStyle.ApplyLifeStyle(lifestyleApplier),
-                Component.For<IEventStore>().ImplementedBy<InMemoryEventStore>().LifeStyle.Singleton,
+                    //CQRSLite stuff
+                    Component.For<OrderCommandHandlers>().LifeStyle.ApplyLifeStyle(lifestyleApplier),
+                    //Component.For<ICommandSender, IHandlerRegistrar>().ImplementedBy<InProcessBus>().LifeStyle.ApplyLifeStyle(lifestyleApplier),
+                    Component.For<IEventPublisher>().ImplementedBy<BusEventPublisher>().LifeStyle.Singleton,
+                    Component.For<ISession>().ImplementedBy<Session>().LifeStyle.ApplyLifeStyle(lifestyleApplier),
+                    Component.For<IEventStore>().ImplementedBy<InMemoryEventStore>().LifeStyle.Singleton,
+                    Component.For<IReadModelRepository>().ImplementedBy<IReadModelRepository>().LifeStyle.Singleton,
+
+                    //Classes.FromThisAssembly().BasedOn<IBusEventHandler>().a,
+
+                    Component.For<IBusEventHandler>().ImplementedBy<OrderCreatedEventHandler>()
+                        .Named("OrderCreatedEventHandler").LifeStyle.Singleton,
+                    Component.For<IBusEventHandler>().ImplementedBy<OrderRenamedEventHandler>()
+                        .Named("OrderRenamedEventHandler").LifeStyle.Singleton,
+
+             
+
 
 
                 Component.For<IRepository>().UsingFactoryMethod(
@@ -90,16 +76,6 @@ namespace SachaBarber.CQRS.Demo.Orders.Domain.IOC
                     })
 
             );
-
-            //if (lifestyleApplier is WcfLifestyleApplier)
-            //{
-            //    container.Register(Component.For<IBus>().UsingFactoryMethod(NSBInstaller.CreateBusFactory).LifeStyle.Singleton);
-            //}
-
-
-
-
         }
-
     }
 }
