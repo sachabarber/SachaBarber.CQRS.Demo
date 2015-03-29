@@ -19,7 +19,9 @@ namespace SachaBarber.CQRS.Demo.Orders.DTOs
 
         [DataMember]
         public string StoreItemDescription { get; set; }
-        
+
+        [DataMember]
+        public string StoreItemUrl { get; set; }
  
     }
 }

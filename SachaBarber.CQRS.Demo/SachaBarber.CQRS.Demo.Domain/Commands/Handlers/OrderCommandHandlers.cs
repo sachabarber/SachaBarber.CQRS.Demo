@@ -33,7 +33,8 @@ namespace SachaBarber.CQRS.Demo.Orders.Domain.Commands
                 {
                     OrderId = x.OrderId,
                     StoreItemDescription = x.StoreItemDescription,
-                    StoreItemId = x.StoreItemId
+                    StoreItemId = x.StoreItemId,
+                    StoreItemUrl = x.StoreItemUrl
                 }).ToList());
             _session.Add(item);
             _session.Commit();

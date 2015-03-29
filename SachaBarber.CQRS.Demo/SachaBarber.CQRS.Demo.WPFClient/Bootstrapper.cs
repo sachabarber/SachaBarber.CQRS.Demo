@@ -9,6 +9,8 @@ using Microsoft.Practices.Unity;
 using Microsoft.Practices.Prism.UnityExtensions;
 
 using SachaBarber.CQRS.Demo.Orders.ReadModel;
+using SachaBarber.CQRS.Demo.WPFClient.Services;
+using SachaBarber.CQRS.Demo.WPFClient.ViewModels;
 
 namespace SachaBarber.CQRS.Demo.WPFClient
 {
@@ -19,6 +21,10 @@ namespace SachaBarber.CQRS.Demo.WPFClient
             base.ConfigureContainer();
 
             Container.RegisterType<IReadModelRepository, ReadModelRepository>(new ContainerControlledLifetimeManager());
+            Container.RegisterType<IMessageBoxService, MessageBoxService>(new TransientLifetimeManager());
+            Container.RegisterType<IDialogService, DialogService>(new TransientLifetimeManager());
+            Container.RegisterType<ISchedulerService, SchedulerService>(new TransientLifetimeManager());
+            Container.RegisterType<CreateOrderDialogViewModelFactory>(new ContainerControlledLifetimeManager());
         }
 
         protected override DependencyObject CreateShell()

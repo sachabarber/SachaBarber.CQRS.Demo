@@ -1,7 +1,6 @@
 ﻿using System;
 using System.IO;
 using System.Threading;
-using NServiceBus;
 using NLog;
 
 namespace SachaBarber.CQRS.Demo.Orders.Domain.Host
@@ -16,7 +15,6 @@ namespace SachaBarber.CQRS.Demo.Orders.Domain.Host
         /// </summary>
         static void Main()
         {
-            NServiceBus.Logging.LogManager.Use<NLogFactory>();
 #if (!DEBUG)
             try
             {

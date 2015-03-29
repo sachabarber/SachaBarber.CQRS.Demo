@@ -1,0 +1,49 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:windows="clr-namespace:SachaBarber.CQRS.Demo.WPFClient.Controls"
+                    xmlns:viewModels="clr-namespace:SachaBarber.CQRS.Demo.WPFClient.ViewModels">
+
+    <!-- Custom Window : to allow repositioning of ResizeGrip-->
+    <ControlTemplate x:Key="NonResizableBorderlessWindow" TargetType="{x:Type Window}">
+        <Grid>
+            <AdornerDecorator>
+                <ContentPresenter/>
+            </AdornerDecorator>
+        </Grid>
+    </ControlTemplate>
+
+
+    <Style
+        BasedOn="{StaticResource {x:Type Window}}"
+        TargetType="{x:Type windows:DialogViewModelWindow}">
+
+
+        <Setter Property="Width" Value="Auto"/>
+        <Setter Property="Height" Value="Auto"/>
+        <Setter Property="WindowStyle" Value="ToolWindow"/>
+
+        <Setter Property="Title" Value="{Binding RelativeSource={RelativeSource Self}, Path=ViewModel.Title, Mode=OneWay}"/>
+        <Setter Property="Close" Value="{Binding RelativeSource={RelativeSource Self}, Path=ViewModel.Close, Mode=OneWay}"/>
+        <Setter Property="SizeToContent" Value="WidthAndHeight" />
+        <Setter Property="ResizeMode" Value="NoResize" />
+    </Style>
+
+
+    <DataTemplate DataType="{x:Type viewModels:CreateOrderDialogViewModel}">
+        <StackPanel Orientation="Vertical">
+            <Label FontFamily="Segoe UI" Content="DESCRIPTION" 
+                   FontWeight="Normal"
+                   HorizontalAlignment="Left" Width="100" Margin="5,0,5,2"/>
+            <TextBox FontFamily="Segoe UI" Text="{Binding Description}" Width="350" Margin="5,0,5,2"/>
+            <Label FontFamily="Segoe UI" Content="ADDRESS" Width="100" 
+                   FontWeight="Normal"
+                   HorizontalAlignment="Left"  Margin="5,0,5,2"/>
+            <TextBox FontFamily="Segoe UI" Text="{Binding Address}" 
+                     TextWrapping="Wrap" AcceptsReturn="True"
+                     Width="350" Height="80" Margin="5,0,5,2"/>
+            <Button Command="{Binding OkCommand}" Content="OK" Margin="5"/>
+        </StackPanel>
+    </DataTemplate>
+
+
+</ResourceDictionary>

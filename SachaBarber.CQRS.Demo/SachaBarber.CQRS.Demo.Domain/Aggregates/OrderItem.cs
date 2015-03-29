@@ -13,5 +13,6 @@ namespace SachaBarber.CQRS.Demo.Orders.Domain.Aggregates
         public Guid StoreItemId { get; set; }
 
         public string StoreItemDescription { get; set; }
+        public string StoreItemUrl { get; set; }
     }
 }

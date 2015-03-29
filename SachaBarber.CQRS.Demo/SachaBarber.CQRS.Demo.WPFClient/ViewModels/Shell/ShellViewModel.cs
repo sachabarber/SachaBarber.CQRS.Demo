@@ -12,18 +12,28 @@ using SachaBarber.CQRS.Demo.Orders.ReadModel;
 using SachaBarber.CQRS.Demo.Orders.ReadModel.Models;
 using SachaBarber.CQRS.Demo.WPFClient.Controls;
 using System.Windows.Input;
+using SachaBarber.CQRS.Demo.Orders;
+using SachaBarber.CQRS.Demo.Orders.Commands;
 using SachaBarber.CQRS.Demo.WPFClient.Commands;
+using SachaBarber.CQRS.Demo.WPFClient.Services;
 
 namespace SachaBarber.CQRS.Demo.WPFClient.ViewModels.Shell
 {
     public class ShellViewModel : AsyncDisposableViewModel
     {
         private readonly IReadModelRepository readModelRepository;
+        private readonly CreateOrderDialogViewModelFactory createOrderDialogViewModelFactory;
+        private readonly IDialogService dialogService;
         private object syncLock = new object();
 
-        public ShellViewModel(IReadModelRepository readModelRepository)
+        public ShellViewModel(
+            IReadModelRepository readModelRepository,
+            CreateOrderDialogViewModelFactory createOrderDialogViewModelFactory,
+            IDialogService dialogService)
         {
             this.readModelRepository = readModelRepository;
+            this.createOrderDialogViewModelFactory = createOrderDialogViewModelFactory;
+            this.dialogService = dialogService;
             StoreItems = new ObservableCollection<StoreItemViewModel>();
             BindingOperations.EnableCollectionSynchronization(StoreItems, syncLock);
 
@@ -48,7 +58,7 @@ namespace SachaBarber.CQRS.Demo.WPFClient.ViewModels.Shell
                 {
                     await readModelRepository.CreateFreshDb();
                     var items = await readModelRepository.GetAll<StoreItem>();
-                    StoreItems.AddRange(items.Select(x=> new StoreItemViewModel(x)));
+                    StoreItems.AddRange(items.Select(x => new StoreItemViewModel(x)));
                     return true;
 
                 });
@@ -64,13 +74,27 @@ namespace SachaBarber.CQRS.Demo.WPFClient.ViewModels.Shell
             return StoreItems.Any(x => x.IsSelected);
         }
 
-        private void ExecuteCreateNewOrderCommand(object parameter)
+        private async void ExecuteCreateNewOrderCommand(object parameter)
         {
-           //TODO
-           //TODO
-           //TODO
-           //TODO
-           //TODO
+            Guid orderId = Guid.NewGuid();
+
+            var createOrderDialogViewModel =
+                createOrderDialogViewModelFactory.Create(orderId, StoreItems.Where(x => x.IsSelected).ToList());
+
+            var result = dialogService.ShowDialog(createOrderDialogViewModel);
+            if (result.HasValue && result.Value)
+            {
+                var orderCreated = await new OrderServiceInvoker().CallService(service =>
+                service.SendCommand(new CreateOrderCommand()
+                {
+                    ExpectedVersion = 1,
+                    Id = orderId,
+                    Address = "This is the address",
+                    Description = "Description1",
+                    OrderItems = createOrderDialogViewModel.OrderItems.ToList()
+                }));
+
+            }
         }
 
     }

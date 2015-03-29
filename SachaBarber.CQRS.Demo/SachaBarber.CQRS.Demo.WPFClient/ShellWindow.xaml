@@ -7,17 +7,16 @@
     
     <Window.Resources>
         <DataTemplate x:Key="StoreItemTemplate">
-            <Grid x:Name="theGrid" Margin="5" Background="Black">
+            <Border x:Name="theBorder" Margin="5" Background="Black" BorderThickness="3" BorderBrush="Black">
                 <StackPanel Orientation="Vertical">
                     <CheckBox IsChecked="{Binding IsSelected}" Margin="10" 
-                              BorderThickness="3" BorderBrush="#ff656565" 
                               VerticalAlignment="Center" HorizontalAlignment="Center"/>
                     <Image Width="100" Height="150" Source="{Binding ImageUrl}" Margin="10"/>
                 </StackPanel>
-            </Grid>
+            </Border>
             <DataTemplate.Triggers>
                 <DataTrigger Binding="{Binding IsSelected}" Value="True">
-                    <Setter TargetName="theGrid" Property="Background" Value="OrangeRed"/>
+                    <Setter TargetName="theBorder" Property="BorderBrush" Value="OrangeRed"/>
                 </DataTrigger>
             </DataTemplate.Triggers>
         </DataTemplate>
