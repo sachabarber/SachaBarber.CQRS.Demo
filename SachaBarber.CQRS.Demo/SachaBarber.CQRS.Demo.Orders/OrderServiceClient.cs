@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.ServiceModel;
 using System.Text;
 using System.Threading.Tasks;
 using SachaBarber.CQRS.Demo.Orders.Commands;
+using SachaBarber.CQRS.Demo.Orders.ReadModel.Models;
 
 namespace SachaBarber.CQRS.Demo.Orders
 {
@@ -40,5 +42,24 @@ namespace SachaBarber.CQRS.Demo.Orders
         {
             return base.Channel.SendCommand(command);
         }
+
+        public System.Threading.Tasks.Task<List<StoreItem>> GetAllStoreItems()
+        {
+            return base.Channel.GetAllStoreItems();
+        }
+
+        public System.Threading.Tasks.Task<List<Order>> GetAllOrders()
+        {
+            return base.Channel.GetAllOrders();
+        }
+
+        public System.Threading.Tasks.Task<Order> GetOrder(Guid orderId)
+        {
+            return base.Channel.GetOrder(orderId);
+        }
+
+
+
+
     }
 }

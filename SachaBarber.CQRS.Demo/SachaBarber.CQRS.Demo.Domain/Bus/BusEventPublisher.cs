@@ -44,31 +44,17 @@ namespace SachaBarber.CQRS.Demo.Orders.Domain.Bus
         public void Publish<T>(T @event) where T : IEvent
         {
 
-            var theHandler = _handlers.Single(x => x.HandlerType == @event.GetType());
+            var theHandler = _handlers.SingleOrDefault(x => x.HandlerType == @event.GetType());
 
-            //var meth = (from m in theHandler.GetType()
-            //     .GetMethods(BindingFlags.Public | BindingFlags.Instance)
-            //            let prms = m.GetParameters()
-            //            where prms.Count() == 1 && prms[0].ParameterType == @event.GetType()
-            //            select m).FirstOrDefault();
+            if (theHandler == null)
+                throw new BusinessLogicException(
+                    string.Format("Handler for {0} could not be found", @event.GetType().Name));
 
-            //if (meth == null)
-            //    throw new BusinessLogicException(
-            //        string.Format("Handler for {0} could not be found", @event.GetType().Name));
+            Task.Run(() =>
+            {
+                methodLookups[@event.GetType()].Invoke(theHandler, new[] {(object) @event});
+            }).Wait();
 
-            //meth.Invoke(theHandler, new [] { (object)@event });
-
-            methodLookups[@event.GetType()].Invoke(theHandler, new [] { (object)@event });
-          
         }
-
-
-        public static Func<object, T> CreateStaticCastStatement<T>()
-        {
-            ParameterExpression inObject = Expression.Parameter(typeof(object));
-            Expression convertExpression = Expression.Convert(inObject, typeof(T));
-            return Expression.Lambda<Func<object, T>>(convertExpression, inObject).Compile();
-        }
-
     }
 }

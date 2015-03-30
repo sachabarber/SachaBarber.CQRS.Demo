@@ -49,13 +49,12 @@ namespace SachaBarber.CQRS.Demo.Orders.Domain.IOC
 
                     //CQRSLite stuff
                     Component.For<OrderCommandHandlers>().LifeStyle.ApplyLifeStyle(lifestyleApplier),
-                    //Component.For<ICommandSender, IHandlerRegistrar>().ImplementedBy<InProcessBus>().LifeStyle.ApplyLifeStyle(lifestyleApplier),
                     Component.For<IEventPublisher>().ImplementedBy<BusEventPublisher>().LifeStyle.Singleton,
+                    Component.For<IInterProcessBus>().ImplementedBy<InterProcessBus>().LifeStyle.Singleton,
                     Component.For<ISession>().ImplementedBy<Session>().LifeStyle.ApplyLifeStyle(lifestyleApplier),
                     Component.For<IEventStore>().ImplementedBy<InMemoryEventStore>().LifeStyle.Singleton,
-                    Component.For<IReadModelRepository>().ImplementedBy<IReadModelRepository>().LifeStyle.Singleton,
+                    Component.For<IReadModelRepository>().ImplementedBy<ReadModelRepository>().LifeStyle.Singleton,
 
-                    //Classes.FromThisAssembly().BasedOn<IBusEventHandler>().a,
 
                     Component.For<IBusEventHandler>().ImplementedBy<OrderCreatedEventHandler>()
                         .Named("OrderCreatedEventHandler").LifeStyle.Singleton,

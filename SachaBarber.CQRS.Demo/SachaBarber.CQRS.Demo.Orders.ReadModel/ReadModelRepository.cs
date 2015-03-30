@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
@@ -23,37 +24,40 @@ namespace SachaBarber.CQRS.Demo.Orders.ReadModel
         Task<bool> SeedProducts();
         Task<List<T>> GetAll<T>();
         Task<bool> AddOrder(Order order);
+        Task<Order> GetOrder(Guid orderId);
     }
 
 
     public class ReadModelRepository : IReadModelRepository
     {
 
-        private readonly IDocumentStore documentStore = null;
+        private IDocumentStore documentStore = null;
         private string dataDir = @"C:\temp\RavenDb";
 
         public ReadModelRepository()
         {
+       
+        }
+
+        public async Task<bool> CreateFreshDb()
+        {
+
             documentStore = new EmbeddableDocumentStore
             {
                 DataDirectory = dataDir,
                 UseEmbeddedHttpServer = true
             };
-            documentStore.Initialize();
 
+            documentStore.Initialize();
 
             //Add order Index
             if (documentStore.DatabaseCommands.GetIndex("Order/ById") == null)
             {
                 documentStore.DatabaseCommands.PutIndex(
                     "Order/ById",
-                    new IndexDefinitionBuilder<Order> { Map = ords => from order in ords select new { order.Id } });
+                    new IndexDefinitionBuilder<Order> { Map = ords => from order in ords select new { Id = order.Id } });
             }
 
-        }
-
-        public async Task<bool> CreateFreshDb()
-        {
             var storeItems = await this.GetAll<StoreItem>();
             if (!storeItems.Any())
             {
@@ -65,7 +69,6 @@ namespace SachaBarber.CQRS.Demo.Orders.ReadModel
 
         public Task<bool> SeedProducts()
         {
-
             return Task.Run(() =>
                 {
                     using (IDocumentSession session = documentStore.OpenSession())
@@ -80,25 +83,7 @@ namespace SachaBarber.CQRS.Demo.Orders.ReadModel
                     }
                     return true;
                 });
-
-
-
         }
-
-
-
-        private void CreateStoreItem(IDocumentSession session, string imageUrl, string description)
-        {
-            StoreItem newStoreItem = new StoreItem
-            {
-                Id = Guid.NewGuid(),
-                ImageUrl = imageUrl,
-                Description = description
-            };
-            session.Store(newStoreItem);
-        }
-
-
 
         public Task<List<T>> GetAll<T>()
         {
@@ -111,7 +96,9 @@ namespace SachaBarber.CQRS.Demo.Orders.ReadModel
                         int start = 0;
                         while (true)
                         {
-                            var current = session.Query<T>().Take(1024).Skip(start).ToList();
+                            var current = session.Query<T>()
+                                .Customize(x => x.WaitForNonStaleResults())
+                                .Take(1024).Skip(start).ToList();
                             if (current.Count == 0) break;
 
                             start += current.Count;
@@ -136,20 +123,46 @@ namespace SachaBarber.CQRS.Demo.Orders.ReadModel
                 });
         }
 
+        public Task<Order> GetOrder(Guid orderId)
+        {
+            return Task.Run(() =>
+            {
+                using (IDocumentSession session = documentStore.OpenSession())
+                {
+                    return session.Query<Order>().SingleOrDefault(x => x.OrderId == orderId);
+                }
+            });
+        }
+
+
+
+
+        private void CreateStoreItem(IDocumentSession session, string imageUrl, string description)
+        {
+            StoreItem newStoreItem = new StoreItem
+            {
+                StoreItemId = Guid.NewGuid(),
+                ImageUrl = imageUrl,
+                Description = description
+            };
+            session.Store(newStoreItem);
+        }
 
         private async Task<bool> DeleteAllOrders()
         {
-            var staleIndexesWaitAction = new Action(
-                delegate
-                {
-                    while (documentStore.DatabaseCommands.GetStatistics().StaleIndexes.Length != 0)
+            await Task.Run(() =>
+            {
+                var staleIndexesWaitAction = new Action(() =>
                     {
-                        Thread.Sleep(10);
-                    }
-                });
-            staleIndexesWaitAction.Invoke();
-            documentStore.DatabaseCommands.DeleteByIndex("Order/ById", new IndexQuery());
-            staleIndexesWaitAction.Invoke();
+                        while (documentStore.DatabaseCommands.GetStatistics().StaleIndexes.Length != 0)
+                        {
+                            Thread.Sleep(10);
+                        }
+                    });
+                staleIndexesWaitAction.Invoke();
+                documentStore.DatabaseCommands.DeleteByIndex("Order/ById", new IndexQuery());
+                staleIndexesWaitAction.Invoke();
+            });
             return true;
         }
     }

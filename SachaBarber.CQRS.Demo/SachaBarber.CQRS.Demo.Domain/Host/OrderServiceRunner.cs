@@ -7,6 +7,7 @@ using NLog;
 using SachaBarber.CQRS.Demo.Orders.Domain.Bus;
 using SachaBarber.CQRS.Demo.Orders.Domain.Events.Handlers;
 using SachaBarber.CQRS.Demo.Orders.Domain.IOC;
+using SachaBarber.CQRS.Demo.Orders.ReadModel;
 using SachaBarber.CQRS.Demo.SharedCore;
 using SachaBarber.CQRS.Demo.SharedCore.ExtensionMethods;
 using SachaBarber.CQRS.Demo.SharedCore.IOC;
@@ -32,6 +33,9 @@ namespace SachaBarber.CQRS.Demo.Orders.Domain.Host
                 container.Install(
                     new DomainInstaller(new WcfLifestyleApplier()));
                 container.CheckForPotentiallyMisconfiguredComponents();
+
+                var readModelRespository = container.Resolve<IReadModelRepository>();
+                readModelRespository.CreateFreshDb().Wait();
 
                 CreateServiceHost<IOrderService>(ref dealingServiceHost, "OrderService");
 

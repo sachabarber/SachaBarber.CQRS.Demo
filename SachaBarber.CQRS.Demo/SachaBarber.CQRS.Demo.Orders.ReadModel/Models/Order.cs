@@ -8,7 +8,10 @@ namespace SachaBarber.CQRS.Demo.Orders.ReadModel.Models
 {
     public class Order
     {
-        public Guid Id { get; set; }
+        public string Id { get; set; }
+        public Guid OrderId { get; set; }
+
+        public int Version { get; set; }
 
         public string Description { get; set; }
         

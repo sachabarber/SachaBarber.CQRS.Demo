@@ -21,25 +21,35 @@ namespace SachaBarber.CQRS.Demo.WPFClient.ViewModels.Shell
 {
     public class ShellViewModel : AsyncDisposableViewModel
     {
-        private readonly IReadModelRepository readModelRepository;
         private readonly CreateOrderDialogViewModelFactory createOrderDialogViewModelFactory;
         private readonly IDialogService dialogService;
+        private readonly IInterProcessBusSubscriber interProcessBusSubscriber;
         private object syncLock = new object();
 
         public ShellViewModel(
-            IReadModelRepository readModelRepository,
             CreateOrderDialogViewModelFactory createOrderDialogViewModelFactory,
-            IDialogService dialogService)
+            IDialogService dialogService,
+            IInterProcessBusSubscriber interProcessBusSubscriber)
         {
-            this.readModelRepository = readModelRepository;
             this.createOrderDialogViewModelFactory = createOrderDialogViewModelFactory;
             this.dialogService = dialogService;
+            this.interProcessBusSubscriber = interProcessBusSubscriber;
             StoreItems = new ObservableCollection<StoreItemViewModel>();
             BindingOperations.EnableCollectionSynchronization(StoreItems, syncLock);
 
             CreateNewOrderCommand = new SimpleCommand<object, object>(
                 CanExecuteCreateNewOrderCommand,
                 ExecuteCreateNewOrderCommand);
+
+            interProcessBusSubscriber.GetEventStream().Subscribe(async x =>
+            {
+                string mess = x;
+
+                var orders = await new OrderServiceInvoker().CallService(service =>
+                            service.GetAllOrders());
+
+                var fgddsd = 56;
+            });
         }
 
 
@@ -56,11 +66,11 @@ namespace SachaBarber.CQRS.Demo.WPFClient.ViewModels.Shell
             return Task.Run(
                 async () =>
                 {
-                    await readModelRepository.CreateFreshDb();
-                    var items = await readModelRepository.GetAll<StoreItem>();
+                    var items = await new OrderServiceInvoker().CallService(service =>
+                        service.GetAllStoreItems());
+
                     StoreItems.AddRange(items.Select(x => new StoreItemViewModel(x)));
                     return true;
-
                 });
         }
 

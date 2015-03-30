@@ -68,6 +68,10 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\NLog.3.2.0.0\lib\net45\NLog.dll</HintPath>
     </Reference>
+    <Reference Include="RabbitMQ.Client, Version=3.5.0.0, Culture=neutral, PublicKeyToken=89e7d7c5feba84ce, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\RabbitMQ.Client.3.5.0\lib\net40\RabbitMQ.Client.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Configuration.Install" />
@@ -104,6 +108,8 @@
     <Compile Include="Aggregates\OrderItem.cs" />
     <Compile Include="Bus\IBusEventHandler.cs" />
     <Compile Include="Bus\BusEventPublisher.cs" />
+    <Compile Include="Bus\InterProcessBus.cs" />
+    <Compile Include="Bus\IInterProcessBus.cs" />
     <Compile Include="Commands\Handlers\OrderCommandHandlers.cs" />
     <Compile Include="EventStore\InMemoryEventStore.cs" />
     <Compile Include="Events\Handlers\OrderRenamedEventHandler.cs" />

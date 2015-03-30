@@ -14,7 +14,7 @@ namespace SachaBarber.CQRS.Demo.WPFClient.ViewModels.Shell
 
         public StoreItemViewModel(StoreItem item)
         {
-            this.Id = item.Id;
+            this.Id = item.StoreItemId;
             this.Description = item.Description;
             this.ImageUrl = string.Format("/SachaBarber.CQRS.Demo.WPFClient;component/Images/{0}", item.ImageUrl);
         }

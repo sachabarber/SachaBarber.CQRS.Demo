@@ -61,6 +61,10 @@
       <Project>{dafd2a8a-d6b0-4433-8ddf-b98460c64ec6}</Project>
       <Name>CQRSlite</Name>
     </ProjectReference>
+    <ProjectReference Include="..\SachaBarber.CQRS.Demo.Orders.ReadModel\SachaBarber.CQRS.Demo.Orders.ReadModel.csproj">
+      <Project>{7eb95c96-8f69-46a1-b810-bfeaba0b2973}</Project>
+      <Name>SachaBarber.CQRS.Demo.Orders.ReadModel</Name>
+    </ProjectReference>
     <ProjectReference Include="..\SachaBarber.CQRS.Demo.SharedCore\SachaBarber.CQRS.Demo.SharedCore.csproj">
       <Project>{f97fe1c8-53bf-4c69-8694-6a8a6776d86a}</Project>
       <Name>SachaBarber.CQRS.Demo.SharedCore</Name>

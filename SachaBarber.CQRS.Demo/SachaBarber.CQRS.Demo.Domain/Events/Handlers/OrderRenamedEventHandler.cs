@@ -14,7 +14,7 @@ namespace SachaBarber.CQRS.Demo.Orders.Domain.Events.Handlers
             get { return typeof(OrderRenamedEvent); }
         }
 
-        public void Handle(OrderRenamedEvent orderRenamedEvent)
+        public async void Handle(OrderRenamedEvent orderRenamedEvent)
         {
             //TODO : This should update readmodel, and then publish 
             //       back out to UI using rabbitMQ

@@ -6,6 +6,8 @@ using System.ServiceModel;
 using System.Threading.Tasks;
 using SachaBarber.CQRS.Demo.Orders.Commands;
 using SachaBarber.CQRS.Demo.Orders.Domain.Commands;
+using SachaBarber.CQRS.Demo.Orders.ReadModel;
+using SachaBarber.CQRS.Demo.Orders.ReadModel.Models;
 using SachaBarber.CQRS.Demo.SharedCore.Exceptions;
 using SachaBarber.CQRS.Demo.SharedCore.WCF;
 
@@ -16,13 +18,14 @@ namespace SachaBarber.CQRS.Demo.Orders.Domain
     public class OrderService : IOrderService
     {
         private readonly OrderCommandHandlers commandHandlers;
+        private readonly IReadModelRepository readModelRepository;
 
-        public OrderService(OrderCommandHandlers commandHandlers)
+        public OrderService(OrderCommandHandlers commandHandlers, IReadModelRepository readModelRepository)
         {
             this.commandHandlers = commandHandlers;
+            this.readModelRepository = readModelRepository;
         }
 
-    
 
         public async Task<bool> SendCommand(Command command)
         {
@@ -42,5 +45,24 @@ namespace SachaBarber.CQRS.Demo.Orders.Domain
             });
             return true;
         }
+
+        public async System.Threading.Tasks.Task<List<StoreItem>> GetAllStoreItems()
+        {
+            var storeItems = await readModelRepository.GetAll<StoreItem>();
+            return storeItems;
+        }
+
+        public async System.Threading.Tasks.Task<List<Order>> GetAllOrders()
+        {
+            var orders = await readModelRepository.GetAll<Order>();
+            return orders;
+        }
+
+        public async System.Threading.Tasks.Task<Order> GetOrder(Guid orderId)
+        {
+            var order = await readModelRepository.GetOrder(orderId);
+            return order;
+        }
+
     }
 }

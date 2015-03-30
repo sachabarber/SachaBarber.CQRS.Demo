@@ -37,6 +37,9 @@ namespace SachaBarber.CQRS.Demo.WPFClient
 
         async void ShellWindow_Loaded(object sender, RoutedEventArgs e)
         {
+            //Gives the service layer time to initialise the RavenDB
+            await Task.Delay(10000); 
+
             await viewModel.Init();
         }
     }

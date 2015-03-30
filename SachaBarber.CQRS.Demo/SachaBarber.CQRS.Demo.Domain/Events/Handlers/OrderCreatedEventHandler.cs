@@ -4,22 +4,51 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using SachaBarber.CQRS.Demo.Orders.Domain.Bus;
+using SachaBarber.CQRS.Demo.Orders.ReadModel;
+using SachaBarber.CQRS.Demo.Orders.ReadModel.Models;
 
 namespace SachaBarber.CQRS.Demo.Orders.Domain.Events.Handlers
 {
     public class OrderCreatedEventHandler : IBusEventHandler<OrderCreatedEvent>
     {
+        private readonly IReadModelRepository readModelRepository;
+        private readonly IInterProcessBus interProcessBus;
+
+        public OrderCreatedEventHandler(
+            IReadModelRepository readModelRepository,
+            IInterProcessBus interProcessBus)
+        {
+            this.readModelRepository = readModelRepository;
+            this.interProcessBus = interProcessBus;
+        }
+
         public Type HandlerType
         {
             get { return typeof (OrderCreatedEvent); }
         }
 
-        public void Handle(OrderCreatedEvent orderCreatedEvent)
+        public async void Handle(OrderCreatedEvent orderCreatedEvent)
         {
-            //TODO : This should update readmodel, and then publish 
-            //       back out to UI using rabbitMQ
+            await readModelRepository.AddOrder(new ReadModel.Models.Order()
+            {
+                OrderId = orderCreatedEvent.Id,
+                Address = orderCreatedEvent.Address,
+                Description = orderCreatedEvent.Description,
+                Version = orderCreatedEvent.Version,
+                OrderItems = orderCreatedEvent.OrderItems.Select(x =>
+                    new ReadModel.Models.OrderItem()
+                    {
+                        OrderId = x.OrderId,
+                        StoreItemId = x.StoreItemId,
+                        StoreItemDescription = x.StoreItemDescription,
+                        StoreItemUrl = x.StoreItemUrl
+                    }).ToList()
+            });
 
-            
+
+            //var fdsbfjds = await readModelRepository.GetAll<Order>();
+
+            interProcessBus.SendMessage("OrderCreatedEvent");
         }
     }
 }
