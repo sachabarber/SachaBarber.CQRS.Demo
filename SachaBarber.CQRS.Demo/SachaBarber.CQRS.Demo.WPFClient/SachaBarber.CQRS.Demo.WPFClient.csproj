@@ -135,6 +135,7 @@
     <Compile Include="Commands\SimpleCommand.cs" />
     <Compile Include="Controls\AsyncHostControl.cs" />
     <Compile Include="Controls\DialogViewModelWindow.cs" />
+    <Compile Include="Controls\NoSizeDecorator.cs" />
     <Compile Include="Controls\Spinner.xaml.cs">
       <DependentUpon>Spinner.xaml</DependentUpon>
     </Compile>
@@ -161,6 +162,7 @@
     <Compile Include="ViewModels\IDialogWindowEvents.cs" />
     <Compile Include="ViewModels\INPCBase.cs" />
     <Compile Include="ViewModels\Orders\OrdersViewModel.cs" />
+    <Compile Include="ViewModels\Orders\OrderViewModel.cs" />
     <Compile Include="ViewModels\Shell\ShellViewModel.cs" />
     <Compile Include="ViewModels\Shell\StoreItemViewModel.cs" />
   </ItemGroup>
@@ -214,6 +216,10 @@
     <Page Include="Controls\Spinner.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Resources\Styles.Common.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Resources\Styles.Dialogs.xaml">
       <Generator>MSBuild:Compile</Generator>

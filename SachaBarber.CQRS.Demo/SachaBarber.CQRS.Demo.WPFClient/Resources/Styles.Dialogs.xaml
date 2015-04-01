@@ -31,6 +31,14 @@
 
     <DataTemplate DataType="{x:Type viewModels:CreateOrderDialogViewModel}">
         <StackPanel Orientation="Vertical">
+
+            <Grid Height="Auto" Background="Black">
+                    <Label FontFamily="Segoe UI" FontSize="12" 
+                           FontWeight="Normal" Content="ENTER ORDER DETAILS"
+                           VerticalAlignment="Center" VerticalContentAlignment="Center" Margin="5" 
+                           Foreground="White"/>
+            </Grid>
+
             <Label FontFamily="Segoe UI" Content="DESCRIPTION" 
                    FontWeight="Normal"
                    HorizontalAlignment="Left" Width="100" Margin="5,0,5,2"/>

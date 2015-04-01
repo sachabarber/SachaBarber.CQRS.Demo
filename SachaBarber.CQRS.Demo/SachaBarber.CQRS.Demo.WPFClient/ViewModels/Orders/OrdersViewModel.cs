@@ -8,29 +8,36 @@ using System.Windows.Data;
 using SachaBarber.CQRS.Demo.Orders;
 using SachaBarber.CQRS.Demo.Orders.ReadModel.Models;
 using SachaBarber.CQRS.Demo.WPFClient.Services;
+using System.Windows.Input;
+using SachaBarber.CQRS.Demo.WPFClient.Commands;
 
 namespace SachaBarber.CQRS.Demo.WPFClient.ViewModels.Orders
 {
     public class OrdersViewModel : INPCBase
     {
-        private object syncLock = new object();
+        private readonly IMessageBoxService messageBoxService;
         private bool hasOrders = false;
+        private List<OrderViewModel> orders = new List<OrderViewModel>();
+        
 
         public OrdersViewModel(
             IInterProcessBusSubscriber interProcessBusSubscriber,
-            OrderServiceInvoker orderServiceInvoker)
+            OrderServiceInvoker orderServiceInvoker,
+            IMessageBoxService messageBoxService)
         {
-            Orders = new ObservableCollection<Order>();
-
-            BindingOperations.EnableCollectionSynchronization(Orders, syncLock);
+            this.messageBoxService = messageBoxService;
 
             interProcessBusSubscriber.GetEventStream().Subscribe(async x =>
             {
                 var newOrders = await orderServiceInvoker.CallService(service =>
                             service.GetAllOrders());
 
-                this.Orders = new ObservableCollection<Order>(newOrders);
+                this.Orders = new List<OrderViewModel>(
+                    newOrders.Select(ord => new OrderViewModel(ord, messageBoxService)));
                 this.HasOrders = Orders.Any();
+
+                messageBoxService.ShowInformation("New orders available, click the right hand side button to reveal them");
+
             });
         }
 
@@ -46,7 +53,19 @@ namespace SachaBarber.CQRS.Demo.WPFClient.ViewModels.Orders
             }
         }
 
+    
+        public List<OrderViewModel> Orders
+        {
+            get
+            {
+                return this.orders;
+            }
+            protected set
+            {
+                RaiseAndSetIfChanged(ref this.orders, value, () => Orders);
+            }
+        }
 
-        public ObservableCollection<Order> Orders { get; private set; }
+    
     }
 }

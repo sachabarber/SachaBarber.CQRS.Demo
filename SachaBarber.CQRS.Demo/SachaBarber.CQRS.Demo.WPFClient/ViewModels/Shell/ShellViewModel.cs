@@ -27,6 +27,7 @@ namespace SachaBarber.CQRS.Demo.WPFClient.ViewModels.Shell
         private readonly OrderServiceInvoker orderServiceInvoker;
         private readonly IMessageBoxService messageBoxService;
         private object syncLock = new object();
+        private bool hasItems = false;
 
         public ShellViewModel(
             CreateOrderDialogViewModelFactory createOrderDialogViewModelFactory,
@@ -51,6 +52,9 @@ namespace SachaBarber.CQRS.Demo.WPFClient.ViewModels.Shell
         }
 
 
+
+
+
         public async Task Init()
         {
             this.WaitText = "Loading stored items from read model";
@@ -59,7 +63,25 @@ namespace SachaBarber.CQRS.Demo.WPFClient.ViewModels.Shell
             this.AsyncState = AsyncType.Content;
         }
 
-        public Task<bool> InitialiseReadModel()
+        public bool HasItems
+        {
+            get
+            {
+                return this.hasItems;
+            }
+            protected set
+            {
+                RaiseAndSetIfChanged(ref this.hasItems, value, () => HasItems);
+            }
+        }
+
+ 
+        public ICommand CreateNewOrderCommand { get; private set; }
+
+        public ObservableCollection<StoreItemViewModel> StoreItems { get; private set; }
+        public OrdersViewModel OrdersViewModel { get; private set; }
+
+        private Task<bool> InitialiseReadModel()
         {
             return Task.Run(
                 async () =>
@@ -67,29 +89,21 @@ namespace SachaBarber.CQRS.Demo.WPFClient.ViewModels.Shell
                     try
                     {
                         var items = await orderServiceInvoker.CallService(service =>
-                        service.GetAllStoreItems());
-
+                                            service.GetAllStoreItems());
                         StoreItems.AddRange(items.Select(x => new StoreItemViewModel(x)));
+                        HasItems = StoreItems.Any();
                         return true;
                     }
                     catch (Exception e)
                     {
                         return false;
                     }
-
-
                 });
         }
 
-        public ICommand CreateNewOrderCommand { get; private set; }
-
-        public ObservableCollection<StoreItemViewModel> StoreItems { get; private set; }
-        public OrdersViewModel OrdersViewModel { get; private set; }
-
-
         private bool CanExecuteCreateNewOrderCommand(object parameter)
         {
-            return StoreItems.Any(x => x.IsSelected);
+            return StoreItems.Any(x => x.IsSelected) && this.AsyncState != AsyncType.Busy;
         }
 
         private async void ExecuteCreateNewOrderCommand(object parameter)
@@ -112,8 +126,8 @@ namespace SachaBarber.CQRS.Demo.WPFClient.ViewModels.Shell
                         {
                             ExpectedVersion = 1,
                             Id = orderId,
-                            Address = "This is the address",
-                            Description = "Description1",
+                            Address = createOrderDialogViewModel.Address,
+                            Description = createOrderDialogViewModel.Description,
                             OrderItems = createOrderDialogViewModel.OrderItems.ToList()
                         }));
 

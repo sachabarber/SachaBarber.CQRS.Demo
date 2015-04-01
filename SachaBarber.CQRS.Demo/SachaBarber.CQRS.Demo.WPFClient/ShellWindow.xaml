@@ -2,6 +2,9 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:converters="clr-namespace:SachaBarber.CQRS.Demo.WPFClient.Converters"
+        xmlns:controls="clr-namespace:SachaBarber.CQRS.Demo.WPFClient.Controls"
+        xmlns:models="clr-namespace:SachaBarber.CQRS.Demo.Orders.ReadModel.Models;assembly=SachaBarber.CQRS.Demo.Orders.ReadModel"
+        xmlns:orders="clr-namespace:SachaBarber.CQRS.Demo.WPFClient.ViewModels.Orders"
         Title="CQRS Demo" Height="300" Width="300" 
         WindowStyle="ToolWindow" Background="#ff656565">
 
@@ -27,7 +30,7 @@
             <DoubleAnimation 
 			    Duration="00:00:01"
 				From="0"
-				To="-300"
+				To="-400"
 				Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[3].(TranslateTransform.X)" 
                 Storyboard.TargetName="ordersPanel">
                 <DoubleAnimation.EasingFunction>
@@ -38,7 +41,7 @@
         <Storyboard x:Key="EaseOutAnimation">
             <DoubleAnimation 
 				Duration="00:00:01"
-				From="-300"
+				From="-400"
 				To="0"
 				Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[3].(TranslateTransform.X)" 
                 Storyboard.TargetName="ordersPanel">
@@ -48,61 +51,211 @@
             </DoubleAnimation>
         </Storyboard>
 
+        <Style x:Key="ShowOrdersButtonStyle" TargetType="{x:Type ToggleButton}">
+            <Setter Property="Width" Value="10"/>
+            <Setter Property="ToolTip" Value="Show/Hide Orders"/>
+            <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+            <Setter Property="VerticalAlignment" Value="Stretch"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type ToggleButton}">
+                        <Grid x:Name="theGrid" Width="10" 
+                              Background="OrangeRed" VerticalAlignment="Stretch"/>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="theGrid" 
+                                        Property="Background" Value="Black"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+
+        <DataTemplate x:Key="OrderItemDataTemplate" DataType="{x:Type models:OrderItem}">
+            <Image Width="25" Height="37.5" 
+                   ToolTip="{Binding StoreItemDescription}"
+                   Source="{Binding StoreItemUrl}" Margin="10"/>
+        </DataTemplate>
+
+
+        <DataTemplate x:Key="OrderDataTemplate" DataType="{x:Type orders:OrderViewModel}">
+            <StackPanel Orientation="Vertical" HorizontalAlignment="Center">
+                <StackPanel Orientation="Horizontal">
+
+                    <Label FontFamily="Segoe UI" Content="ORDER" FontSize="16"
+                        FontWeight="SemiBold" Foreground="OrangeRed"
+                        HorizontalAlignment="Left" Width="100" Margin="0,0,5,2"/>
+
+                    <!-- Go to edit mode icon -->
+                    <Button Style="{StaticResource accentHightlightColorImageButtonSmallStyle}" 
+                            Command="{Binding GotoEditModeCommand}" 
+                            Margin="0" ToolTip="Go to edit mode"
+                            Visibility="{Binding IsEnabled, Converter={x:Static converters:BoolToVisibilityCollapsedConverter.Instance}, ConverterParameter='False' }">
+                        <Grid>
+                            <Path Data="M0,44.439791L18.98951,54.569246 0.47998798,62.66881z M17.428029,12.359973L36.955557,23.568769 21.957478,49.686174 20.847757,46.346189 15.11851,45.756407 14.138656,42.166935 8.5292659,41.966761 6.9493899,38.037481 2.4399572,38.477377z M26.812517,0.0009765625C27.350616,-0.012230873,27.875986,0.10826397,28.348372,0.3782568L42.175028,8.3180408C43.85462,9.2780154,44.234529,11.777948,43.02482,13.89789L41.375219,16.767812 21.460039,5.3381228 23.10964,2.4582005C23.979116,0.941679,25.437378,0.034730911,26.812517,0.0009765625z" 
+                                Stretch="Uniform" Fill="{Binding RelativeSource={RelativeSource AncestorType={x:Type Button} }, Path=Foreground}" Width="68" Height="68" />
+                        </Grid>
+                    </Button>
+
+
+                    <!-- Cancel edit mode icon -->
+                    <StackPanel Orientation="Horizontal" 
+                                Visibility="{Binding IsEnabled, Converter={x:Static converters:BoolToVisibilityCollapsedConverter.Instance}, ConverterParameter='True' }">
+
+
+                       
+                        <Button Style="{StaticResource accentHightlightColorImageButtonSmallStyle}" 
+                                Command="{Binding CancelEditModeCommand}" 
+                                Margin="0" ToolTip="Cancel edit mode">
+                            <Grid>
+                                <Path Data="M51.527958,0L64,12.4741 44.47221,32.001027 64,51.52871 51.528,64.000001 32.000016,44.472668 12.471823,64.000001 0.0010004044,51.528802 19.528015,32.001088 0,12.473726 12.472,0.0010004044 31.999884,19.528773z" 
+                                    Stretch="Uniform" Fill="{Binding RelativeSource={RelativeSource AncestorType={x:Type Button} }, Path=Foreground}" Width="68" Height="68" />
+                            </Grid>
+                        </Button>
+
+                        <Grid Width="5" Background="Transparent"/>
+                        
+                        <Button Style="{StaticResource accentHightlightColorImageButtonSmallStyle}" 
+                                Command="{Binding RenameOrderCommand}" 
+                                Margin="0" ToolTip="Alter the order">
+                            <Grid>
+                                <Path Data="M20.460999,40.232L41.518,40.232 41.518,43.887 20.460999,43.887z M26.737,21.159001L34.365,21.159001 34.365,28.710999 39.764997,28.710999 35.200075,33.4373 30.632548,38.164 26.064924,33.4373 21.499999,28.710999 26.737,28.710999z M4.9400005,16.604999L4.9400005,45.078352C4.9400005,46.385576,6.0077,47.451998,7.3124027,47.451998L42.903967,47.451998 54.766079,47.451998C56.073391,47.451998,57.141003,46.385576,57.141003,45.078352L57.141003,16.604999z M53.913868,6.9300003C52.971113,6.9300003,52.208002,7.6929626,52.208002,8.6357746L52.208002,10.340208C52.208002,11.284267,52.971113,12.046001,53.913868,12.046001L55.619682,12.046001C56.562447,12.046001,57.322998,11.284267,57.322998,10.340208L57.322998,8.6357746C57.322998,7.6929626,56.562447,6.9300003,55.619682,6.9300003z M46.796854,6.9300003C45.854109,6.9300003,45.091002,7.6929626,45.091002,8.6357746L45.091002,10.340208C45.091002,11.284267,45.854109,12.046001,46.796854,12.046001L48.500147,12.046001C49.445395,12.046001,50.206003,11.284267,50.206003,10.340208L50.206003,8.6357746C50.206003,7.6929626,49.445395,6.9300003,48.500147,6.9300003z M0,0L61.689999,0 61.689999,52.198 0,52.198z" 
+                                    Stretch="Uniform" Fill="{Binding RelativeSource={RelativeSource AncestorType={x:Type Button} }, Path=Foreground}" Width="68" Height="68" />
+                            </Grid>
+                        </Button>
+
+                    </StackPanel>
+
+
+                </StackPanel>
+                <Label FontFamily="Segoe UI" Content="DESCRIPTION" 
+                        FontWeight="Normal" Foreground="White"
+                        HorizontalAlignment="Left" Width="100" Margin="0,0,5,2"/>
+                <TextBox FontFamily="Segoe UI" Text="{Binding Order.Description}" 
+                        Width="350" Margin="5,0,5,2" IsEnabled="{Binding IsEnabled}"/>
+                <Label FontFamily="Segoe UI" Content="ADDRESS" Width="100" 
+                        FontWeight="Normal" Foreground="White"
+                        HorizontalAlignment="Left"  Margin="0,0,5,2"/>
+                <TextBox FontFamily="Segoe UI" Text="{Binding Order.Address}" 
+                        TextWrapping="Wrap" AcceptsReturn="True"
+                        IsEnabled="{Binding IsEnabled}"
+                        Width="350" Height="80" Margin="5,0,5,2"/>
+                <ItemsControl ItemsSource="{Binding Order.OrderItems}" 
+                              ItemTemplate="{StaticResource OrderItemDataTemplate}">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <WrapPanel Margin="10"/>
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                </ItemsControl>
+
+                <controls:NoSizeDecorator Height="1">
+                    <Line Stroke="OrangeRed" HorizontalAlignment="Stretch"
+                          X2="{Binding ActualWidth, RelativeSource={RelativeSource Self}}"
+                          StrokeDashArray="2 2" StrokeThickness="1" />
+                </controls:NoSizeDecorator>
+            </StackPanel>
+        </DataTemplate>
+        
 
     </Window.Resources>
 
 
 
-    <DockPanel LastChildFill="True">
+    <Grid>
 
-        <Grid Height="100" Background="OrangeRed" HorizontalAlignment="Stretch" DockPanel.Dock="Top">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="100"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        
+        <Grid Grid.Row="0" Height="100" Background="OrangeRed" HorizontalAlignment="Stretch" >
             <Label FontFamily="Segoe UI" FontSize="40" FontWeight="Normal" Content="CREATE AND AMEND ORDERS"
                   VerticalAlignment="Center" VerticalContentAlignment="Center" Margin="10" Foreground="Black"></Label>
 
-            <Button HorizontalAlignment="Right" Margin="10" VerticalAlignment="Center"
-                    Command="{Binding CreateNewOrderCommand}" Content="Create New Order" ToolTip="Select some comics and click here to create a new order"/>
         </Grid>
 
-
-        <Grid>
-            <ItemsControl ItemsSource="{Binding StoreItems}" ItemTemplate="{StaticResource StoreItemTemplate}" Margin="10">
-                <ItemsControl.ItemsPanel>
-                    <ItemsPanelTemplate>
-                        <WrapPanel/>
-                    </ItemsPanelTemplate>
-                </ItemsControl.ItemsPanel>
-            </ItemsControl>
+        <Grid Grid.Row="1" Height="44" Background="Black" 
+              Visibility="{Binding HasItems, Converter={x:Static converters:BoolToVisibilityCollapsedConverter.Instance}, ConverterParameter='True'}">
+            <StackPanel Orientation="Horizontal" Margin="10,0,0,0">
+                <Label FontFamily="Segoe UI" FontSize="20" FontWeight="Normal" Content="ACTIONS"
+                  VerticalAlignment="Center" VerticalContentAlignment="Center" Margin="5,2,10,2" 
+                  Foreground="White"></Label>
 
 
-            <Grid x:Name="ordersPanel" DataContext="{Binding OrdersViewModel}"
-                    Margin="0,60,-300,60"
- 		            RenderTransformOrigin="0.5,0.5"
-                    HorizontalAlignment="Right"
-                    VerticalAlignment="Stretch"
-                    Visibility="{Binding HasOrders, Converter={x:Static converters:BoolToVisibilityCollapsedConverter.Instance}, ConverterParameter='True'}">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="50"/>
-                    <ColumnDefinition Width="300"/>
-                </Grid.ColumnDefinitions>
+                <!-- Create new order icon -->
+                <Button Style="{StaticResource accentHightlightColorImageButtonStyle}" 
+                    Command="{Binding CreateNewOrderCommand}" 
+                    Margin="4,0,0,0" ToolTip="Select some comics and click here to create a new order">
+                    <Grid>
+                        <Path Data="M37.484688,45.226999C39.373899,45.226999 40.913946,46.767252 40.913946,48.660497 40.913946,50.558843 39.373899,52.094 37.484688,52.094 35.587076,52.094 34.046928,50.558843 34.046928,48.660497 34.046928,46.767252 35.587076,45.226999 37.484688,45.226999z M26.112514,45.226999C28.01016,45.226999 29.551917,46.767252 29.551917,48.660497 29.551917,50.558843 28.01016,52.094 26.112514,52.094 24.223907,52.094 22.6829,50.558843 22.682899,48.660497 22.6829,46.767252 24.223907,45.226999 26.112514,45.226999z M37.766939,30.001001L37.766939,33.399851 40.898335,33.399851C40.971933,33.399851,41.038332,33.376447,41.104729,33.338548L42.15173,30.001001z M30.19192,30.001001L30.19192,33.399851 35.303932,33.399851 35.303932,30.001001z M24.2642,30.001001L25.846664,33.399851 27.727913,33.399851 27.727913,30.001001z M37.766939,24.316L37.766939,27.539999 42.923754,27.539999 43.935131,24.316z M30.19192,24.316L30.19192,27.539999 35.303932,27.539999 35.303932,24.316z M21.617329,24.316L23.118387,27.539999 27.727913,27.539999 27.727913,24.316z M37.766939,18.45285L37.766939,21.854 44.707468,21.854 45.60853,18.981658C45.675629,18.773155,45.717329,18.597452,45.741926,18.45285z M30.19192,18.45285L30.19192,21.854 35.303932,21.854 35.303932,18.45285z M10.561927,3.9879993L10.561927,5.7563777C8.7955856,6.1497033 7.7083673,7.3814409 7.7083673,9.0077236 7.7083673,10.97919 9.3482552,11.845223 10.951942,12.431247 12.412894,12.960967 12.716905,13.424684 12.716905,13.962505 12.716905,14.629031 12.082782,15.066548 11.095847,15.066548 9.8920345,15.066548 8.9414406,14.60313 8.480484,14.32582L8.1718235,14.140712 7.5410013,16.360998 7.7108669,16.472902C8.3678408,16.890819,9.4186878,17.191629,10.451924,17.264633L10.451924,18.993999 12.468196,18.993999 12.468196,17.124027C14.28206,16.737312 15.441001,15.439162 15.441001,13.765697 15.441001,12.074232 14.536769,11.014392 12.416794,10.21876 10.934941,9.6510589 10.432323,9.2772644 10.432323,8.7396533 10.432323,8.1392801 10.960942,7.7772062 11.840573,7.7772062 12.945413,7.7772062 13.662938,8.1366003 14.125255,8.3658588L14.417565,8.5155246 15.053687,6.3528409 14.84978,6.2498069C14.381164,6.0168879,13.644037,5.7055962,12.556799,5.6340632L12.556799,3.9879993z M55.541771,3.1979993L62.110695,3.1979993C63.1595,3.1979997 64.000004,4.0429627 64.000004,5.091291 64.000004,6.1366918 63.1595,6.9858034 62.110695,6.9858031L55.541771,6.9858031C53.992764,6.9858034 53.485764,7.2721803 52.88546,9.3112209 52.253357,11.47258 44.020126,39.498449 44.020126,39.498449 44.003326,39.560949 43.978527,39.623449 43.953226,39.68205 43.869827,39.894346 41.771418,44.872 36.518898,44.872L21.676301,44.872C20.627506,44.872 19.777893,44.023206 19.777893,42.978918 19.777893,41.933328 20.627506,41.084337 21.676301,41.084337L36.518898,41.084337C39.008509,41.084337 40.215412,38.745859 40.423813,38.313463 40.473106,38.144056 40.57461,37.797018 40.71937,37.302816L40.721075,37.296999 25.362275,37.296999C23.415679,37.296999,22.508778,35.661577,22.325303,35.048271L17.290001,24.241947 17.379172,24.211714C18.798313,23.691087,20.088236,22.900343,21.18632,21.902065L21.236727,21.854 27.727913,21.854 27.727913,18.45285 23.788262,18.45285 23.842435,18.347215C24.331276,17.334146,24.676982,16.239543,24.853138,15.089811L24.920525,14.561 25.270417,14.561C33.222545,14.561 45.101681,14.561 46.367714,14.560999 46.638193,14.560999 46.927795,14.593519 47.219078,14.66447L47.355549,14.701338 47.382618,14.609243C48.353989,11.304574 49.083158,8.8262637 49.256548,8.2421415 49.989647,5.7448556 51.313251,3.1979997 55.541771,3.1979993z M11.49095,0C17.837123,-2.3841858E-07 22.983001,5.1444848 22.983001,11.4909 22.983001,17.837246 17.837123,22.983 11.49095,22.983 5.1438684,22.983 0,17.837246 0,11.4909 0,5.1444848 5.1438684,-2.3841858E-07 11.49095,0z" 
+                        Stretch="Uniform" Fill="{Binding RelativeSource={RelativeSource AncestorType={x:Type Button} }, Path=Foreground}" Width="68" Height="68" />
+                    </Grid>
+                </Button>
 
-                <Grid.RenderTransform>
-                    <TransformGroup>
-                        <ScaleTransform/>
-                        <SkewTransform/>
-                        <RotateTransform/>
-                        <TranslateTransform/>
-                    </TransformGroup>
-                </Grid.RenderTransform>
-                <ToggleButton x:Name="btn" Grid.Row="0" Grid.Column="0"  Background="OrangeRed" 
-				        VerticalAlignment="Center"  Width="50" Height="50">
-                </ToggleButton>
-                <Grid Width="300" Grid.Row="0" Grid.Column="1" HorizontalAlignment="Stretch" 
-				        VerticalAlignment="Stretch" Background="OrangeRed"/>
+
+            </StackPanel>
+        </Grid>
+
+        <controls:AsyncHostControl Grid.Row="2"
+                    AsyncState="{Binding Path=AsyncState}"
+                    BusyContent="{Binding WaitText}"
+                    ErrorContent="{Binding ErrorMessage}">
+            <Grid>
+                <ItemsControl ItemsSource="{Binding StoreItems}" ItemTemplate="{StaticResource StoreItemTemplate}" Margin="10">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <WrapPanel/>
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                </ItemsControl>
+
+
+                <Grid x:Name="ordersPanel" DataContext="{Binding OrdersViewModel}"
+                        Margin="0,60,-400,60"
+ 		                RenderTransformOrigin="0.5,0.5"
+                        HorizontalAlignment="Right"
+                        VerticalAlignment="Stretch"
+                        Visibility="{Binding HasOrders, Converter={x:Static converters:BoolToVisibilityCollapsedConverter.Instance}, ConverterParameter='True'}">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="10"/>
+                        <ColumnDefinition Width="400"/>
+                    </Grid.ColumnDefinitions>
+
+                    <Grid.RenderTransform>
+                        <TransformGroup>
+                            <ScaleTransform/>
+                            <SkewTransform/>
+                            <RotateTransform/>
+                            <TranslateTransform/>
+                        </TransformGroup>
+                    </Grid.RenderTransform>
+                    <ToggleButton x:Name="btn" Style="{StaticResource ShowOrdersButtonStyle}"
+                                  Grid.Row="0" Grid.Column="0">
+                    </ToggleButton>
+                    <Grid Width="400" Grid.Row="0" Grid.Column="1" HorizontalAlignment="Stretch" 
+				            VerticalAlignment="Stretch" Background="Black">
+                        <ScrollViewer HorizontalScrollBarVisibility="Hidden" 
+                                      VerticalScrollBarVisibility="Auto">
+                            <ItemsControl ItemsSource="{Binding Orders}" 
+                              ItemTemplate="{StaticResource OrderDataTemplate}">
+                                <ItemsControl.ItemsPanel>
+                                    <ItemsPanelTemplate>
+                                        <StackPanel Orientation="Vertical" Margin="5"/>
+                                    </ItemsPanelTemplate>
+                                </ItemsControl.ItemsPanel>
+                            </ItemsControl>
+                        </ScrollViewer>
+                    </Grid>
+
+                </Grid>
 
             </Grid>
-
-        </Grid>
-    </DockPanel>
+        </controls:AsyncHostControl>
+    </Grid>
 
 
 
