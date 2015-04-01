@@ -138,6 +138,7 @@
     <Compile Include="Controls\Spinner.xaml.cs">
       <DependentUpon>Spinner.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Converters\BoolToVisibilityCollapsedConverter.cs" />
     <Compile Include="ExtensionMethods\ExpressionExtensions.cs" />
     <Compile Include="ExtensionMethods\ObservableExtensions.cs" />
     <Compile Include="Services\DialogService.cs" />
@@ -159,6 +160,7 @@
     <Compile Include="ViewModels\IDialogViewModel.cs" />
     <Compile Include="ViewModels\IDialogWindowEvents.cs" />
     <Compile Include="ViewModels\INPCBase.cs" />
+    <Compile Include="ViewModels\Orders\OrdersViewModel.cs" />
     <Compile Include="ViewModels\Shell\ShellViewModel.cs" />
     <Compile Include="ViewModels\Shell\StoreItemViewModel.cs" />
   </ItemGroup>

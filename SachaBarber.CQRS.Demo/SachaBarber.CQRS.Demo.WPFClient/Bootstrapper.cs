@@ -7,7 +7,7 @@ using System.Windows;
 
 using Microsoft.Practices.Unity;
 using Microsoft.Practices.Prism.UnityExtensions;
-
+using SachaBarber.CQRS.Demo.Orders;
 using SachaBarber.CQRS.Demo.Orders.ReadModel;
 using SachaBarber.CQRS.Demo.WPFClient.Services;
 using SachaBarber.CQRS.Demo.WPFClient.ViewModels;
@@ -25,6 +25,7 @@ namespace SachaBarber.CQRS.Demo.WPFClient
             Container.RegisterType<ISchedulerService, SchedulerService>(new TransientLifetimeManager());
             Container.RegisterType<CreateOrderDialogViewModelFactory>(new ContainerControlledLifetimeManager());
             Container.RegisterType<IInterProcessBusSubscriber, InterProcessBusSubscriber>(new ContainerControlledLifetimeManager());
+            Container.RegisterType<OrderServiceInvoker>(new ContainerControlledLifetimeManager());
         }
 
         protected override DependencyObject CreateShell()

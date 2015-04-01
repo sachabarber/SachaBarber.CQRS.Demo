@@ -16,6 +16,7 @@ using SachaBarber.CQRS.Demo.Orders;
 using SachaBarber.CQRS.Demo.Orders.Commands;
 using SachaBarber.CQRS.Demo.WPFClient.Commands;
 using SachaBarber.CQRS.Demo.WPFClient.Services;
+using SachaBarber.CQRS.Demo.WPFClient.ViewModels.Orders;
 
 namespace SachaBarber.CQRS.Demo.WPFClient.ViewModels.Shell
 {
@@ -23,17 +24,22 @@ namespace SachaBarber.CQRS.Demo.WPFClient.ViewModels.Shell
     {
         private readonly CreateOrderDialogViewModelFactory createOrderDialogViewModelFactory;
         private readonly IDialogService dialogService;
-        private readonly IInterProcessBusSubscriber interProcessBusSubscriber;
+        private readonly OrderServiceInvoker orderServiceInvoker;
+        private readonly IMessageBoxService messageBoxService;
         private object syncLock = new object();
 
         public ShellViewModel(
             CreateOrderDialogViewModelFactory createOrderDialogViewModelFactory,
             IDialogService dialogService,
-            IInterProcessBusSubscriber interProcessBusSubscriber)
+            OrderServiceInvoker orderServiceInvoker,
+            IMessageBoxService messageBoxService,
+            Func<OrdersViewModel> ordersViewModelFactory)
         {
+            this.OrdersViewModel = ordersViewModelFactory();
             this.createOrderDialogViewModelFactory = createOrderDialogViewModelFactory;
             this.dialogService = dialogService;
-            this.interProcessBusSubscriber = interProcessBusSubscriber;
+            this.orderServiceInvoker = orderServiceInvoker;
+            this.messageBoxService = messageBoxService;
             StoreItems = new ObservableCollection<StoreItemViewModel>();
             BindingOperations.EnableCollectionSynchronization(StoreItems, syncLock);
 
@@ -41,15 +47,7 @@ namespace SachaBarber.CQRS.Demo.WPFClient.ViewModels.Shell
                 CanExecuteCreateNewOrderCommand,
                 ExecuteCreateNewOrderCommand);
 
-            interProcessBusSubscriber.GetEventStream().Subscribe(async x =>
-            {
-                string mess = x;
-
-                var orders = await new OrderServiceInvoker().CallService(service =>
-                            service.GetAllOrders());
-
-                var fgddsd = 56;
-            });
+           
         }
 
 
@@ -66,17 +64,27 @@ namespace SachaBarber.CQRS.Demo.WPFClient.ViewModels.Shell
             return Task.Run(
                 async () =>
                 {
-                    var items = await new OrderServiceInvoker().CallService(service =>
+                    try
+                    {
+                        var items = await orderServiceInvoker.CallService(service =>
                         service.GetAllStoreItems());
 
-                    StoreItems.AddRange(items.Select(x => new StoreItemViewModel(x)));
-                    return true;
+                        StoreItems.AddRange(items.Select(x => new StoreItemViewModel(x)));
+                        return true;
+                    }
+                    catch (Exception e)
+                    {
+                        return false;
+                    }
+
+
                 });
         }
 
         public ICommand CreateNewOrderCommand { get; private set; }
 
         public ObservableCollection<StoreItemViewModel> StoreItems { get; private set; }
+        public OrdersViewModel OrdersViewModel { get; private set; }
 
 
         private bool CanExecuteCreateNewOrderCommand(object parameter)
@@ -94,16 +102,33 @@ namespace SachaBarber.CQRS.Demo.WPFClient.ViewModels.Shell
             var result = dialogService.ShowDialog(createOrderDialogViewModel);
             if (result.HasValue && result.Value)
             {
-                var orderCreated = await new OrderServiceInvoker().CallService(service =>
-                service.SendCommand(new CreateOrderCommand()
+                try
                 {
-                    ExpectedVersion = 1,
-                    Id = orderId,
-                    Address = "This is the address",
-                    Description = "Description1",
-                    OrderItems = createOrderDialogViewModel.OrderItems.ToList()
-                }));
+                    this.AsyncState = AsyncType.Busy;
+                    this.WaitText = "Saving order";
+ 
+                    var orderCreated = await orderServiceInvoker.CallService(service =>
+                        service.SendCommand(new CreateOrderCommand()
+                        {
+                            ExpectedVersion = 1,
+                            Id = orderId,
+                            Address = "This is the address",
+                            Description = "Description1",
+                            OrderItems = createOrderDialogViewModel.OrderItems.ToList()
+                        }));
 
+                    if (orderCreated)
+                    {
+                        this.AsyncState = AsyncType.Content;
+                    }
+                }
+                catch (Exception e)
+                {
+                    messageBoxService.ShowError("There was an error creating the order");
+                    this.ErrorMessage = "There was an error creating the order";
+                    this.AsyncState = AsyncType.Error;
+                }
+                
             }
         }
 
