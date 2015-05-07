@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Data;
 
 using Raven.Abstractions.Extensions;
@@ -36,6 +37,8 @@ namespace SachaBarber.CQRS.Demo.WPFClient.ViewModels.Shell
             IMessageBoxService messageBoxService,
             Func<OrdersViewModel> ordersViewModelFactory)
         {
+
+
             this.OrdersViewModel = ordersViewModelFactory();
             this.createOrderDialogViewModelFactory = createOrderDialogViewModelFactory;
             this.dialogService = dialogService;
@@ -52,7 +55,10 @@ namespace SachaBarber.CQRS.Demo.WPFClient.ViewModels.Shell
         }
 
 
-
+        public void Close()
+        {
+            OrdersViewModel.Close();
+        }
 
 
         public async Task Init()
@@ -74,10 +80,8 @@ namespace SachaBarber.CQRS.Demo.WPFClient.ViewModels.Shell
                 RaiseAndSetIfChanged(ref this.hasItems, value, () => HasItems);
             }
         }
-
  
         public ICommand CreateNewOrderCommand { get; private set; }
-
         public ObservableCollection<StoreItemViewModel> StoreItems { get; private set; }
         public OrdersViewModel OrdersViewModel { get; private set; }
 
@@ -89,7 +93,7 @@ namespace SachaBarber.CQRS.Demo.WPFClient.ViewModels.Shell
                     try
                     {
                         var items = await orderServiceInvoker.CallService(service =>
-                                            service.GetAllStoreItems());
+                                            service.GetAllStoreItemsAsync());
                         StoreItems.AddRange(items.Select(x => new StoreItemViewModel(x)));
                         HasItems = StoreItems.Any();
                         return true;
@@ -122,7 +126,7 @@ namespace SachaBarber.CQRS.Demo.WPFClient.ViewModels.Shell
                     this.WaitText = "Saving order";
  
                     var orderCreated = await orderServiceInvoker.CallService(service =>
-                        service.SendCommand(new CreateOrderCommand()
+                        service.SendCommandAsync(new CreateOrderCommand()
                         {
                             ExpectedVersion = 1,
                             Id = orderId,
@@ -146,5 +150,11 @@ namespace SachaBarber.CQRS.Demo.WPFClient.ViewModels.Shell
             }
         }
 
+
+        public override void Dispose()
+        {
+            base.Dispose();
+            this.OrdersViewModel.Dispose();
+        }
     }
 }

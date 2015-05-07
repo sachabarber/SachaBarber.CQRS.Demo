@@ -38,24 +38,24 @@ namespace SachaBarber.CQRS.Demo.Orders
         {
         }
 
-        public System.Threading.Tasks.Task<bool> SendCommand(Command command)
+        public System.Threading.Tasks.Task<bool> SendCommandAsync(Command command)
         {
-            return base.Channel.SendCommand(command);
+            return base.Channel.SendCommandAsync(command);
         }
 
-        public System.Threading.Tasks.Task<List<StoreItem>> GetAllStoreItems()
+        public System.Threading.Tasks.Task<List<StoreItem>> GetAllStoreItemsAsync()
         {
-            return base.Channel.GetAllStoreItems();
+            return base.Channel.GetAllStoreItemsAsync();
         }
 
-        public System.Threading.Tasks.Task<List<Order>> GetAllOrders()
+        public System.Threading.Tasks.Task<List<Order>> GetAllOrdersAsync()
         {
-            return base.Channel.GetAllOrders();
+            return base.Channel.GetAllOrdersAsync();
         }
 
-        public System.Threading.Tasks.Task<Order> GetOrder(Guid orderId)
+        public System.Threading.Tasks.Task<Order> GetOrderAsync(Guid orderId)
         {
-            return base.Channel.GetOrder(orderId);
+            return base.Channel.GetOrderAsync(orderId);
         }
 
 

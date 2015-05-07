@@ -45,9 +45,6 @@ namespace SachaBarber.CQRS.Demo.Orders.Domain.Events.Handlers
                     }).ToList()
             });
 
-
-            //var fdsbfjds = await readModelRepository.GetAll<Order>();
-
             interProcessBus.SendMessage("OrderCreatedEvent");
         }
     }

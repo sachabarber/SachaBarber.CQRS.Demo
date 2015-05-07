@@ -52,6 +52,12 @@ namespace SachaBarber.CQRS.Demo.WPFClient
             await viewModel.Init();
         }
 
+        protected override void OnClosed(EventArgs e)
+        {
+            base.OnClosed(e);
+            (this.DataContext as ShellViewModel).Close();
+        }
+
         private void btn_Click(object sender, System.Windows.RoutedEventArgs e)
         {
             if (btn.IsChecked == true)

@@ -2,8 +2,11 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Reactive.Disposables;
+using System.Reactive.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Data;
 using SachaBarber.CQRS.Demo.Orders;
 using SachaBarber.CQRS.Demo.Orders.ReadModel.Models;
@@ -13,11 +16,15 @@ using SachaBarber.CQRS.Demo.WPFClient.Commands;
 
 namespace SachaBarber.CQRS.Demo.WPFClient.ViewModels.Orders
 {
-    public class OrdersViewModel : INPCBase
+    public class OrdersViewModel : INPCBase, IDisposable
     {
-        private readonly IMessageBoxService messageBoxService;
         private bool hasOrders = false;
         private List<OrderViewModel> orders = new List<OrderViewModel>();
+        private CompositeDisposable disposables = new CompositeDisposable();
+        private const double topOffset = 20;
+        private const double leftOffset = 380;
+        private readonly GrowlNotifications growlNotifications = new GrowlNotifications();
+        private List<string> orderEvents;
         
 
         public OrdersViewModel(
@@ -25,20 +32,41 @@ namespace SachaBarber.CQRS.Demo.WPFClient.ViewModels.Orders
             OrderServiceInvoker orderServiceInvoker,
             IMessageBoxService messageBoxService)
         {
-            this.messageBoxService = messageBoxService;
-
-            interProcessBusSubscriber.GetEventStream().Subscribe(async x =>
+            orderEvents = new List<string>()
             {
-                var newOrders = await orderServiceInvoker.CallService(service =>
-                            service.GetAllOrders());
+                "OrderCreatedEvent","OrderAddressChangedEvent","OrderDeletedEvent"
+            };
 
-                this.Orders = new List<OrderViewModel>(
-                    newOrders.Select(ord => new OrderViewModel(ord, messageBoxService)));
-                this.HasOrders = Orders.Any();
+            growlNotifications.Top = SystemParameters.WorkArea.Top + topOffset;
+            growlNotifications.Left = SystemParameters.WorkArea.Left + 
+                SystemParameters.WorkArea.Width - leftOffset;
 
-                messageBoxService.ShowInformation("New orders available, click the right hand side button to reveal them");
+            var stream = interProcessBusSubscriber.GetEventStream();
 
-            });
+
+            disposables.Add(stream.Where(x => orderEvents.Contains(x))
+                .Subscribe(async x =>
+                {
+                    var newOrders = await orderServiceInvoker.CallService(service =>
+                                service.GetAllOrdersAsync());
+
+                    this.Orders = new List<OrderViewModel>(
+                        newOrders.Select(ord => new OrderViewModel(ord, messageBoxService, orderServiceInvoker)));
+                    this.HasOrders = Orders.Any();
+
+                    growlNotifications.AddNotification(new Notification 
+                    {   Title = "Orders changed", 
+                        ImageUrl = "pack://application:,,,/Images/metroInfo.png", 
+                        Message = "New/modified orders have been obtained from the ReadModel. Click on the right hand side panel to see them" 
+                    });
+                })
+          );
+           
+        }
+
+        public void Close()
+        {
+            growlNotifications.Close();
         }
 
         public bool HasOrders
@@ -66,6 +94,10 @@ namespace SachaBarber.CQRS.Demo.WPFClient.ViewModels.Orders
             }
         }
 
-    
+
+        public void Dispose()
+        {
+            this.disposables.Dispose();
+        }
     }
 }

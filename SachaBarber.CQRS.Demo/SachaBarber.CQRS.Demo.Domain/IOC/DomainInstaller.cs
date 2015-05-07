@@ -42,7 +42,7 @@ namespace SachaBarber.CQRS.Demo.Orders.Domain.IOC
             container.AddFacility<WcfFacility>()
                 .Register(
 
-                    //wcf services
+                    //WCF services
                     Component.For<IOrderService>()
                         .ImplementedBy<OrderService>()
                         .LifeStyle.ApplyLifeStyle(lifestyleApplier),
@@ -54,25 +54,18 @@ namespace SachaBarber.CQRS.Demo.Orders.Domain.IOC
                     Component.For<ISession>().ImplementedBy<Session>().LifeStyle.ApplyLifeStyle(lifestyleApplier),
                     Component.For<IEventStore>().ImplementedBy<InMemoryEventStore>().LifeStyle.Singleton,
                     Component.For<IReadModelRepository>().ImplementedBy<ReadModelRepository>().LifeStyle.Singleton,
-
-
                     Component.For<IBusEventHandler>().ImplementedBy<OrderCreatedEventHandler>()
                         .Named("OrderCreatedEventHandler").LifeStyle.Singleton,
-                    Component.For<IBusEventHandler>().ImplementedBy<OrderRenamedEventHandler>()
-                        .Named("OrderRenamedEventHandler").LifeStyle.Singleton,
-
-             
-
-
-
-                Component.For<IRepository>().UsingFactoryMethod(
-                    kernel =>
-                    {
-                        return
-                            new CacheRepository(
-                                new Repository(kernel.Resolve<IEventStore>(), kernel.Resolve<IEventPublisher>()),
-                                kernel.Resolve<IEventStore>());
-                    })
+                    Component.For<IBusEventHandler>().ImplementedBy<OrderAddressChangedEventHandler>()
+                        .Named("OrderAddressChangedEventHandler").LifeStyle.Singleton,
+                    Component.For<IRepository>().UsingFactoryMethod(
+                        kernel =>
+                        {
+                            return
+                                new CacheRepository(
+                                    new Repository(kernel.Resolve<IEventStore>(), kernel.Resolve<IEventPublisher>()),
+                                    kernel.Resolve<IEventStore>());
+                        })
 
             );
         }

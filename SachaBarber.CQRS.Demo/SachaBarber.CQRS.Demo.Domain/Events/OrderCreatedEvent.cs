@@ -9,14 +9,8 @@ using SachaBarber.CQRS.Demo.Orders.Domain.Aggregates;
 
 namespace SachaBarber.CQRS.Demo.Orders.Domain.Events
 {
-    public class OrderCreatedEvent : IEvent
+    public class OrderCreatedEvent : EventBase
     {
-
-        public readonly string Description;
-        public readonly string Address;
-        public readonly List<OrderItem> OrderItems;
-
-
         public OrderCreatedEvent()
         {
             
@@ -26,17 +20,20 @@ namespace SachaBarber.CQRS.Demo.Orders.Domain.Events
             Guid id, 
             string description,
             string address,
-            List<OrderItem> orderItems 
+            List<OrderItem> orderItems,
+            int version
             )
         {
             Id = id;
+            Version = version;
             Description = description;
             Address = address;
             OrderItems = orderItems;
+
         }
 
-        public Guid Id { get; set; }
-        public int Version { get; set; }
-        public DateTimeOffset TimeStamp { get; set; }
+        public string Description { get; private set; }
+        public string Address { get; private set; }
+        public List<OrderItem> OrderItems { get; private set; }
     }
 }

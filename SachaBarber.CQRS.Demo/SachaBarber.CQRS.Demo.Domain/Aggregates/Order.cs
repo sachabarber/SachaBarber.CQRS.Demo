@@ -11,42 +11,57 @@ namespace SachaBarber.CQRS.Demo.Orders.Domain.Aggregates
 {
     public class Order : AggregateRoot
     {
-
-        public string description { get; set; }
-        public string address { get; set; }
-        public List<OrderItem> orderItems { get; set; }
+        private string description;
+        private string address;
+        private bool isDeleted;
+        private List<OrderItem> orderItems;
 
         private void Apply(OrderCreatedEvent e)
         {
+            Version = e.Version;
             description = e.Description;
             address = e.Address;
+            isDeleted = false;
             orderItems = e.OrderItems;
         }
 
-
-        private void Apply(OrderRenamedEvent e)
+        private void Apply(OrderAddressChangedEvent e)
         {
-            description = e.NewOrderDescription;
+            Version = e.Version;
+            address = e.NewOrderAddress;
         }
 
-
-        public void RenameOrder(string newOrderDescription)
+        private void Apply(OrderDeletedEvent e)
         {
-            if (string.IsNullOrEmpty(newOrderDescription)) 
-                throw new ArgumentException("newOrderDescription");
-            ApplyChange(new OrderRenamedEvent(Id, newOrderDescription));
+            Version = e.Version;
+            isDeleted = true;
         }
+
+        public void ChangeAddress(string newAddress)
+        {
+            if (string.IsNullOrEmpty(newAddress))
+                throw new ArgumentException("newAddress");
+            ApplyChange(new OrderAddressChangedEvent(Id, newAddress,Version));
+        }
+
+        public void Delete()
+        {
+            ApplyChange(new OrderDeletedEvent(Id, Version));
+        }
+
 
         private Order() { }
 
         public Order(
             Guid id,
+            int version,
             string description,
             string address,
-            List<OrderItem> orderItems)
+            List<OrderItem> orderItems
+            )
         {
             Id = id;
-            ApplyChange(new OrderCreatedEvent(id, description, address, orderItems));
+            ApplyChange(new OrderCreatedEvent(id, description, address, orderItems, version));
         }
     }
 }

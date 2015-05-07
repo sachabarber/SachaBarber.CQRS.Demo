@@ -47,9 +47,9 @@
       <Link>Properties\SolutionInfo.cs</Link>
     </Compile>
     <Compile Include="Commands\Command.cs" />
+    <Compile Include="Commands\DeleteOrderCommand.cs" />
     <Compile Include="Commands\CreateOrderCommand.cs" />
     <Compile Include="Commands\ChangeOrderAddressComand.cs" />
-    <Compile Include="Commands\RenameOrderCommand.cs" />
     <Compile Include="DTOs\OrderItem.cs" />
     <Compile Include="IOrderService.cs" />
     <Compile Include="OrderServiceClient.cs" />

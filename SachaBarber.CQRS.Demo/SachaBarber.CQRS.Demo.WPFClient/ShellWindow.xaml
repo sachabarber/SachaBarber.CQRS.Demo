@@ -38,6 +38,7 @@
                 </DoubleAnimation.EasingFunction>
             </DoubleAnimation>
         </Storyboard>
+        
         <Storyboard x:Key="EaseOutAnimation">
             <DoubleAnimation 
 				Duration="00:00:01"
@@ -60,11 +61,11 @@
                 <Setter.Value>
                     <ControlTemplate TargetType="{x:Type ToggleButton}">
                         <Grid x:Name="theGrid" Width="10" 
-                              Background="OrangeRed" VerticalAlignment="Stretch"/>
+                              Background="Black" VerticalAlignment="Stretch"/>
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsMouseOver" Value="True">
                                 <Setter TargetName="theGrid" 
-                                        Property="Background" Value="Black"/>
+                                        Property="Background" Value="OrangeRed"/>
                             </Trigger>
                         </ControlTemplate.Triggers>
                     </ControlTemplate>
@@ -87,6 +88,18 @@
                     <Label FontFamily="Segoe UI" Content="ORDER" FontSize="16"
                         FontWeight="SemiBold" Foreground="OrangeRed"
                         HorizontalAlignment="Left" Width="100" Margin="0,0,5,2"/>
+
+
+                    <!-- Delete icon -->
+                    <Button Style="{StaticResource accentHightlightColorImageButtonSmallStyle}" 
+                            Command="{Binding DeleteOrderCommand}" 
+                            Margin="0" ToolTip="Delete This Order"
+                            Visibility="{Binding IsEnabled, Converter={x:Static converters:BoolToVisibilityCollapsedConverter.Instance}, ConverterParameter='False' }">
+                        <Grid>
+                            <Path Data="M12.367564,9.5351901L12.367564,18.86957 14.301122,18.86957 14.301122,9.5351901z M7.5301319,9.5351901L7.5301319,18.86957 9.4637786,18.86957 9.4637786,9.5351901z M2.6927693,9.5351901L2.6927693,18.86957 4.6264163,18.86957 4.6264163,9.5351901z M0,7.3790004L16.994,7.3790004 16.453585,21.333001 0.54035997,21.333001z M5.7944208,0.90623426L5.7944208,2.1835518 11.19953,2.1835518 11.19953,0.90623426z M4.6264163,0L12.367564,0 12.367564,2.1835518 16.994,2.1835518 16.994,5.1470001 0,5.1470001 0,2.1835518 4.6264163,2.1835518z" 
+                                Stretch="Uniform" Fill="{Binding RelativeSource={RelativeSource AncestorType={x:Type Button} }, Path=Foreground}" Width="68" Height="68" />
+                        </Grid>
+                    </Button>
 
                     <!-- Go to edit mode icon -->
                     <Button Style="{StaticResource accentHightlightColorImageButtonSmallStyle}" 
@@ -115,11 +128,11 @@
                             </Grid>
                         </Button>
 
-                        <Grid Width="5" Background="Transparent"/>
+                        <Grid Width="5" Background="Transparent" Margin="10,0,0,0"/>
                         
                         <Button Style="{StaticResource accentHightlightColorImageButtonSmallStyle}" 
-                                Command="{Binding RenameOrderCommand}" 
-                                Margin="0" ToolTip="Alter the order">
+                                Command="{Binding ChangeOrderAddressCommand}" 
+                                Margin="0" ToolTip="Change order address">
                             <Grid>
                                 <Path Data="M20.460999,40.232L41.518,40.232 41.518,43.887 20.460999,43.887z M26.737,21.159001L34.365,21.159001 34.365,28.710999 39.764997,28.710999 35.200075,33.4373 30.632548,38.164 26.064924,33.4373 21.499999,28.710999 26.737,28.710999z M4.9400005,16.604999L4.9400005,45.078352C4.9400005,46.385576,6.0077,47.451998,7.3124027,47.451998L42.903967,47.451998 54.766079,47.451998C56.073391,47.451998,57.141003,46.385576,57.141003,45.078352L57.141003,16.604999z M53.913868,6.9300003C52.971113,6.9300003,52.208002,7.6929626,52.208002,8.6357746L52.208002,10.340208C52.208002,11.284267,52.971113,12.046001,53.913868,12.046001L55.619682,12.046001C56.562447,12.046001,57.322998,11.284267,57.322998,10.340208L57.322998,8.6357746C57.322998,7.6929626,56.562447,6.9300003,55.619682,6.9300003z M46.796854,6.9300003C45.854109,6.9300003,45.091002,7.6929626,45.091002,8.6357746L45.091002,10.340208C45.091002,11.284267,45.854109,12.046001,46.796854,12.046001L48.500147,12.046001C49.445395,12.046001,50.206003,11.284267,50.206003,10.340208L50.206003,8.6357746C50.206003,7.6929626,49.445395,6.9300003,48.500147,6.9300003z M0,0L61.689999,0 61.689999,52.198 0,52.198z" 
                                     Stretch="Uniform" Fill="{Binding RelativeSource={RelativeSource AncestorType={x:Type Button} }, Path=Foreground}" Width="68" Height="68" />
@@ -134,7 +147,7 @@
                         FontWeight="Normal" Foreground="White"
                         HorizontalAlignment="Left" Width="100" Margin="0,0,5,2"/>
                 <TextBox FontFamily="Segoe UI" Text="{Binding Order.Description}" 
-                        Width="350" Margin="5,0,5,2" IsEnabled="{Binding IsEnabled}"/>
+                        Width="350" Margin="5,0,5,2" IsEnabled="False"/>
                 <Label FontFamily="Segoe UI" Content="ADDRESS" Width="100" 
                         FontWeight="Normal" Foreground="White"
                         HorizontalAlignment="Left"  Margin="0,0,5,2"/>
@@ -239,7 +252,7 @@
                     <Grid Width="400" Grid.Row="0" Grid.Column="1" HorizontalAlignment="Stretch" 
 				            VerticalAlignment="Stretch" Background="Black">
                         <ScrollViewer HorizontalScrollBarVisibility="Hidden" 
-                                      VerticalScrollBarVisibility="Auto">
+                                      VerticalScrollBarVisibility="Auto" Margin="5">
                             <ItemsControl ItemsSource="{Binding Orders}" 
                               ItemTemplate="{StaticResource OrderDataTemplate}">
                                 <ItemsControl.ItemsPanel>

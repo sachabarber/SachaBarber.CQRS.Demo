@@ -16,16 +16,16 @@ namespace SachaBarber.CQRS.Demo.Orders
     public interface IOrderService
     {
         [OperationContract]
-        Task<bool> SendCommand(Command command);
+        Task<bool> SendCommandAsync(Command command);
 
         [OperationContract]
-        Task<List<StoreItem>> GetAllStoreItems();
+        Task<List<StoreItem>> GetAllStoreItemsAsync();
 
         [OperationContract]
-        Task<List<Order>> GetAllOrders();
+        Task<List<Order>> GetAllOrdersAsync();
 
         [OperationContract]
-        Task<Order> GetOrder(Guid orderId);
+        Task<Order> GetOrderAsync(Guid orderId);
 
     }
 }

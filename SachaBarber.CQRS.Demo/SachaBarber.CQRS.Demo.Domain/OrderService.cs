@@ -14,7 +14,8 @@ using SachaBarber.CQRS.Demo.SharedCore.WCF;
 namespace SachaBarber.CQRS.Demo.Orders.Domain
 {
     [ServiceBehavior(InstanceContextMode = InstanceContextMode.PerCall)]
-    [ErrorHandlerBehavior]
+    //Useful when debugging, see App.Config too
+    //[ErrorHandlerBehavior]
     public class OrderService : IOrderService
     {
         private readonly OrderCommandHandlers commandHandlers;
@@ -27,7 +28,7 @@ namespace SachaBarber.CQRS.Demo.Orders.Domain
         }
 
 
-        public async Task<bool> SendCommand(Command command)
+        public async Task<bool> SendCommandAsync(Command command)
         {
             await Task.Run(() =>
             {
@@ -46,19 +47,19 @@ namespace SachaBarber.CQRS.Demo.Orders.Domain
             return true;
         }
 
-        public async System.Threading.Tasks.Task<List<StoreItem>> GetAllStoreItems()
+        public async System.Threading.Tasks.Task<List<StoreItem>> GetAllStoreItemsAsync()
         {
             var storeItems = await readModelRepository.GetAll<StoreItem>();
             return storeItems;
         }
 
-        public async System.Threading.Tasks.Task<List<Order>> GetAllOrders()
+        public async System.Threading.Tasks.Task<List<Order>> GetAllOrdersAsync()
         {
             var orders = await readModelRepository.GetAll<Order>();
             return orders;
         }
 
-        public async System.Threading.Tasks.Task<Order> GetOrder(Guid orderId)
+        public async System.Threading.Tasks.Task<Order> GetOrderAsync(Guid orderId)
         {
             var order = await readModelRepository.GetOrder(orderId);
             return order;

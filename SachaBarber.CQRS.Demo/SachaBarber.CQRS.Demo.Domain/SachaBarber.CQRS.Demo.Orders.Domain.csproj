@@ -112,10 +112,13 @@
     <Compile Include="Bus\IInterProcessBus.cs" />
     <Compile Include="Commands\Handlers\OrderCommandHandlers.cs" />
     <Compile Include="EventStore\InMemoryEventStore.cs" />
-    <Compile Include="Events\Handlers\OrderRenamedEventHandler.cs" />
+    <Compile Include="Events\EventBase.cs" />
+    <Compile Include="Events\Handlers\OrderAddressChangedEventHandler.cs" />
+    <Compile Include="Events\Handlers\OrderDeletedEventHandler.cs" />
     <Compile Include="Events\Handlers\OrderCreatedEventHandler.cs" />
+    <Compile Include="Events\OrderDeletedEvent.cs" />
     <Compile Include="Events\OrderCreatedEvent.cs" />
-    <Compile Include="Events\OrderRenamedEvent.cs" />
+    <Compile Include="Events\OrderAddressChangedEvent.cs" />
     <Compile Include="Host\Program.cs" />
     <Compile Include="Host\Service.cs">
       <SubType>Component</SubType>

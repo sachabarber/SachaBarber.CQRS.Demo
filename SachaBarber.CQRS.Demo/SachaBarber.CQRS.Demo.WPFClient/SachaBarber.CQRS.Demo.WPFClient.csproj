@@ -142,6 +142,9 @@
     <Compile Include="Converters\BoolToVisibilityCollapsedConverter.cs" />
     <Compile Include="ExtensionMethods\ExpressionExtensions.cs" />
     <Compile Include="ExtensionMethods\ObservableExtensions.cs" />
+    <Compile Include="GrowlNotifications.xaml.cs">
+      <DependentUpon>GrowlNotifications.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Services\DialogService.cs" />
     <Compile Include="Services\IDialogService.cs" />
     <Compile Include="Services\IInterProcessBusSubscriber.cs" />
@@ -161,6 +164,7 @@
     <Compile Include="ViewModels\IDialogViewModel.cs" />
     <Compile Include="ViewModels\IDialogWindowEvents.cs" />
     <Compile Include="ViewModels\INPCBase.cs" />
+    <Compile Include="ViewModels\Notification.cs" />
     <Compile Include="ViewModels\Orders\OrdersViewModel.cs" />
     <Compile Include="ViewModels\Orders\OrderViewModel.cs" />
     <Compile Include="ViewModels\Shell\ShellViewModel.cs" />
@@ -190,6 +194,18 @@
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
     <AppDesigner Include="Properties\" />
+    <Page Include="Resources\Styles.GrowlNotifications.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="GrowlNotifications.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Resources\Styles.ScrollViewer.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
@@ -234,7 +250,6 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
   </ItemGroup>
-  <ItemGroup />
   <ItemGroup>
     <Resource Include="Images\CaptainMidnight.jpg">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
@@ -254,6 +269,12 @@
     <Resource Include="Images\Witcher.jpg">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\close.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\metroInfo.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />

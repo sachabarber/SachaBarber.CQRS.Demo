@@ -6,13 +6,14 @@ using System.Text;
 using System.Threading.Tasks;
 
 using CQRSlite.Commands;
+using SachaBarber.CQRS.Demo.Orders.DTOs;
 
 namespace SachaBarber.CQRS.Demo.Orders.Commands
 {
     [DataContract]
-    public class RenameOrderCommand : Command
+    public class DeleteOrderCommand : Command
     {
-        [DataMember]
-        public string NewOrderDescription { get; set; }
+      
+
     }
 }

@@ -8,6 +8,8 @@
                 <ResourceDictionary Source="pack://application:,,,/SachaBarber.CQRS.Demo.WPFClient;component/Resources/Styles.Threading.xaml"/>
                 <ResourceDictionary Source="pack://application:,,,/SachaBarber.CQRS.Demo.WPFClient;component/Resources/Styles.Dialogs.xaml"/>
                 <ResourceDictionary Source="pack://application:,,,/SachaBarber.CQRS.Demo.WPFClient;component/Resources/Styles.Common.xaml"/>
+                <ResourceDictionary Source="pack://application:,,,/SachaBarber.CQRS.Demo.WPFClient;component/Resources/Styles.ScrollViewer.xaml"/>
+                <ResourceDictionary Source="pack://application:,,,/SachaBarber.CQRS.Demo.WPFClient;component/Resources/Styles.GrowlNotifications.xaml"/>
                 
                 <!-- Get around a bug in .NET 4.0 : http://wpftutorial.net/MergedDictionaryPerformance.html -->
                 <ResourceDictionary>

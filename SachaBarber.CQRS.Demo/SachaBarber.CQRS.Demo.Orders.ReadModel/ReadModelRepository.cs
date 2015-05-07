@@ -24,6 +24,8 @@ namespace SachaBarber.CQRS.Demo.Orders.ReadModel
         Task<bool> SeedProducts();
         Task<List<T>> GetAll<T>();
         Task<bool> AddOrder(Order order);
+        Task<bool> DeleteOrder(Guid orderId);
+        Task<bool> UpdateOrderAddress(Guid orderId, string newAddress, int version);
         Task<Order> GetOrder(Guid orderId);
     }
 
@@ -122,6 +124,36 @@ namespace SachaBarber.CQRS.Demo.Orders.ReadModel
                     return true;
                 });
         }
+
+        public Task<bool> DeleteOrder(Guid orderId)
+        {
+            return Task.Run(() =>
+            {
+                using (IDocumentSession session = documentStore.OpenSession())
+                {
+                    var order = session.Query<Order>().SingleOrDefault(x => x.OrderId == orderId);
+                    session.Delete(order);
+                    session.SaveChanges();
+                }
+                return true;
+            });
+        }
+
+        public Task<bool> UpdateOrderAddress(Guid orderId, string newAddress, int version)
+        {
+            return Task.Run(() =>
+            {
+                using (IDocumentSession session = documentStore.OpenSession())
+                {
+                    var order = session.Query<Order>().SingleOrDefault(x => x.OrderId == orderId);
+                    order.Address = newAddress;
+                    order.Version = version;
+                    session.SaveChanges();
+                }
+                return true;
+            });
+        }
+
 
         public Task<Order> GetOrder(Guid orderId)
         {
