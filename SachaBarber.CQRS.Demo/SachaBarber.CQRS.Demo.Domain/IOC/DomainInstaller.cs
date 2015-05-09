@@ -58,6 +58,8 @@ namespace SachaBarber.CQRS.Demo.Orders.Domain.IOC
                         .Named("OrderCreatedEventHandler").LifeStyle.Singleton,
                     Component.For<IBusEventHandler>().ImplementedBy<OrderAddressChangedEventHandler>()
                         .Named("OrderAddressChangedEventHandler").LifeStyle.Singleton,
+                    Component.For<IBusEventHandler>().ImplementedBy<OrderDeletedEventHandler>()
+                        .Named("OrderDeletedEventHandler").LifeStyle.Singleton,
                     Component.For<IRepository>().UsingFactoryMethod(
                         kernel =>
                         {

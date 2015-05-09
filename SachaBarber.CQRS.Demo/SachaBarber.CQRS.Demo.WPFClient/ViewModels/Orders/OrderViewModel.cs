@@ -36,7 +36,7 @@ namespace SachaBarber.CQRS.Demo.WPFClient.ViewModels.Orders
             );
 
             this.DeleteOrderCommand = new SimpleCommand<object, object>(
-                x => this.IsEnabled && !operationInFlight,
+                x => !this.IsEnabled && !operationInFlight,
                 ExecuteDeleteOrderCommand
             );
 

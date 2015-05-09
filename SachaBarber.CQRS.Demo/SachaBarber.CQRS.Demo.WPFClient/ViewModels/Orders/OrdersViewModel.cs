@@ -54,11 +54,16 @@ namespace SachaBarber.CQRS.Demo.WPFClient.ViewModels.Orders
                         newOrders.Select(ord => new OrderViewModel(ord, messageBoxService, orderServiceInvoker)));
                     this.HasOrders = Orders.Any();
 
-                    growlNotifications.AddNotification(new Notification 
-                    {   Title = "Orders changed", 
-                        ImageUrl = "pack://application:,,,/Images/metroInfo.png", 
-                        Message = "New/modified orders have been obtained from the ReadModel. Click on the right hand side panel to see them" 
-                    });
+                    if (this.HasOrders)
+                    {
+                        growlNotifications.AddNotification(new Notification
+                        {
+                            Title = "Orders changed",
+                            ImageUrl = "pack://application:,,,/Images/metroInfo.png",
+                            Message =
+                                "New/modified orders have been obtained from the ReadModel. Click on the right hand side panel to see them"
+                        });
+                    }
                 })
           );
            

@@ -11,6 +11,7 @@ namespace SachaBarber.CQRS.Demo.Orders.Commands
     [DataContract]
     [KnownType(typeof(CreateOrderCommand))]
     [KnownType(typeof(ChangeOrderAddressCommand))]
+    [KnownType(typeof(DeleteOrderCommand))]
     public abstract class Command : ICommand
     {
         [DataMember]

@@ -11,11 +11,13 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate  TargetType="{x:Type Button}">
-                    <Viewbox Width="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=Width}" 
+                    <Grid Background="Black">
+                        <Viewbox Width="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=Width}" 
                              Height="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=Height}"
                              Margin="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=Margin}" >
-                        <ContentPresenter Content="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=Content}"/>
-                    </Viewbox>
+                            <ContentPresenter Content="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=Content}"/>
+                        </Viewbox>
+                    </Grid>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsMouseOver" Value="True">
                             <Setter Property="Foreground" Value="OrangeRed"></Setter>
@@ -41,11 +43,13 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate  TargetType="{x:Type Button}">
-                    <Viewbox Width="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=Width}" 
-                             Height="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=Height}"
-                             Margin="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=Margin}" >
-                        <ContentPresenter Content="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=Content}"/>
-                    </Viewbox>
+                    <Grid Background="Black">
+                        <Viewbox Width="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=Width}" 
+                                 Height="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=Height}"
+                                 Margin="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=Margin}" >
+                            <ContentPresenter Content="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=Content}"/>
+                        </Viewbox>
+                    </Grid>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsMouseOver" Value="True">
                             <Setter Property="Foreground" Value="OrangeRed"></Setter>

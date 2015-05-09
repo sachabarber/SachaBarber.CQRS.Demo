@@ -1,0 +1,351 @@
+
+<head>
+<style type="text/css">
+.auto-style1 {
+	background-color: #FFFF00;
+}
+</style>
+</head>
+
+<h1>Introduction</h1>
+<p>About 3 years ago I went to a talk given my some dude on CQRS. At the time I 
+thought mmm that's a neat idea, but I could not really see how it applied to my 
+every day job. So I kind of forgot about it a bit. 2 years or so pass, and the 
+place where I work hired this new dude, turns out it was&nbsp;the guy that 
+did the talk on CQRS, that person is Ashic Mahtab whom I now have the pleasure 
+to work with. Working with Ashic on a day to day basis spiked my interest in CQRS again. 
+On more than one occassion I 
+would have an issue with my code, and Ashic would overhear me cursing at the 
+screen, where he would casually walk over and go through the issue with me and 
+explain how that could never happen using CQRS &amp; Event Sourcing.</p>
+<p>Ashic was asked to review the Microsoft Patterns &amp; Practices book &quot;<em>A 
+Journey Into CQRS &amp; Event Sourcing</em>&quot;, and lists Greg Young amongst his 
+friends/associates. 
+As you can imagine Ashic has been very very useful to bounce ideas/questions off 
+while I have been trying to learn CQRS. As such I have vetted a great many 
+questions via Ashic, so I hope the material I present here is accurate.</p>
+<p>Ashic if you are reading this, thanks so much for putting up with my 
+(sometimes) silly questions, and thanks for ALWAYS taking the time to explain 
+things to me in an easy to understand manner, that nearly always made more sense 
+of things in the end. Sir I salute you.</p>
+<p>Anyway I decided that I needed to understand this pattern. So I set about reading 
+a lot of material on it, and watching some videos and reading some books on it, 
+and examining frameworks out there on it. The fruit of that is this article and 
+the attached demo app.</p>
+<p>&nbsp;</p>
+<p>In this article we I will be covering both CQRS and event sourcing.</p>
+<p>&nbsp;</p>
+<h2>So What Exactly Is CQRS?</h2>
+<p><em>In his book &quot;Object Oriented Software Construction,&quot; Betrand Meyer 
+introduced the term &quot;Command Query Separation&quot; to describe the principle that an 
+object's methods should be either commands or queries. A query returns data and 
+does not alter the state of the object; a command changes the state of an object 
+but does not return any data. The benefit is that you have a better 
+understanding what does, and what does not, change the state in your system.<br>
+</em></p>
+<p><em>CQRS takes this principle a step further to define a simple pattern.</em></p>
+<p><em><br>&quot;CQRS is simply the creation of two objects where there was 
+previously only one. The separation occurs based upon whether the methods are a 
+command or a query (the same definition that is used by Meyer in Command and 
+Query Separation: a command is any method that mutates state and a query is any 
+method that returns a value).&quot;</em></p>
+<p><em><br>—Greg Young, CQRS, Task Based UIs, Event Sourcing agh!</em></p>
+<p><em><br>What is important and interesting about this simple pattern is how, 
+where, and why you use it when you build enterprise systems. Using this simple 
+pattern enables you to meet a wide range of architectural challenges, such as 
+achieving scalability, managing complexity, and managing changing business rules 
+in some portions of your system.</em></p>
+<p><em><br>&quot;CQRS is a simple pattern that strictly 
+segregates the responsibility of handling command input into an autonomous 
+system from the responsibility of handling side-effect-free query/read access on 
+the same system. Consequently, the decoupling allows for any number of 
+homogeneous or heterogeneous query/read modules to be paired with a command 
+processor. This principle presents a very suitable foundation for event 
+sourcing, eventual-consistency state replication/fan-out and, thus, high-scale 
+read access. In simple terms, you don't service queries via the same module of a 
+service that you process commands through. In REST terminology, GET requests 
+wire up to a different thing from what PUT, POST, and DELETE requests wire up 
+to.&quot;<br></em></p>
+<p><em>—Clemens Vasters (CQRS Advisors Mail List)</em></p>
+<p>&nbsp;</p>
+<p>
+<strong>Some Good CQRS Resources</strong></p>
+<ul>
+	<li>Martin Fowlers blog : <a href="http://martinfowler.com/bliki/CQRS.html">http://martinfowler.com/bliki/CQRS.html</a></li>
+	<li>Microsoft CQRS book :
+	<a href="https://msdn.microsoft.com/en-us/library/jj591573.aspx">https://msdn.microsoft.com/en-us/library/jj591573.aspx</a>&nbsp;</li>
+	<li>Gred Young video on CQRS : 
+	<a href="https://www.youtube.com/watch?v=JHGkaShoyNs">https://www.youtube.com/watch?v=JHGkaShoyNs</a></li>
+	<li>Mark Nijhof CQRS example/book :
+	<a href="https://github.com/MarkNijhof/Fohjin" target="_blank">
+	https://github.com/MarkNijhof/Fohjin</a></li>
+</ul>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<h2>So What Exactly Is Event Sourcing?</h2>
+<p>I quite like the way Martin Fowler describes this one:</p>
+<p><em>We can query an application's state to find out the current state 
+of the world, and this answers many questions. However there are times when we 
+don't just want to see where we are, we also want to know how we got there.<br>
+<br>Event Sourcing ensures that all changes to application state are stored as a 
+sequence of events. Not just can we query these events, we can also use the 
+event log to reconstruct past states, and as a foundation to automatically 
+adjust the state to cope with retroactive changes.</em></p>
+<p>&nbsp;</p>
+<p>
+<a href="http://martinfowler.com/eaaDev/EventSourcing.html">
+http://martinfowler.com/eaaDev/EventSourcing.html</a></p>
+<p>&nbsp;</p>
+<p>If that doesn't make sense to you, think about a typical CRUD operation where 
+we would store the current state of an object in the database. With event 
+sourcing we would store events associated with a particular object (usually 
+based on some generated ID (most often a Guid), which is the ID of the 
+aggregate). Where if we wanted to know the current state of the object we would 
+retrieve all the past events and play them in sequence to get the current state. 
+In a nutshell that is how event sourcing works.</p>
+<p>&nbsp;</p>
+<h2><strong>So Why Might We Use CQRS?</strong></h2>
+<p>In most applications I have seen I think it is fair to say that you may have 
+something like this</p>
+<ul>
+	<li>Data access objects</li>
+	<li>Data access layer </li>
+	<li>Repositories / unit of work</li>
+	<li>Business logic</li>
+	<li>Validation layer</li>
+	<li>Transformation from DTOs</li>
+	<li>Service to facilitate remote call from clients (REST / SOAP)</li>
+	<li>UI code</li>
+</ul>
+<p>That is quite a few layers.&nbsp; When you consider that most apps read a 
+hell of a lot more than they write, does it really make sense for the reads to 
+go through all this layering? Probably not. Perhaps a more sane model would be 
+one where we use these layers when we want to write something, and when we want 
+to read something we could expect the data to be valid, and as such, could we 
+not bypass a lot of this and just grab the data directly from the database? That 
+is certainly one compelling reason to use CQRS.</p>
+<p>Event sourcing may also be used with CQRS, and when it does, it adds the 
+ability to get full audit of the changes performed for a given aggregate. This 
+is accomplished by storing the events in some form of event store and replaying 
+them on the aggregate.</p>
+<p>&nbsp;</p>
+<p>These are 2 compelling reasons to use CQRS.</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<h2>Is It A Golden Bullet?</h2>
+<p>I personally do not think it is suitable for every part of your application. 
+For example imagine this quite common web based scenario:&nbsp;</p>
+<p><em>&quot;The user must type their username and password into some input fields, 
+after which the system must trying and identify the user, by some lookup 
+mechanism. If the user is obtained, the system should retrieve some profile 
+information which is held in session for 4 hours or until the user logs out&quot;</em></p>
+<p>&nbsp;</p>
+<p>I <strong>personally</strong> do NOT think this is a good fit for CQRS (other 
+people may disagree), as it implies a more request/response type of operation, 
+where an immediate response is needed based on the user login request. This is 
+kind of at logger heads with a typical CQRS arrangement. With CQRS we should be 
+able to clearly separate the command to do something , from a query to retrieve 
+something. In this scenario we do need a pretty much immediate response to a 
+command, and we do not want/wish to perform any additional query, we need the 
+reponse right now for the current request. So it is not really a suitable CQRS 
+candidate (at least in my opinion).</p>
+<p>&nbsp;</p>
+<p>Contrast that with this sort of scenario:&nbsp;</p>
+<p><em>&quot;The user may alter an open order, that has not yet been dispatched, and 
+where the difference between today and the dispatch date is greater than 24 
+hours. The user may alter certain attributes of the order such as</em></p>
+<ul>
+	<li><em>Delivery Address</em></li>
+	<li><em>Quantity</em></li>
+</ul>
+<p><em>The sytem shall allow the user requested changes to be stored against the 
+order, and shall inform the user that the changes have been made and shall be 
+dealt with shortly&quot;</em></p>
+<p>&nbsp;</p>
+<p>This (to my mind) is a much better fit for being modeled using CQRS, as it is 
+not really a request/response type of operation, as the command to change the 
+details can clearly be seperated from the query to obtain the modified order 
+details. </p>
+<p>Albeit there may be other hairy issues raised by doing the CQRS operation 
+fully asynchrounsly, I will talk about that next. </p>
+<p>&nbsp;</p>
+<h1>Where Is The Code</h1>
+<p>The demo code for this article can be obtained from my github account : </p>
+<p>
+<a href="https://github.com/sachabarber/SachaBarber.CQRS.Demo" target="_blank">
+https://github.com/sachabarber/SachaBarber.CQRS.Demo</a></p>
+<p>&nbsp;</p>
+<h1>Prerequisites</h1>
+<p>I have tried my hardest to keep the prerequisites of the demo code down to 
+the bare minimum. I have been good to you by using RavenDB embedded for the read 
+model, and by creating an in memory event store, there is still however a need 
+for the following bits to be installed:</p>
+<p>&nbsp;</p>
+<ul>
+	<li>Erlang (Rabbit MQ needs this) :
+	<a href="http://www.erlang.org/download.html" target="_blank">
+	http://www.erlang.org/download.html</a></li>
+	<li>Rabbit MQ :
+	<a href="https://www.rabbitmq.com/install-windows.html" target="_blank">
+	https://www.rabbitmq.com/install-windows.html</a></li>
+</ul>
+<p>&nbsp;</p>
+<p>I would try and make sure the RabbitMQ server is set to start as a windows 
+service automatically using the system account.</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<h1>The Building Blocks Of A CQRS Architected Application</h1>
+<p class="auto-style1">xxxxxxx</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<h1>Synchronous vs Asynchronous (Eventual Consistency)</h1>
+<p class="auto-style1">xxxxxxx</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<h1>The Demo App</h1>
+<p class="auto-style1">xxxxxxx</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<h1>To Framework Or NOT?</h1>
+<p>Now Ashic that I work with, has always stated that he thinks using a 
+framework for CQRS is not a great way to go, as you may need more control than a 
+framework offers sometimes. This is certainly true, and is a common problem. 
+Someone who has a lot of experience of working with CQRS may very well have 
+built these systems from scratch, I have not, and I still wanted to get a CQRS 
+application to work. </p>
+<p>&nbsp;</p>
+<p>So I decided that I <strong>would</strong> use a framework, I hunted around 
+and found quite a few, but the one I liked the most was called
+<a href="https://github.com/gautema/CQRSlite" target="_blank">CQRSlite</a>. 
+Which is an extended version of an
+<a href="https://github.com/gregoryyoung/m-r" target="_blank">older framework by 
+Greg Young</a>. It offers the following features:</p>
+<ul>
+	<li>Command sending and event publishing</li>
+	<li>Unit of work through session with aggregate tracking</li>
+	<li>Repository for getting and saving aggregates</li>
+	<li>Optimistic concurrency checking</li>
+	<li>In process bus with autoregistration of handlers</li>
+	<li>Snapshotting</li>
+	<li>Caching with concurrency checks and updating to latest version</li>
+</ul>
+<p>&nbsp;</p>
+<p>I have found it be quite intuitive to work with, and have not regretted my 
+decision to use it.</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<h1>The Write Model</h1>
+<p class="auto-style1">xxxxxxx</p>
+<p>&nbsp;</p>
+<h1>The Event Store</h1>
+<p class="auto-style1">xxxxxxx</p>
+<p>In memory, but would use a hand written one or one of these</p>
+<ul>
+	<li><a href="https://github.com/NEventStore" target="_blank">NEventStore</a></li>
+	<li><a href="https://geteventstore.com/" target="_blank">GetEventStore</a> 
+	(Greg Young is a partner in this one)</li>
+</ul>
+<p>&nbsp;</p>
+<h1>The Read Model</h1>
+<p class="auto-style1">xxxxxxx</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<h2>Projections From Events</h2>
+<p class="auto-style1">Mention Projac github library here, and show a worked example using our order aggregate</p>
+<p>&nbsp;</p>
+<p>
+<a href="https://github.com/yreynhout/Projac/blob/master/Sql.md" target="_blank">
+Projac</a> projection library</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<h1>Further Considerations</h1>
+<p>The following 2 points are things that I was aware of, but did not implement 
+in the demo that goes along with this article. </p>
+<ul>
+	<li>Event Versioning</li>
+	<li>Snapshoting</li>
+</ul>
+<p>That said I am not a complete 
+deuche bag and will certainly talk you through these items, and shall also point 
+you at some good resources that talk you through them in a bit more detail.</p>
+<p>&nbsp;</p>
+<h2>Event Versioning</h2>
+<p><em>When using Event Sourcing you store your events in an Event Store. This 
+Event Store can only insert new events and read historical events, nothing more 
+nothing less. So when you change your domain logic and also the events belonging 
+to this behavior, then you cannot go back into the Event Store and do a one time 
+convert of all the historical events belonging to the same behavior. The Event 
+Store needs to stay intact, that is one of its powers.<br><br>So you make a new 
+version of the original event, this new version carries more or less information 
+then the original one. </em></p>
+<p>
+<a href="http://cre8ivethought.com/blog/2010/02/09/cqrs-event-versioning" target="_blank">
+http://cre8ivethought.com/blog/2010/02/09/cqrs-event-versioning</a></p>
+<p>
+&nbsp;</p>
+<p>
+Mark shows you one approach that would work for working with multiple versions 
+of events. That is a great place to start.</p>
+<p>
+&nbsp;</p>
+<h2>Snapshoting</h2>
+<p><em>One part of Event Sourcing that could become problematic is those objects 
+with long, complex lifetimes. In virtually all cases, an object's lifetime is 
+relatively short--perhaps a dozen events or so. But there are cases in which an 
+object may live for a very, very long time and be used frequently. Greg gives an 
+example in one if his talks of an object that gets thousands of new events per 
+day. Loading up this object can be expensive because you have to load up all of 
+the state transitions since the object's inception.<br><br>One shortcut around 
+this is the concept of a snapshot. You send the aggregate a snapshot command 
+message of some kind and it produces a snapshot message which contains all of 
+its state--along the lines of converting a domain object to a DTO, except this 
+comes from inside of the domain object rather than from the outside.<br><br>Once 
+we have this snapshot message, we persist it. Then, when loading up the object 
+from storage, we load all of the events up to and including the last snapshot. 
+This allows us to restore the object to a certain state and then &quot;replay&quot; all 
+events since the last snapshot.</em></p>
+<p>
+<a href="http://blog.jonathanoliver.com/event-sourcing-and-snapshots/" target="_blank">
+http://blog.jonathanoliver.com/event-sourcing-and-snapshots/</a></p>
+<p>&nbsp;</p>
+<p>Like I have stated this is not something that I have implemented in the demo 
+code base, but it is something that is catered for in the
+<a href="https://github.com/gautema/CQRSlite" target="_blank">CQRSlite</a> 
+framework, and would not take too much effort to add. You would simply need to 
+do the following:</p>
+<ul>
+	<li>Swap to using a <code>SnapshotAggregateRoot </code>instead of <code>
+	AggregateRoot </code>type, and implement some extra methods</li>
+	<li>Swap to using a SnapshotRepository instead of a regular Repository</li>
+</ul>
+<p>&nbsp;</p>
+<p>There is some example of snapshots working in one of the test cases, that 
+would be a good place to start if you wanted to also include snaopshotting.</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<h1>That's It</h1>
+<p>That is all I wanted to say this time. I do hope this is useful for some of you out there. I have certainly 
+learned a hell of a lot by wanting to write an article about this. I honestly 
+believe if you can learn enough to explain something to someone else you have 
+gained a good insight into something. Obviously I could be talking absolute 
+rubbish, but I certainly hope I am not, and would hope any practising DDD/CQRS 
+experts that may stumble across this article, and read it would correct anything 
+I have got completly wrong. </p>
+<p>&nbsp;</p>
+<p>That said I have spent quite a bit of time on this one, so I am optimistic 
+that I have done a semi-reasonable job on it.</p>
+<p>&nbsp;</p>
+<p>Anyway if you like what you see, feel free to leave a comment, or even better 
+a vote, that would be freekin awesome.</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+
