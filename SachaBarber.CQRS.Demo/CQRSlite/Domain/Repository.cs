@@ -23,7 +23,8 @@ namespace CQRSlite.Domain
 
         public void Save<T>(T aggregate, int? expectedVersion = null) where T : AggregateRoot
         {
-            if (expectedVersion != null && _eventStore.Get(aggregate.Id, expectedVersion.Value).Any())
+            if (expectedVersion != null && _eventStore.Get(
+                    aggregate.Id, expectedVersion.Value).Any())
                 throw new ConcurrencyException(aggregate.Id);
             var i = 0;
             foreach (var @event in aggregate.GetUncommittedChanges())
@@ -31,7 +32,8 @@ namespace CQRSlite.Domain
                 if (@event.Id == Guid.Empty) 
                     @event.Id = aggregate.Id;
                 if (@event.Id == Guid.Empty)
-                    throw new AggregateOrEventMissingIdException(aggregate.GetType(), @event.GetType());
+                    throw new AggregateOrEventMissingIdException(
+                        aggregate.GetType(), @event.GetType());
                 i++;
                 @event.Version = aggregate.Version + i;
                 @event.TimeStamp = DateTimeOffset.UtcNow;

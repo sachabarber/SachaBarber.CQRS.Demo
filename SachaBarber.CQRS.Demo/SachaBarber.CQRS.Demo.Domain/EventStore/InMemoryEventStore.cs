@@ -11,13 +11,16 @@ namespace SachaBarber.CQRS.Demo.Orders.Domain.EventStore
 {
     public class InMemoryEventStore : IEventStore
     {
-        private readonly Dictionary<Guid, List<IEvent>> _inMemoryDB = new Dictionary<Guid, List<IEvent>>();
+        private readonly Dictionary<Guid, List<IEvent>> _inMemoryDB = 
+            new Dictionary<Guid, List<IEvent>>();
 
         public IEnumerable<IEvent> Get(Guid aggregateId, int fromVersion)
         {
             List<IEvent> events;
             _inMemoryDB.TryGetValue(aggregateId, out events);
-            return events != null ? events.Where(x => x.Version > fromVersion) : new List<IEvent>();
+            return events != null 
+                ? events.Where(x => x.Version > fromVersion) 
+                : new List<IEvent>();
         }
 
         public void Save(IEvent @event)

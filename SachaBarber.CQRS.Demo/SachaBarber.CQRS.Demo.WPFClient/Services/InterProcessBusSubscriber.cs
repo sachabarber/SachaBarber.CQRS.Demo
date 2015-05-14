@@ -26,14 +26,16 @@ namespace SachaBarber.CQRS.Demo.WPFClient.Services
         public InterProcessBusSubscriber()
         {
             this.busName = "InterProcessBus";
-            this.connectionString = ConfigurationManager.AppSettings["RabbitMqHost"];
+            this.connectionString = 
+                ConfigurationManager.AppSettings["RabbitMqHost"];
             StartMessageListener();
         }
 
         private void StartMessageListener()
         {
             cancellationToken = new CancellationTokenSource();
-            workerTask = Task.Factory.StartNew(() => ListenForMessage(), cancellationToken.Token);
+            workerTask = Task.Factory.StartNew(
+                () => ListenForMessage(), cancellationToken.Token);
         }
 
         public void Dispose()
@@ -62,7 +64,8 @@ namespace SachaBarber.CQRS.Demo.WPFClient.Services
                     bool exclusive = false;
                     bool autoDelete = false;
 
-                    var queue = channel.QueueDeclare(Assembly.GetEntryAssembly().GetName().Name,
+                    var queue = channel.QueueDeclare(
+                        Assembly.GetEntryAssembly().GetName().Name,
                         durable, exclusive, autoDelete, null);
                     channel.QueueBind(queue.QueueName, busName, string.Empty);
                     var consumer = new QueueingBasicConsumer(channel);

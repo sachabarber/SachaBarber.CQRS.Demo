@@ -13,7 +13,8 @@ namespace CQRSlite.Cache
         private readonly IEventStore _eventStore;
         private readonly MemoryCache _cache;
         private readonly Func<CacheItemPolicy> _policyFactory;
-        private static readonly ConcurrentDictionary<string, object> _locks = new ConcurrentDictionary<string, object>();
+        private static readonly ConcurrentDictionary<string, object> _locks = 
+            new ConcurrentDictionary<string, object>();
 
         public CacheRepository(IRepository repository, IEventStore eventStore)
         {
@@ -26,17 +27,18 @@ namespace CQRSlite.Cache
             _eventStore = eventStore;
             _cache = MemoryCache.Default;
             _policyFactory = () => new CacheItemPolicy
-                                       {
-                                           SlidingExpiration = new TimeSpan(0,0,15,0),
-                                           RemovedCallback = x =>
-                                                                 {
-                                                                     object o;
-                                                                     _locks.TryRemove(x.CacheItem.Key, out o);
-                                                                 }
-                                       };
+                {
+                    SlidingExpiration = new TimeSpan(0,0,15,0),
+                    RemovedCallback = x =>
+                    {
+                        object o;
+                        _locks.TryRemove(x.CacheItem.Key, out o);
+                    }
+                };
         }
 
-        public void Save<T>(T aggregate, int? expectedVersion = null) where T : AggregateRoot
+        public void Save<T>(T aggregate, int? expectedVersion = null) 
+            where T : AggregateRoot
         {
             var idstring = aggregate.Id.ToString();
             try
@@ -79,7 +81,10 @@ namespace CQRSlite.Cache
                     }
 
                     aggregate = _repository.Get<T>(aggregateId);
-                    _cache.Add(aggregateId.ToString(), aggregate, _policyFactory.Invoke());
+                    _cache.Add(
+                        aggregateId.ToString(), 
+                        aggregate, 
+                        _policyFactory.Invoke());
                     return aggregate;
                 }
             }

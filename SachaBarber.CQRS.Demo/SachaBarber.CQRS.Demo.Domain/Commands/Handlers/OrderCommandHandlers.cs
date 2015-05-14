@@ -25,7 +25,11 @@ namespace SachaBarber.CQRS.Demo.Orders.Domain.Commands
 
         public void Handle(CreateOrderCommand command)
         {
-            var item = new Order(command.Id, command.ExpectedVersion, command.Description, command.Address,
+            var item = new Order(
+                command.Id, 
+                command.ExpectedVersion, 
+                command.Description, 
+                command.Address,
                 command.OrderItems.Select(x => new OrderItem()
                 {
                     OrderId = x.OrderId,
@@ -40,16 +44,18 @@ namespace SachaBarber.CQRS.Demo.Orders.Domain.Commands
 
         public void Handle(ChangeOrderAddressCommand command)
         {
-            Order item = _session.Get<Order>(command.Id, command.ExpectedVersion);
+            Order item = _session.Get<Order>(
+                command.Id, command.ExpectedVersion);
             item.ChangeAddress(command.NewAddress);
             _session.Commit();
         }
 
         public void Handle(DeleteOrderCommand command)
         {
-            Order item = _session.Get<Order>(command.Id, command.ExpectedVersion);
+            Order item = _session.Get<Order>(
+                command.Id, command.ExpectedVersion);
             item.Delete();
             _session.Commit();
         }
     }
-}
+    }

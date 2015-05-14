@@ -57,7 +57,11 @@ namespace SachaBarber.CQRS.Demo.Orders.ReadModel
             {
                 documentStore.DatabaseCommands.PutIndex(
                     "Order/ById",
-                    new IndexDefinitionBuilder<Order> { Map = ords => from order in ords select new { Id = order.Id } });
+                    new IndexDefinitionBuilder<Order>
+                    {
+                        Map = ords => from order in ords 
+                                        select new { Id = order.Id }
+                    });
             }
 
             var storeItems = await this.GetAll<StoreItem>();
@@ -75,12 +79,12 @@ namespace SachaBarber.CQRS.Demo.Orders.ReadModel
                 {
                     using (IDocumentSession session = documentStore.OpenSession())
                     {
-                         CreateStoreItem(session,"RatGood.jpg","Rat God");
-                         CreateStoreItem(session, "NeverBoy.jpg", "Never Boy");
-                         CreateStoreItem(session, "Witcher.jpg", "Witcher");
-                         CreateStoreItem(session, "Eight.jpg", "Eight");
-                         CreateStoreItem(session, "MisterX.jpg", "Mister X");
-                         CreateStoreItem(session, "CaptainMidnight.jpg", "Captain Midnight");
+                            CreateStoreItem(session,"RatGood.jpg","Rat God");
+                            CreateStoreItem(session, "NeverBoy.jpg", "Never Boy");
+                            CreateStoreItem(session, "Witcher.jpg", "Witcher");
+                            CreateStoreItem(session, "Eight.jpg", "Eight");
+                            CreateStoreItem(session, "MisterX.jpg", "Mister X");
+                            CreateStoreItem(session, "CaptainMidnight.jpg", "Captain Midnight");
                         session.SaveChanges();
                     }
                     return true;
@@ -131,7 +135,8 @@ namespace SachaBarber.CQRS.Demo.Orders.ReadModel
             {
                 using (IDocumentSession session = documentStore.OpenSession())
                 {
-                    var order = session.Query<Order>().SingleOrDefault(x => x.OrderId == orderId);
+                    var order = session.Query<Order>()
+                        .SingleOrDefault(x => x.OrderId == orderId);
                     session.Delete(order);
                     session.SaveChanges();
                 }
@@ -145,7 +150,8 @@ namespace SachaBarber.CQRS.Demo.Orders.ReadModel
             {
                 using (IDocumentSession session = documentStore.OpenSession())
                 {
-                    var order = session.Query<Order>().SingleOrDefault(x => x.OrderId == orderId);
+                    var order = session.Query<Order>()
+                        .SingleOrDefault(x => x.OrderId == orderId);
                     order.Address = newAddress;
                     order.Version = version;
                     session.SaveChanges();
@@ -161,7 +167,8 @@ namespace SachaBarber.CQRS.Demo.Orders.ReadModel
             {
                 using (IDocumentSession session = documentStore.OpenSession())
                 {
-                    return session.Query<Order>().SingleOrDefault(x => x.OrderId == orderId);
+                    return session.Query<Order>()
+                        .SingleOrDefault(x => x.OrderId == orderId);
                 }
             });
         }
@@ -169,7 +176,8 @@ namespace SachaBarber.CQRS.Demo.Orders.ReadModel
 
 
 
-        private void CreateStoreItem(IDocumentSession session, string imageUrl, string description)
+        private void CreateStoreItem(IDocumentSession session, string imageUrl, 
+            string description)
         {
             StoreItem newStoreItem = new StoreItem
             {
@@ -186,13 +194,15 @@ namespace SachaBarber.CQRS.Demo.Orders.ReadModel
             {
                 var staleIndexesWaitAction = new Action(() =>
                     {
-                        while (documentStore.DatabaseCommands.GetStatistics().StaleIndexes.Length != 0)
+                        while (documentStore.DatabaseCommands.GetStatistics()
+                            .StaleIndexes.Length != 0)
                         {
                             Thread.Sleep(10);
                         }
                     });
                 staleIndexesWaitAction.Invoke();
-                documentStore.DatabaseCommands.DeleteByIndex("Order/ById", new IndexQuery());
+                documentStore.DatabaseCommands
+                    .DeleteByIndex("Order/ById", new IndexQuery());
                 staleIndexesWaitAction.Invoke();
             });
             return true;

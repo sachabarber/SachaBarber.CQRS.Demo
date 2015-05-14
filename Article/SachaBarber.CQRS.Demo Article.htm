@@ -1,10 +1,5 @@
 
 <head>
-<style type="text/css">
-.auto-style1 {
-	background-color: #FFFF00;
-}
-</style>
 </head>
 
 <h1>Introduction</h1>
@@ -12,31 +7,34 @@
 thought mmm that's a neat idea, but I could not really see how it applied to my 
 every day job. So I kind of forgot about it a bit. 2 years or so pass, and the 
 place where I work hired this new dude, turns out it was&nbsp;the guy that 
-did the talk on CQRS, that person is Ashic Mahtab whom I now have the pleasure 
+did the talk on CQRS. That person is Ashic Mahtab whom I have now had the pleasure 
 to work with. Working with Ashic on a day to day basis spiked my interest in CQRS again. 
-On more than one occassion I 
+On more than one occasion I 
 would have an issue with my code, and Ashic would overhear me cursing at the 
-screen, where he would casually walk over and go through the issue with me and 
-explain how that could never happen using CQRS &amp; Event Sourcing.</p>
-<p>Ashic was asked to review the Microsoft Patterns &amp; Practices book &quot;<em>A 
+screen, where he would casually walk over and go through the issue with me, and 
+then with an all knowing (AKA smug) smile, explain how that could never happen using CQRS &amp; Event Sourcing. Ashic 
+is a good CQRS knowledge base and was asked to review the Microsoft Patterns &amp; Practices book &quot;<em>A 
 Journey Into CQRS &amp; Event Sourcing</em>&quot;, and lists Greg Young amongst his 
 friends/associates. 
-As you can imagine Ashic has been very very useful to bounce ideas/questions off 
+As you can imagine Ashic has been very <span lang="en-gb"></span>useful to bounce ideas/questions off 
 while I have been trying to learn CQRS. As such I have vetted a great many 
-questions via Ashic, so I hope the material I present here is accurate.</p>
-<p>Ashic if you are reading this, thanks so much for putting up with my 
+questions via him, so I hope the material I present here is accurate.</p>
+<p>Ashic&nbsp; if you are reading this, thanks so much for putting up with my 
 (sometimes) silly questions, and thanks for ALWAYS taking the time to explain 
 things to me in an easy to understand manner, that nearly always made more sense 
 of things in the end. Sir I salute you.</p>
-<p>Anyway I decided that I needed to understand this pattern. So I set about reading 
+<p>Anyway I decided that I needed to understand this pattern/architecture a bit 
+better. So I set about reading 
 a lot of material on it, and watching some videos and reading some books on it, 
 and examining frameworks out there on it. The fruit of that is this article and 
 the attached demo app.</p>
 <p>&nbsp;</p>
-<p>In this article we I will be covering both CQRS and event sourcing.</p>
+<p>In this article I will be covering both CQRS and event sourcing. This 
+article is about me trying to understand CQRS, and trying to explain it to 
+others.</p>
 <p>&nbsp;</p>
 <h2>So What Exactly Is CQRS?</h2>
-<p><em>In his book &quot;Object Oriented Software Construction,&quot; Betrand Meyer 
+<p><em>In his book &quot;Object Oriented Software Construction,&quot; Bertrand Meyer 
 introduced the term &quot;Command Query Separation&quot; to describe the principle that an 
 object's methods should be either commands or queries. A query returns data and 
 does not alter the state of the object; a command changes the state of an object 
@@ -49,7 +47,7 @@ previously only one. The separation occurs based upon whether the methods are a
 command or a query (the same definition that is used by Meyer in Command and 
 Query Separation: a command is any method that mutates state and a query is any 
 method that returns a value).&quot;</em></p>
-<p><em><br>—Greg Young, CQRS, Task Based UIs, Event Sourcing agh!</em></p>
+<p><em><br>—Greg Young, CQRS, Task Based UIs, Event Sourcing age!</em></p>
 <p><em><br>What is important and interesting about this simple pattern is how, 
 where, and why you use it when you build enterprise systems. Using this simple 
 pattern enables you to meet a wide range of architectural challenges, such as 
@@ -74,12 +72,13 @@ to.&quot;<br></em></p>
 	<li>Martin Fowlers blog : <a href="http://martinfowler.com/bliki/CQRS.html">http://martinfowler.com/bliki/CQRS.html</a></li>
 	<li>Microsoft CQRS book :
 	<a href="https://msdn.microsoft.com/en-us/library/jj591573.aspx">https://msdn.microsoft.com/en-us/library/jj591573.aspx</a>&nbsp;</li>
-	<li>Gred Young video on CQRS : 
+	<li>Greg Young video on CQRS : 
 	<a href="https://www.youtube.com/watch?v=JHGkaShoyNs">https://www.youtube.com/watch?v=JHGkaShoyNs</a></li>
 	<li>Mark Nijhof CQRS example/book :
 	<a href="https://github.com/MarkNijhof/Fohjin" target="_blank">
 	https://github.com/MarkNijhof/Fohjin</a></li>
 </ul>
+<p>&nbsp;</p>
 <p>&nbsp;</p>
 <p>&nbsp;</p>
 <h2>So What Exactly Is Event Sourcing?</h2>
@@ -98,25 +97,30 @@ http://martinfowler.com/eaaDev/EventSourcing.html</a></p>
 <p>&nbsp;</p>
 <p>If that doesn't make sense to you, think about a typical CRUD operation where 
 we would store the current state of an object in the database. With event 
-sourcing we would store events associated with a particular object (usually 
-based on some generated ID (most often a Guid), which is the ID of the 
-aggregate). Where if we wanted to know the current state of the object we would 
-retrieve all the past events and play them in sequence to get the current state. 
+sourcing we would store events associated with a particular object based on some generated ID (most often a Guid), which is the ID of the 
+aggregate. Where if we wanted to know the current state of the object we would 
+retrieve all the past events and play them in sequence to get to the current state. 
 In a nutshell that is how event sourcing works.</p>
 <p>&nbsp;</p>
+<p><strong>NOTE : </strong>If you want to use EventSourcing you should probably 
+use CQRS, but if you want to create a CQRS system you don't necessarily need 
+CQRS.</p>
+<p>&nbsp;</p>
+<h2>&nbsp;</h2>
 <h2><strong>So Why Might We Use CQRS?</strong></h2>
 <p>In most applications I have seen I think it is fair to say that you may have 
 something like this</p>
 <ul>
-	<li>Data access objects</li>
-	<li>Data access layer </li>
-	<li>Repositories / unit of work</li>
-	<li>Business logic</li>
-	<li>Validation layer</li>
-	<li>Transformation from DTOs</li>
-	<li>Service to facilitate remote call from clients (REST / SOAP)</li>
 	<li>UI code</li>
+	<li>Service to facilitate remote call from clients (REST / SOAP)</li>
+	<li>Transformation from DTOs</li>
+	<li>Validation layer</li>
+	<li>Business logic</li>
+	<li>Repositories / unit of work</li>
+	<li>Data access layer </li>
+	<li>Data access objects</li>
 </ul>
+<p>&nbsp;</p>
 <p>That is quite a few layers.&nbsp; When you consider that most apps read a 
 hell of a lot more than they write, does it really make sense for the reads to 
 go through all this layering? Probably not. Perhaps a more sane model would be 
@@ -140,14 +144,14 @@ after which the system must trying and identify the user, by some lookup
 mechanism. If the user is obtained, the system should retrieve some profile 
 information which is held in session for 4 hours or until the user logs out&quot;</em></p>
 <p>&nbsp;</p>
-<p>I <strong>personally</strong> do NOT think this is a good fit for CQRS (other 
+<p><strong>I</strong> <strong>personally</strong> do NOT think this is a good fit for CQRS (other 
 people may disagree), as it implies a more request/response type of operation, 
 where an immediate response is needed based on the user login request. This is 
 kind of at logger heads with a typical CQRS arrangement. With CQRS we should be 
 able to clearly separate the command to do something , from a query to retrieve 
 something. In this scenario we do need a pretty much immediate response to a 
 command, and we do not want/wish to perform any additional query, we need the 
-reponse right now for the current request. So it is not really a suitable CQRS 
+response right now for the current request. So it is not really a suitable CQRS 
 candidate (at least in my opinion).</p>
 <p>&nbsp;</p>
 <p>Contrast that with this sort of scenario:&nbsp;</p>
@@ -158,13 +162,13 @@ hours. The user may alter certain attributes of the order such as</em></p>
 	<li><em>Delivery Address</em></li>
 	<li><em>Quantity</em></li>
 </ul>
-<p><em>The sytem shall allow the user requested changes to be stored against the 
+<p><em>The system shall allow the user requested changes to be stored against the 
 order, and shall inform the user that the changes have been made and shall be 
 dealt with shortly&quot;</em></p>
 <p>&nbsp;</p>
-<p>This (to my mind) is a much better fit for being modeled using CQRS, as it is 
+<p>This (to my mind) is a much better fit for being modelled using CQRS, as it is 
 not really a request/response type of operation, as the command to change the 
-details can clearly be seperated from the query to obtain the modified order 
+details can clearly be separated from the query to obtain the modified order 
 details. </p>
 <p>Albeit there may be other hairy issues raised by doing the CQRS operation 
 fully asynchrounsly, I will talk about that next. </p>
@@ -182,6 +186,7 @@ model, and by creating an in memory event store, there is still however a need
 for the following bits to be installed:</p>
 <p>&nbsp;</p>
 <ul>
+	<li>Some knowledge of DDD (Aggregates / Repository etc etc)</li>
 	<li>Erlang (Rabbit MQ needs this) :
 	<a href="http://www.erlang.org/download.html" target="_blank">
 	http://www.erlang.org/download.html</a></li>
@@ -195,31 +200,165 @@ service automatically using the system account.</p>
 <p>&nbsp;</p>
 <p>&nbsp;</p>
 <h1>The Building Blocks Of A CQRS Architected Application</h1>
-<p class="auto-style1">xxxxxxx</p>
+<p>The diagram below shows the typical building blocks/process flows of a CQRS 
+application.</p>
+<p><a href="BuildingBlocksLarge.png" target="_blank"><img alt="" height="455" src="BuildingBlocksSmall.png" width="630"></a></p>
+<p><i>CLICK FOR BIGGER IMAGE</i></p>
 <p>&nbsp;</p>
+<p>There may be some subtle changes made here and there to the above building 
+blocks, but this seems to be the most commonly accepted architecture for 
+building CQRS apps. I will describe each of the blocks above in bit of detail 
+below, but we will revisit these in much more detail when we discuss the demo 
+app as a whole.</p>
 <p>&nbsp;</p>
+<h2>Client</h2>
+<p>The client could be any form of client really, as win forms app, wife app, web 
+site etc <span lang="en-gb"></span>As long as it can send a command it could be a client the data 
+model.</p>
+<p>The demo app I use here is a WPF client that utilises WCF to send commands to 
+the domain model.</p>
 <p>&nbsp;</p>
+<h2>Command Bus</h2>
+<p>The command bus is really just used to obtain a handler for the incoming 
+command. There are some cool libraries around that do things like this, such as 
+Jimmy Bogard's <a href="https://github.com/jbogard/Mediatr">MediatR</a>. Thing 
+is with that is that library is that it is a bit overkill for the requirements. 
+As such I have used a simple bit of reflection.</p>
+<p>&nbsp;</p>
+<h2>Command Handlers</h2>
+<p>These are the handlers that will deal with executing the command logic. There 
+should be a 1:1 mapping between an incoming command and command handler.</p>
+<p>&nbsp;</p>
+<h2>Domain</h2>
+<p>The domain model is the central part of the system, and it this that will 
+have any historical events from the event store played against the domain model 
+aggregates. Or have any new events (via incoming commands) applied to the 
+aggregates, before any new events are persisted to the events store.</p>
+<p>&nbsp;</p>
+<h2>Services</h2>
+<p>These are any domain services that do not fit with aggregate roots or value 
+types that are part of the domain.</p>
+<p>&nbsp;</p>
+<h2>Repository</h2>
+<p>The repository pattern is used for 2 main purposes:</p>
+<ul>
+	<li>To store any uncommitted events to the event store. </li>
+	<li>To load an aggregate from the event store based on its ID (which as I 
+	have already stated, is usually a Guid generated before the aggregates 1st 
+	event is even stored in the event store)</li>
+</ul>
+<p>&nbsp;</p>
+<p><strong>NOTE :&nbsp; This is writing to the &quot;Write&quot; model, where we 
+store the events in the event store. This is due to the fact that this article 
+uses CQRS with Event Sourcing. </strong></p>
+<p>&nbsp;</p>
+<h2>Event Bus</h2>
+<p>This is used to publish out events that been applied to the domain model.</p>
+<p>&nbsp;</p>
+<h2>Event Handlers</h2>
+<p>These are handlers that will deal with executing the event logic. There 
+should be a 1:1 mapping between a domain event and event handler. It is usually 
+at this bit of the process that the read model is updated. The read model may be 
+a relational database or may even be NoSQL, but it should be a denormalized 
+representation of the client requirements. Or at the very least in some sort of 
+representation that makes it very easy for the client to deal with the data 
+within the read model. There may or may not be a good parity between handled 
+events and the representation that the read model requires, it may even be 
+required to transform the data in some way. This may also be known as 
+&quot;Projections&quot;, we will see more on that later.</p>
+<p>&nbsp;</p>
+<p><strong>NOTE :&nbsp; This is writing to the &quot;Read&quot; model (but only internally 
+in the domain, the client may NOT write to the read model only read from it)</strong></p>
+<p>&nbsp;</p>
+<h2>Thin Data Layer</h2>
+<p>As previously stated we want to read model to be as easy to deal with as 
+possible, as such a simple data access layer is all that is needed. Perhaps some 
+uber simple repository is needed, but that would be all, no validation/no 
+business logic, just a way of getting stuff out of the read model.</p>
+<p>&nbsp;</p>
+<h2>Query Facade</h2>
+<p>We should allow queries to be executed almost directly over the read model. 
+Remember from the clients point of view, its a read ONLY model. As such the 
+client may even read directly from the read model.</p>
+<p>&nbsp;</p>
+<h1>&nbsp;</h1>
 <h1>Synchronous vs Asynchronous (Eventual Consistency)</h1>
-<p class="auto-style1">xxxxxxx</p>
+<p>One of the things that I immediately realised when I started this demo app, 
+was that there is a tremendous difference in the complexities if you choose to 
+go with everything asynchronous versus synchronous. What I mean by that is that 
+if you go down the synchronous route you may have something like this (pseudo 
+code)</p>
 <p>&nbsp;</p>
+<h2>Synchronous Code (Pseudo Code)</h2>
+<p>If we assume that the&nbsp; knowledge that all parts of the system are 
+synchronous. That is the internals of the CQRS architecture that we using are 
+fully synchronous components. T</p>
 <p>&nbsp;</p>
+<p><em>FireCommand(new CommitOrderCommand(Guid.NewGuid(), [] { &quot;bag of peas&quot;});</em></p>
+<p><em>Orders = readModelService.GetAllOrders();</em></p>
 <p>&nbsp;</p>
+<p>We have no issues here, as we simply fire a command (that would talk to the 
+write model of the CQRS domain model), and let that run to completion, and then 
+read from the read model, at which point we would expect our new order to be 
+there. All good</p>
 <p>&nbsp;</p>
+<h2>Asynchronous Code (Pseudo Code)</h2>
+<p>This approach uses the idea of eventual consistency, where we make a write to 
+the domain model (initiated via a command), but we do this with the knowledge 
+that all parts of the system are asynchronous. That is the internals of the CQRS 
+architecture that we using are fully asynchronous components. This could mean 
+using interprocess buses such as </p>
+<ul>
+	<li>NetMQ</li>
+	<li>RabbitMQ</li>
+	<li>NServiceBus</li>
+	<li>MassTransit</li>
+	<li>MSMQ</li>
+	<li>Azure ServiceBus</li>
+</ul>
 <p>&nbsp;</p>
+<p><em>FireCommand(new CommitOrderCommand(Guid.NewGuid(), [] { &quot;bag of peas&quot;});</em></p>
+<p>......</p>
+<p>......</p>
 <p>&nbsp;</p>
+<p>Essentially we now can not longer predict the correct time to update from the 
+read model. When would we do that? How do we know when to do that? The answer 
+lies in a message being passed from the event handlers in the CQRS system, that 
+tell those interested (primarily a user interface UI) that something has 
+happened in the domain model. The message could contain the actual data or could 
+simply act as a trigger to state that a certain event has occurred in the domain 
+model and let the consumers of this new message.</p>
+<p>This later approach is the one I have taken in the app (Where RabbitMQ is 
+used for this purpose). Where the read model is updated 1st in response to a 
+published event from the event store, and then the CQRS framework pushes out a 
+message in response to the read model being updated, and those parties that 
+subscribe to this message will be notified at which point they may choose to do 
+something about it, such as update themselves (a ViewModel/View if the 
+subscriber is a UI) by reading from the read model again.</p>
+<p>This does raise an interesting question. Say you fire a command (assume from 
+a UI) across to change something about a domain aggregateRoot object. Say you 
+have an order and you fire a &quot;Change Address Command&quot; at the CQRS system. You 
+still have the original order with the current address in the UI (which we 
+assumed above), and at some point down the line the UI will be notified about 
+some event that occurred in the domain model at which point the UI would read 
+from the read model. The read model WILL ONLY contain the new address once the 
+entire workflow has been completed (well up to the update to the read model that 
+is). So up until this time the UI will be in a different (some would call it 
+in-consistent) state than the read model.</p>
 <p>&nbsp;</p>
+<p>This is known as &quot;<strong>eventual consistency</strong>&quot;, and is something 
+that you will have to get used to when doing fully asynchronous systems. The 
+data will <strong>eventually be consistent,</strong> or it may end up in a error 
+state that may even require some manual intervention to make it consistent again 
+(that is worst error case though).</p>
 <p>&nbsp;</p>
-<h1>The Demo App</h1>
-<p class="auto-style1">xxxxxxx</p>
-<p>&nbsp;</p>
-<p>&nbsp;</p>
-<p>&nbsp;</p>
+<h1>&nbsp;</h1>
 <h1>To Framework Or NOT?</h1>
 <p>Now Ashic that I work with, has always stated that he thinks using a 
 framework for CQRS is not a great way to go, as you may need more control than a 
 framework offers sometimes. This is certainly true, and is a common problem. 
-Someone who has a lot of experience of working with CQRS may very well have 
-built these systems from scratch, I have not, and I still wanted to get a CQRS 
+That said, this advise to not use a framework was coming from someone who has a lot of experience of working with CQRS 
+that has written these systems from scratch, I have not, and I still wanted to get a CQRS 
 application to work. </p>
 <p>&nbsp;</p>
 <p>So I decided that I <strong>would</strong> use a framework, I hunted around 
@@ -233,7 +372,7 @@ Greg Young</a>. It offers the following features:</p>
 	<li>Unit of work through session with aggregate tracking</li>
 	<li>Repository for getting and saving aggregates</li>
 	<li>Optimistic concurrency checking</li>
-	<li>In process bus with autoregistration of handlers</li>
+	<li>In process bus with auto registration of handlers</li>
 	<li>Snapshotting</li>
 	<li>Caching with concurrency checks and updating to latest version</li>
 </ul>
@@ -242,39 +381,1475 @@ Greg Young</a>. It offers the following features:</p>
 decision to use it.</p>
 <p>&nbsp;</p>
 <p>&nbsp;</p>
-<h1>The Write Model</h1>
-<p class="auto-style1">xxxxxxx</p>
 <p>&nbsp;</p>
-<h1>The Event Store</h1>
-<p class="auto-style1">xxxxxxx</p>
-<p>In memory, but would use a hand written one or one of these</p>
+<h1>The Demo App</h1>
+<p>The demo app is a small WPF app. We will not be dissecting any code in this 
+section, that will be discussed in a while. In this section I just wanted to 
+cover the main scenarios that we will cover, and how the UI allows for them.</p>
+<p>&nbsp;</p>
+<div style="border:2px black solid; background-color:yellow; margin:5px;">
+<p style="margin:10px;"><strong>WARNINGS</strong></p>
+	<p style="margin:10px;">&nbsp;</p>
+	<p style="margin:10px;"><strong>#1</strong></p>
+	<p style="margin:10px;">The demo app uses WCF for its comms between the UI 
+and server side (write model). To give things a chance to spin up and be ready, there is a 
+hardcoded delay of 10 seconds before the UI attempts to do anything. You should 
+	<strong>NOT</strong> change this. In a normal environment the WCF service would be up and running 
+all the time, so this fake delay would not be needed.</p>
+	<p style="margin:10px;">&nbsp;</p>
+	<p style="margin:10px;"><strong>#2</strong></p>
+	<p style="margin:10px;">Since I did not want to burden you lot with having 
+	to install too much extra software, I have used as much in memory stuff as I 
+	can. As such there is an in memory event store. This means that events are 
+	not persisted if the application is killed/dies. Due to this feature, we 
+	also need to ensure the read model is cleansed on every run too. This is 
+	handled for you, don't worry. I just did not want anyone being too surprised 
+	when they stopped the demo app, and started it again, and saw none of the 
+	stuff they saved before. This is by design, and it is for your own good </p>
+</div>
+<p>&nbsp;</p>
+<h2>How To Run The Demo App</h2>
+<p>Once you have the codebase and have installed the prerequisites you should 
+open the Visual Studio (as an Administrator) and ensure that the following 2 
+projects are set to run:</p>
+<ol>
+	<li>SachaBarber.CQRS.Demo.Domain</li>
+	<li>SachaBarber.CQRS.Demo.WPFClient</li>
+</ol>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<h2>What's Included In The Demo App?</h2>
+<p>The demo app that this article offers the following scenarios:</p>
+<p>&nbsp;</p>
+<h3>Create A New Order</h3>
+<p>The demo app starts up with a bunch of comics. Where you may select the 
+comics you want, and then click the add button, which will allow some minimal 
+information. This will eventually create a new order (via the write model) which 
+will cause an <strong>OrderCreatedEvent</strong> notification to come back to 
+the UI (via RabbitMQ message). At which point the UI will show a toast style 
+message, and will update itself by reading from the read model.&nbsp; The 
+current order(s) view not be shown initially but the user may choose to show 
+that by using the side bar button (right hand side of screen).</p>
+<p>The following screen shots show you how you would carry out this scenario</p>
+<p>&nbsp;</p>
+<p><a href="CreateOrderBig.png" target="_blank"><img alt="" height="354" src="CreateOrderSmall.png" width="630"></a></p>
+<p><em>CLICK FOR BIGGER IMAGE</em></p>
+<p>&nbsp;</p>
+<p>You can select the items you want in your order, and click the button at the 
+top to create a new order.</p>
+<p>&nbsp;</p>
+<p><img alt="" height="438" src="AddDetails.png" width="630"></p>
+<p>Once you click the new order button you can fill in some minimal data about 
+the order.</p>
+<p>&nbsp;</p>
+<p><a href="OrderCreatedBig.png" target="_blank"><img alt="" height="354" src="OrderCreatedSmall.png" width="630"></a></p>
+<p><em>CLICK FOR BIGGER IMAGE</em></p>
+<p>&nbsp;</p>
+<p>When the order is created in the domain model and has also been added to the 
+read model. At which point the UI will receive a RabbiMQ notification after 
+which the UI will read from the read model which will show the list of all 
+orders from the read model. The orders view is available from the right hand 
+side button.</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p><a href="OrderCreated2Big.png" target="_blank"><img alt="" height="354" src="OrderCreated2Small.png" width="630"></a></p>
+<p><em>CLICK FOR BIGGER IMAGE</em></p>
+<p>This is the orders view, that shows the orders from the read model.</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<h3>Delete An Order</h3>
+<p>From the current order(s) view the user may choose to delete an order. This 
+will eventually delete the requested order (via the write model) which will 
+cause an <strong>OrderDeletedEvent</strong> notification to come back to the UI 
+(via RabbitMQ message). At which point the UI will show a toast style message, 
+and will update itself by reading from the read model. </p>
+<p><img alt="" height="665" src="DeleteOrderButton.png" width="630"></p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<h3>Change Address Of An Order</h3>
+<p>From the current order(s) view the user may choose to go into edit mode (the 
+user may also cancel edit mode) for the selected order. &nbsp;</p>
+<p><img alt="" height="668" src="EditMode.png" width="630"></p>
+<p>At which point the user 
+may edit the order address. Once the user edits the user address they will have 
+the ability to update the order address by clicking a button.</p>
+<p><img alt="" height="665" src="ChangeOrderAddressButton.png" width="630"></p>
+<p>&nbsp;</p>
+<p>This will 
+eventually update the order address (via the write model) which will cause a
+<strong>OrderAddressChangedEvent</strong> notification to come back to the UI 
+(via RabbitMQ message). At which point the UI will show a toast style message, 
+and will update itself by reading from the read model. </p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>Ok, so we have now covered quite a lot of ground, we should hopefully now 
+know :</p>
 <ul>
-	<li><a href="https://github.com/NEventStore" target="_blank">NEventStore</a></li>
+	<li>What CQRS is</li>
+	<li>Wat event sourcing is</li>
+	<li>That we are using the
+	<a href="https://github.com/gautema/CQRSlite" target="_blank">CQRSlite</a> 
+	framework</li>
+	<li>What the demo app does</li>
+</ul>
+<p>&nbsp;</p>
+<p>So its about time to start examining some code then.</p>
+<p>&nbsp;</p>
+<h1>&nbsp;</h1>
+<h1>The Write Model</h1>
+<p>This section discusses the write model. Which comes into play when a client 
+of the domain model issues a command. For the demo app this means that a UI will 
+be issuing the commands.</p>
+<p>&nbsp;</p>
+<h2>How The Demo UI Issues Commands</h2>
+<p>The demo app calls a async/await enabled WCF service. There is the standard 
+WCF stuff, a proxy/ClientChannel etc etc. I will not bore you with that, but 
+this is what typical usage of the WCF service looks like from the UI to send 
+commands:</p>
+<pre lang="cs">
+await orderServiceInvoker.CallService(service =&gt;
+    service.SendCommandAsync(new ChangeOrderAddressCommand()
+    {
+        ExpectedVersion = this.Order.Version,
+        Id = this.Order.OrderId,
+        NewAddress = this.Order.Address
+    }));
+</pre>
+<p>&nbsp;</p>
+<p>This is the WCF service that the UI calls. It is even using aynsc/await (neat 
+huh). </p>
+<p>&nbsp;</p>
+<pre lang="cs">
+[ServiceBehavior(InstanceContextMode = InstanceContextMode.PerCall)]
+//Useful when debugging, see App.Config too
+//[ErrorHandlerBehavior]
+public class OrderService : IOrderService
+{
+    private readonly OrderCommandHandlers commandHandlers;
+    private readonly IReadModelRepository readModelRepository;
+
+    public OrderService(
+    	OrderCommandHandlers commandHandlers, 
+    	IReadModelRepository readModelRepository)
+    {
+        this.commandHandlers = commandHandlers;
+        this.readModelRepository = readModelRepository;
+    }
+
+
+    public async Task&lt;bool&gt; SendCommandAsync(Command command)
+    {
+        await Task.Run(() =&gt;
+        {
+            var meth = (from m in typeof(OrderCommandHandlers)
+                .GetMethods(BindingFlags.Public | BindingFlags.Instance)
+                        let prms = m.GetParameters()
+                        where prms.Count() == 1 &amp;&amp; 
+                        	prms[0].ParameterType == command.GetType()
+                        select m).FirstOrDefault();
+
+            if (meth == null)
+                throw new BusinessLogicException(
+                    string.Format("Handler for {0} could not be found", 
+                    	command.GetType().Name));
+
+            meth.Invoke(commandHandlers, new[] { command });
+        });
+        return true;
+    }
+}</pre>
+<p>&nbsp;</p>
+<h3>Seperate Commands</h3>
+<p>Note that 
+there is a single <code>SendCommandAsync(Command command)</code> method. So how 
+does that work? That is standard WCF stuff actually. If we examine the <code>Command
+</code>class that will become clear . We simply use the <code>[KnownType]</code> 
+attribute.</p>
+<pre lang="cs">
+[DataContract]
+[KnownType(typeof(CreateOrderCommand))]
+[KnownType(typeof(ChangeOrderAddressCommand))]
+[KnownType(typeof(DeleteOrderCommand))]
+public abstract class Command : ICommand
+{
+    [DataMember]
+    public Guid Id { get; set; }
+
+    [DataMember]
+    public int ExpectedVersion { get; set; }
+}</pre>
+<p>&nbsp;</p>
+<h3>How Are Command Handlers Called?</h3>
+<p>Within the demo app <code>OrderService</code>, there is an IOC satisified 
+constructor dependency for <code>OrderCommandHandlers</code>. This object 
+contains all the command handlers for the demo app. This is just how I have done it for 
+the demo app, but you could do it another way, entirely up to you. Anyway there 
+is a <code>OrderCommandHandlers </code>class which is called via reflection 
+within the <code>OrderService </code>where the correct <code>Handle(..)</code> method is 
+located (based on incoming <code>Command </code>type) and called.</p>
+<p>Here is the code for the <code>OrderCommandHandlers </code>class:</p>
+<p>&nbsp;</p>
+<pre lang="cs">
+public class OrderCommandHandlers : ICommandHandler&lt;CreateOrderCommand&gt;,
+                                    ICommandHandler&lt;ChangeOrderAddressCommand&gt;,
+                                    ICommandHandler&lt;DeleteOrderCommand&gt;
+{
+    private readonly ISession _session;
+
+    public OrderCommandHandlers(ISession session)
+    {
+        _session = session;
+    }
+
+    public void Handle(CreateOrderCommand command)
+    {
+        var item = new Order(
+            command.Id, 
+            command.ExpectedVersion, 
+            command.Description, 
+            command.Address,
+            command.OrderItems.Select(x =&gt; new OrderItem()
+            {
+                OrderId = x.OrderId,
+                StoreItemDescription = x.StoreItemDescription,
+                StoreItemId = x.StoreItemId,
+                StoreItemUrl = x.StoreItemUrl
+            }).ToList());
+        _session.Add(item);
+        _session.Commit();
+    }
+
+
+    public void Handle(ChangeOrderAddressCommand command)
+    {
+        Order item = _session.Get&lt;Order&gt;(
+            command.Id, command.ExpectedVersion);
+        item.ChangeAddress(command.NewAddress);
+        _session.Commit();
+    }
+
+    public void Handle(DeleteOrderCommand command)
+    {
+        Order item = _session.Get&lt;Order&gt;(
+            command.Id, command.ExpectedVersion);
+        item.Delete();
+        _session.Commit();
+    }
+}
+</pre>
+<h3>&nbsp;</h3>
+<h3>What Does A Command Actually Do?</h3>
+<p>Well that depends, but before we get into the the possible scenarios, lets 
+talk about something that happens inn all the command handle methods. Whicb is 
+to use the <code>ISession </code>object to <code>Add()</code>/<code>Get()</code> 
+and <code>Commit()</code> methods. Shown below is the <code>ISession </code>
+implementation (this is part of the <a href="https://github.com/gautema/CQRSlite" target="_blank">CQRSlite</a> 
+framework)</p>
+<p>&nbsp;</p>
+<h4>ISession Implementation</h4>
+<pre lang="cs">
+public class Session : ISession
+{
+    private readonly IRepository _repository;
+    private readonly Dictionary&lt;Guid, AggregateDescriptor&gt; _trackedAggregates;
+
+    public Session(IRepository repository)
+    {
+        if(repository == null)
+            throw new ArgumentNullException("repository");
+
+        _repository = repository;
+        _trackedAggregates = new Dictionary&lt;Guid, AggregateDescriptor&gt;();
+    }
+
+    public void Add&lt;T&gt;(T aggregate) where T : AggregateRoot
+    {
+        if (!IsTracked(aggregate.Id))
+            _trackedAggregates.Add(aggregate.Id,
+                new AggregateDescriptor
+                {
+                    Aggregate = aggregate, 
+                    Version = aggregate.Version
+                });
+        else if (_trackedAggregates[aggregate.Id].Aggregate != aggregate)
+            throw new ConcurrencyException(aggregate.Id);
+    }
+
+    public T Get&lt;T&gt;(Guid id, int? expectedVersion = null) where T : AggregateRoot
+    {
+        if(IsTracked(id))
+        {
+            var trackedAggregate = (T)_trackedAggregates[id].Aggregate;
+            if (expectedVersion != null &amp;&amp; trackedAggregate.Version != expectedVersion)
+                throw new ConcurrencyException(trackedAggregate.Id);
+            return trackedAggregate;
+        }
+
+        var aggregate = _repository.Get&lt;T&gt;(id);
+        if (expectedVersion != null &amp;&amp; aggregate.Version != expectedVersion)
+            throw new ConcurrencyException(id);
+        Add(aggregate);
+
+        return aggregate;
+    }
+
+    private bool IsTracked(Guid id)
+    {
+        return _trackedAggregates.ContainsKey(id);
+    }
+
+    public void Commit()
+    {
+        foreach (var descriptor in _trackedAggregates.Values)
+        {
+            _repository.Save(descriptor.Aggregate, descriptor.Version);
+        }
+        _trackedAggregates.Clear();
+    }
+
+    private class AggregateDescriptor
+    {
+        public AggregateRoot Aggregate { get; set; }
+        public int Version { get; set; }
+    }
+}
+</pre>
+<p>&nbsp;</p>
+<p>The main things that this class provides are: </p>
+<ul>
+	<li>The ability to add a new aggregate, this simply adds the aggregate to a 
+	list of tracked aggregates</li>
+	<li>The ability to track aggregates. Those are ones that have been seen for a 
+	particular session</li>
+	<li>The ability to get aggregates. This delegates the work to an <code>
+	IRepository </code>implementation, which we look at next</li>
+	<li>The ability to commit changes made during the current session</li>
+</ul>
+<p>&nbsp;</p>
+<h4>CacheRepository </h4>
+<p>The exact <code>IRepository </code>that the <code>ISession </code>implementation uses in the demo app 
+is a <code>CacheRepository</code>, which decorates a regular <code>IRepository
+</code>implementation. Anyway 
+here is the <code>CacheRepository </code>implementation (this is part of the <a href="https://github.com/gautema/CQRSlite" target="_blank">CQRSlite</a> 
+framework)</p>
+<pre lang="cs">
+public class CacheRepository : IRepository
+{
+    private readonly IRepository _repository;
+    private readonly IEventStore _eventStore;
+    private readonly MemoryCache _cache;
+    private readonly Func&lt;CacheItemPolicy&gt; _policyFactory;
+    private static readonly ConcurrentDictionary&lt;string, object&gt; _locks = 
+        new ConcurrentDictionary&lt;string, object&gt;();
+
+    public CacheRepository(IRepository repository, IEventStore eventStore)
+    {
+        if(repository == null)
+            throw new ArgumentNullException("repository");
+        if(eventStore == null)
+            throw new ArgumentNullException("eventStore");
+
+        _repository = repository;
+        _eventStore = eventStore;
+        _cache = MemoryCache.Default;
+        _policyFactory = () =&gt; new CacheItemPolicy
+            {
+                SlidingExpiration = new TimeSpan(0,0,15,0),
+                RemovedCallback = x =&gt;
+                {
+                    object o;
+                    _locks.TryRemove(x.CacheItem.Key, out o);
+                }
+            };
+    }
+
+    public void Save&lt;T&gt;(T aggregate, int? expectedVersion = null) 
+        where T : AggregateRoot
+    {
+        var idstring = aggregate.Id.ToString();
+        try
+        {
+            lock (_locks.GetOrAdd(idstring, _ =&gt; new object()))
+            {
+                if (aggregate.Id != Guid.Empty && !IsTracked(aggregate.Id))
+                    _cache.Add(idstring, aggregate, _policyFactory.Invoke());
+                _repository.Save(aggregate, expectedVersion);
+            }
+        }
+        catch (Exception)
+        {
+            _cache.Remove(idstring);
+            throw;
+        }
+    }
+
+    public T Get&lt;T&gt;(Guid aggregateId) where T : AggregateRoot
+    {
+        var idstring = aggregateId.ToString();
+        try
+        {
+            lock (_locks.GetOrAdd(idstring, _ =&gt; new object()))
+            {
+                T aggregate;
+                if (IsTracked(aggregateId))
+                {
+                    aggregate = (T)_cache.Get(idstring);
+                    var events = _eventStore.Get(aggregateId, aggregate.Version);
+                    if (events.Any() && events.First().Version != aggregate.Version + 1)
+                    {
+                        _cache.Remove(idstring);
+                    }
+                    else
+                    {
+                        aggregate.LoadFromHistory(events);
+                        return aggregate;
+                    }
+                }
+
+                aggregate = _repository.Get&lt;T&gt;(aggregateId);
+                _cache.Add(
+                    aggregateId.ToString(), 
+                    aggregate, 
+                    _policyFactory.Invoke());
+                return aggregate;
+            }
+        }
+        catch (Exception)
+        {
+            _cache.Remove(idstring);
+            throw;
+        }
+    }
+
+    private bool IsTracked(Guid id)
+    {
+        return _cache.Contains(id.ToString());
+    }
+}
+</pre>
+<p>&nbsp;</p>
+<p>Before we look at the regular <code>IRepository </code>
+implementation, there is one uber important point in the above code. See how in 
+the <code>Get(..)</code> method the event store is queried for <strong>ALL</strong> 
+historical events, which are then used to populate the current state of the 
+aggregate. This is how the event sourcing parts works. We basically load 
+the aggregate state based on past events.</p>
+<p>The other thing that the above code doe is to cache any aggregates it sees for some 
+time period. After all it is a <strong>Cache</strong>Repository.</p>
+<p>&nbsp;</p>
+<h4><strong>Repository Class</strong></h4>
+<p>The regular <code>Repository </code>implementation (ie non caching), deals with storing uncommitted aggregate 
+events to the event store, and notifying the read model via the <code>
+IEventPublisher </code>implementation (internal application bus) that is IOCd in 
+(more on this functionality later). It also deals with 
+loading all historical events for a particular aggregate by using the <code>
+IEventStore </code>implementation, which again is IOCd in. In the demo app the 
+methods in the <code>Repository </code>instance are called by the <code>
+CacheRepository</code>. </p>
+<p>&nbsp;</p>
+<p>Here is the code for the <code>Repository </code>class (this is part of the <a href="https://github.com/gautema/CQRSlite" target="_blank">CQRSlite</a> 
+framework)</p>
+<p>&nbsp;</p>
+<pre lang="cs">
+public class Repository : IRepository
+{
+    private readonly IEventStore _eventStore;
+    private readonly IEventPublisher _publisher;
+
+    public Repository(IEventStore eventStore, IEventPublisher publisher)
+    {
+        if(eventStore == null)
+            throw new ArgumentNullException("eventStore");
+        if(publisher == null)
+            throw new ArgumentNullException("publisher");
+        _eventStore = eventStore;
+        _publisher = publisher;
+    }
+
+    public void Save&lt;T&gt;(T aggregate, int? expectedVersion = null) 
+	where T : AggregateRoot
+    {
+        if (expectedVersion != null && _eventStore.Get(
+                aggregate.Id, expectedVersion.Value).Any())
+            throw new ConcurrencyException(aggregate.Id);
+        var i = 0;
+        foreach (var @event in aggregate.GetUncommittedChanges())
+        {
+            if (@event.Id == Guid.Empty) 
+                @event.Id = aggregate.Id;
+            if (@event.Id == Guid.Empty)
+                throw new AggregateOrEventMissingIdException(
+                    aggregate.GetType(), @event.GetType());
+            i++;
+            @event.Version = aggregate.Version + i;
+            @event.TimeStamp = DateTimeOffset.UtcNow;
+            _eventStore.Save(@event);
+            _publisher.Publish(@event);
+        }
+        aggregate.MarkChangesAsCommitted();
+    }
+
+    public T Get&lt;T&gt;(Guid aggregateId) where T : AggregateRoot
+    {
+        return LoadAggregate&lt;T&gt;(aggregateId);
+    }
+
+    private T LoadAggregate&lt;T&gt;(Guid id) where T : AggregateRoot
+    {
+        var aggregate = AggregateFactory.CreateAggregate&lt;T&gt;();
+
+        var events = _eventStore.Get(id, -1);
+        if (!events.Any())
+            throw new AggregateNotFoundException(id);
+
+        aggregate.LoadFromHistory(events);
+        return aggregate;
+    }
+}
+</pre>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<h4><strong>WOWSERS. That Was Quite The Diversion, Getting Back On Track</strong></h4>
+<p>Ok sorry about that, as I say that was a bit of a diversion. We were talking about 
+how 
+commands were handled, before we started looking onto how the <code>ISession
+</code>workflow worked. Lets remind outselves of what that the command handler code looked 
+like. Here it is again:</p>
+<p>&nbsp;</p>
+<p>Here is the code for the <code>OrderCommandHandlers </code>class:</p>
+<pre lang="cs">
+public class OrderCommandHandlers : ICommandHandler&lt;CreateOrderCommand&gt;,
+                                    ICommandHandler&lt;ChangeOrderAddressCommand&gt;,
+                                    ICommandHandler&lt;DeleteOrderCommand&gt;
+{
+    private readonly ISession _session;
+
+    public OrderCommandHandlers(ISession session)
+    {
+        _session = session;
+    }
+
+    public void Handle(CreateOrderCommand command)
+    {
+        var item = new Order(
+            command.Id, 
+            command.ExpectedVersion, 
+            command.Description, 
+            command.Address,
+            command.OrderItems.Select(x =&gt; new OrderItem()
+            {
+                OrderId = x.OrderId,
+                StoreItemDescription = x.StoreItemDescription,
+                StoreItemId = x.StoreItemId,
+                StoreItemUrl = x.StoreItemUrl
+            }).ToList());
+        _session.Add(item);
+        _session.Commit();
+    }
+
+
+    public void Handle(ChangeOrderAddressCommand command)
+    {
+        Order item = _session.Get&lt;Order&gt;(
+            command.Id, command.ExpectedVersion);
+        item.ChangeAddress(command.NewAddress);
+        _session.Commit();
+    }
+
+    public void Handle(DeleteOrderCommand command)
+    {
+        Order item = _session.Get&lt;Order&gt;(
+            command.Id, command.ExpectedVersion);
+        item.Delete();
+        _session.Commit();
+    }
+}
+</pre>
+<p>Ok cool, refreshed and ready to rock.......so back to what the commands do with when they are handled.</p>
+<ol>
+	<li>If the aggregate is a new one, the IOC'd <code>ISession.Add()</code> method 
+	be called, followed by the <code>ISession.Commit()</code></li>
+	<li>If the aggregate is NOT a new one the&nbsp; IOC'd <code>ISession.Get(..)</code> 
+	method be called</li>
+</ol>
+<p>You should examine the code above a bit to see how that works in detail. What 
+I want to show you now is what happens when we handle a command for an existing 
+aggregate. Lets take the <code>DeleteOrderCommand </code>for example.</p>
+<p>&nbsp;</p>
+<h4>Aggregate Apply</h4>
+<p>So lets follow the flow for <code>DeleteOrderCommand </code>, which so far 
+has given us an aggregate, where we call the <code>Order </code>aggregate <code>
+Delete()</code> method. Lets see that method shall we.</p>
+<p>&nbsp;</p>
+<p>Here is the Order aggregate </p>
+<pre lang="cs">
+public class Order : AggregateRoot
+{
+    private string description;
+    private string address;
+    private bool isDeleted;
+    private List&lt;OrderItem&gt; orderItems;
+
+    private void Apply(OrderCreatedEvent e)
+    {
+        Version = e.Version;
+        description = e.Description;
+        address = e.Address;
+        isDeleted = false;
+        orderItems = e.OrderItems;
+    }
+
+
+    private void Apply(OrderDeletedEvent e)
+    {
+        Version = e.Version;
+        isDeleted = true;
+    }
+
+    public void Delete()
+    {
+        ApplyChange(new OrderDeletedEvent(Id, Version));
+    }
+
+    private void Apply(OrderAddressChangedEvent e)
+    {
+        Version = e.Version;
+        address = e.NewOrderAddress;
+    }
+
+    public void ChangeAddress(string newAddress)
+    {
+        if (string.IsNullOrEmpty(newAddress))
+            throw new ArgumentException("newAddress");
+        ApplyChange(new OrderAddressChangedEvent(Id, 
+		newAddress,Version));
+    }
+
+
+    private Order() { }
+
+    public Order(
+        Guid id,
+        int version,
+        string description,
+        string address,
+        List&lt;OrderItem&gt; orderItems
+        )
+    {
+        Id = id;
+        ApplyChange(new OrderCreatedEvent(id, description, 
+		address, orderItems, version));
+    }
+}</pre>
+<p>Where it can be seen that there are several overloads of the <code>Apply(..)</code> method. Essentially there is one per command action. 
+We will continue to follow the <code>.Delete()</code> method. &nbsp;This simply 
+calls <code>ApplyChange(new OrderDeletedEvent(Id, Version));</code></p>
+<p>To understand what this <code>ApplyChange(..)</code> method is doing we need 
+to go into the <a href="https://github.com/gautema/CQRSlite" target="_blank">CQRSlite</a> 
+framework <code>AggregateRoot </code>code. So lets see that.</p>
+<p>Here it is:</p>
+<pre lang="cs">
+public abstract class AggregateRoot
+{
+    private readonly List&lt;IEvent&gt; _changes = new List&lt;IEvent&gt;();
+
+    public Guid Id { get; protected set; }
+    public int Version { get; protected set; }
+
+    public IEnumerable&lt;IEvent&gt; GetUncommittedChanges()
+    {
+        lock (_changes)
+        {
+            return _changes.ToArray();
+        }
+    }
+
+    public void MarkChangesAsCommitted()
+    {
+        lock(_changes)
+        {
+            Version = Version + _changes.Count;
+            _changes.Clear();
+        }
+    }
+
+    public void LoadFromHistory(IEnumerable&lt;IEvent&gt; history)
+    {
+        foreach (var e in history)
+        {
+            if (e.Version != Version + 1)
+                throw new EventsOutOfOrderException(e.Id);
+            ApplyChange(e, false);
+        }
+    }
+
+    protected void ApplyChange(IEvent @event)
+    {
+        ApplyChange(@event, true);
+    }
+
+    private void ApplyChange(IEvent @event, bool isNew)
+    {
+        lock (_changes)
+        {
+            this.AsDynamic().Apply(@event);
+            if (isNew)
+            {
+                _changes.Add(@event);
+            }
+            else
+            {
+                Id = @event.Id;
+                Version++;
+            }
+        }
+    }
+}
+</pre>
+<p>It can be seen that this base class is responsibe for managing events for a 
+particular aggregate. This includes loading them from history and also working 
+out which applied events are new (for the session) and need to applied to the 
+event store. </p>
+<p>When we call the <code>ApplyChange(..) </code>method this will result in the 
+actual aggregates <code>Apply(..)</code> overloaded method being called for the 
+correct event. Once it is played on the aggregate the aggregate can change its 
+only internal state based on the applied event.</p>
+<p>For example here is the <code>Order </code>aggregates <code>Apply(OrderDeletedEvent e)</code> where it 
+can be seen that the <code>Order </code>aggregates internal state is mutated.</p>
+<pre lang="cs">
+private void Apply(OrderDeletedEvent e)
+{
+    Version = e.Version;
+    isDeleted = true;
+}</pre>
+<p>This workflow is pretty hairy, so you may need to read all of the above again (and again), to get a correct understanding</p>
+
+<h2>&nbsp;</h2>
+<h2>&nbsp;</h2>
+<h2>The Event Store</h2>
+<p>The <a href="https://github.com/gautema/CQRSlite" target="_blank">CQRSlite</a> 
+framework contains the following interface for the event store.</p>
+<pre lang="cs">
+public interface IEventStore 
+{
+    void Save(IEvent @event);
+    IEnumerable&lt;IEvent&gt; Get(Guid aggregateId, int fromVersion);
+}
+</pre>
+<p>&nbsp;</p>
+<p>As such we need to create an implementation of this to deal with the 
+saving/fetching of events that the domain model raises/needs (to apply to the 
+aggregates(s)).
+</p>
+<p>As I wanted to keep the dependencies as small as possible for this demo app, I 
+have gone for an in memory event store, but it should not be too hard to plug in 
+another one. There are some good ones available such as</p>
+<ul>
+	<li><a href="https://github.com/NEventStore" target="_blank">NEventStore</a> 
+	which has adaptors for quite a few databases (NoSQL and relational)</li>
 	<li><a href="https://geteventstore.com/" target="_blank">GetEventStore</a> 
 	(Greg Young is a partner in this one)</li>
 </ul>
 <p>&nbsp;</p>
+<p>Anyway like I say this demo app contains an in memory event store, which is 
+as follows:</p>
+<pre lang="cs">
+public class InMemoryEventStore : IEventStore
+{
+    private readonly Dictionary&lt;Guid, List&lt;IEvent&gt;&gt; _inMemoryDB = 
+        new Dictionary&lt;Guid, List&lt;IEvent&gt;&gt;();
+
+    public IEnumerable&lt;IEvent&gt; Get(Guid aggregateId, int fromVersion)
+    {
+        List&lt;IEvent&gt; events;
+        _inMemoryDB.TryGetValue(aggregateId, out events);
+        return events != null 
+            ? events.Where(x =&gt; x.Version &gt; fromVersion) 
+            : new List&lt;IEvent&gt;();
+    }
+
+    public void Save(IEvent @event)
+    {
+        List&lt;IEvent&gt; list;
+        _inMemoryDB.TryGetValue(@event.Id, out list);
+        if (list == null)
+        {
+            list = new List&lt;IEvent&gt;();
+            _inMemoryDB.Add(@event.Id, list);
+        }
+        list.Add(@event);
+    }
+}</pre>
+<p>&nbsp;</p>
+<p>Hopefully nothing too daunting there, its essentially a wrapper around a
+<code>Dictionary&lt;TKey,TValue&gt;</code>, so I think its fine.</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
 <h1>The Read Model</h1>
-<p class="auto-style1">xxxxxxx</p>
+<p>This section discusses the read model. Which comes into play after the new 
+events have been stored in the event store, and published internally within the 
+domain model by the the <code>Repository </code>class which is part of the <a href="https://github.com/gautema/CQRSlite" target="_blank">CQRSlite</a> 
+framework.</p>
+<p>&nbsp;</p>
+<h2>Event Handlers</h2>
+<p>Any events that are stored in the current session and that end up being 
+persisted to the event store, and also published internally within the domain 
+model using a simple internal process publisher. There are then 
+event handlers that act on those published events. The event handlers have the 
+job of updating the read model. </p>
+<p>If you were using a synchronous call (that is 
+call a command and then be able to read from the read model directly afterwards) 
+we would be done at this point. But since I opted to make a fully asynchronous 
+system (just to see how far down the rabbit hole goes),&nbsp; things are not 
+finished at this point. </p>
+<p>So proceeding then.....once the read model is updated we also need to tell any consumers of the 
+read model that something has changed. For the demo app this is the job of the 
+event handler(s).</p>
+<p>Lets see the pieces that make this happen.</p>
+<p>&nbsp;</p>
+<h3><strong>Source Of Published Events</strong></h3>
+<p>Within the <a href="https://github.com/gautema/CQRSlite" target="_blank">CQRSlite</a> 
+framework there is the following code inside of the regular <code>IRepository </code>implemenation code, where it can be seen that there is a line that publishes out 
+any events (see this line <code>_publisher.Publish(@event)</code> ) that are saved to the event store. 
+We saw this earlier, when we were discussing the write model/commanding side of 
+things. This is the crossover between the incoming writes, and updating the read 
+model based on persisted events (remember the demo app uses CQRS + event 
+sourcing).</p>
+<p>&nbsp;</p>
+<pre lang="cs">
+public void Save&lt;T&gt;(T aggregate, int? expectedVersion = null) 
+	where T : AggregateRoot
+{
+    if (expectedVersion != null &amp;&amp; _eventStore.Get(
+		aggregate.Id, expectedVersion.Value).Any())
+        throw new ConcurrencyException(aggregate.Id);
+    var i = 0;
+    foreach (var @event in aggregate.GetUncommittedChanges())
+    {
+        if (@event.Id == Guid.Empty) 
+            @event.Id = aggregate.Id;
+        if (@event.Id == Guid.Empty)
+            throw new AggregateOrEventMissingIdException(
+		aggregate.GetType(), @event.GetType());
+        i++;
+        @event.Version = aggregate.Version + i;
+        @event.TimeStamp = DateTimeOffset.UtcNow;
+        _eventStore.Save(@event);
+        _publisher.Publish(@event);
+    }
+    aggregate.MarkChangesAsCommitted();
+}</pre>
+<h3>&nbsp;</h3>
+<h3>IEventPublisher</h3>
+<p>The call to the <code>IEventPublisher.Publish(..)</code> made within the <a href="https://github.com/gautema/CQRSlite" target="_blank">CQRSlite</a> 
+framework regular <code>IRepository, </code>should result in a event handler being called 
+that will handle the published 
+event.&nbsp; The <a href="https://github.com/gautema/CQRSlite" target="_blank">CQRSlite</a> 
+framework has an implementation of <code>IEventPublisher</code>, but I chose to 
+roll my own one (as I wanted to use <code>async/await</code><code></code>), which is shown below. 
+One of the really nice things about the <a href="https://github.com/gautema/CQRSlite" target="_blank">CQRSlite</a> 
+framework is that it is very pluggable. i.e. you don't like the default 
+implementation, just swap it out.</p>
+<p>The code below is a pretty simple implemention that attempts to find the correct
+<code>IBusEventHandler </code>for an incoming event, and calls the event 
+handlers <code>Handle </code>method. The array of <code>IBusEventHandler</code>s 
+is supplied by an IOC container (Castle).</p>
+<pre lang="cs">
+public class BusEventPublisher : IEventPublisher
+{
+    private readonly IBusEventHandler[] _handlers;
+    private Dictionary&lt;Type,MethodInfo&gt; methodLookups = 
+        new Dictionary&lt;Type, MethodInfo&gt;(); 
+
+    public BusEventPublisher(IBusEventHandler[] handlers)
+    {
+        _handlers = handlers;
+
+        foreach (var handler in _handlers)
+        {
+            var meth = (from m in handler.GetType()
+                    .GetMethods(BindingFlags.Public | BindingFlags.Instance)
+                        let prms = m.GetParameters()
+                        where prms.Count() == 1 &amp;&amp; m.Name.Contains("Handle")
+                        select new
+                        {
+                            EventType = prms.First().ParameterType,
+                            Method = m
+                        }).FirstOrDefault();
+            if (meth != null)
+            {
+                methodLookups.Add(meth.EventType, meth.Method);
+            }
+
+        }
+
+    }
+
+    public void Publish&lt;T&gt;(T @event) where T : IEvent
+    {
+
+        var theHandler = _handlers.SingleOrDefault(
+            x =&gt; x.HandlerType == @event.GetType());
+
+        if (theHandler == null)
+            throw new BusinessLogicException(
+                string.Format("Handler for {0} could not be found", 
+                @event.GetType().Name));
+
+        Task.Run(() =&gt;
+        {
+            methodLookups[@event.GetType()].Invoke(
+                theHandler, new[] {(object) @event});
+        }).Wait();
+
+    }
+}</pre>
+<p>&nbsp;</p>
+<h3>Typical Event Handler Implementation</h3>
+<p>Lets take a moment here.....where are we?</p>
+<p>&nbsp;</p>
+<p>We have seen who is the source of the new domain events that need to be acted 
+apon, which is done by the
+<a href="https://github.com/gautema/CQRSlite" target="_blank">CQRSlite</a> 
+regular 
+<code>IRepository </code>implementation. </p>
+<p>We have also seen how these events are published within the domain model, 
+which is done by the
+<a href="https://github.com/gautema/CQRSlite" target="_blank">CQRSlite</a> 
+<code>IEventPublisher </code>implementation. </p>
+<p>&nbsp;</p>
+<p>So what does an event handler look 
+like and what does it do with an incoming event?</p>
+<p>Well a typical event handler looks like this, where it can be seen that the 
+code below, where a typical event handler will 
+take the following dependencies:</p>
+<ol>
+	<li><code>IReadModelRepository </code>:&nbsp; To allow the event handler to 
+	make changes to the read model</li>
+	<li><code>IInterProcessBus </code>: To allow the domain model to broadcast 
+	read model change notifications to any read model consumer process (<a href="https://www.rabbitmq.com/install-windows.html" target="_blank">RabbitMQ</a> 
+	is used for this, obviously the consumer will need to have some <a href="https://www.rabbitmq.com/install-windows.html" target="_blank">RabbitMQ</a> 
+	subscriber code to make this happen)</li>
+</ol>
+<p>&nbsp;</p>
+<pre lang="cs">
+public class OrderCreatedEventHandler : IBusEventHandler&lt;OrderCreatedEvent&gt;
+{
+    private readonly IReadModelRepository readModelRepository;
+    private readonly IInterProcessBus interProcessBus;
+
+    public OrderCreatedEventHandler(
+        IReadModelRepository readModelRepository,
+        IInterProcessBus interProcessBus)
+    {
+        this.readModelRepository = readModelRepository;
+        this.interProcessBus = interProcessBus;
+    }
+
+    public Type HandlerType
+    {
+        get { return typeof (OrderCreatedEvent); }
+    }
+
+    public async void Handle(OrderCreatedEvent orderCreatedEvent)
+    {
+        await readModelRepository.AddOrder(new ReadModel.Models.Order()
+        {
+            OrderId = orderCreatedEvent.Id,
+            Address = orderCreatedEvent.Address,
+            Description = orderCreatedEvent.Description,
+            Version = orderCreatedEvent.Version,
+            OrderItems = orderCreatedEvent.OrderItems.Select(x =&gt;
+                new ReadModel.Models.OrderItem()
+                {
+                    OrderId = x.OrderId,
+                    StoreItemId = x.StoreItemId,
+                    StoreItemDescription = x.StoreItemDescription,
+                    StoreItemUrl = x.StoreItemUrl
+                }).ToList()
+        });
+
+        interProcessBus.SendMessage("OrderCreatedEvent");
+    }
+}
+</pre>
+<p>&nbsp;</p>
+<p>Just in case it is not clear enough, the event handler would be used to 
+update the read model with any changes that need to happen as the result of 
+the imcoming domain event. As I have also stated I went for a full asyncronous 
+example, so the demo app code needs to notifiy read model consumers of the 
+changes to the read model. This is discussed in a bit more detail below.</p>
 <p>&nbsp;</p>
 <p>&nbsp;</p>
-<h2>Projections From Events</h2>
-<p class="auto-style1">Mention Projac github library here, and show a worked example using our order aggregate</p>
 <p>&nbsp;</p>
-<p>
-<a href="https://github.com/yreynhout/Projac/blob/master/Sql.md" target="_blank">
-Projac</a> projection library</p>
+<h2>The Database</h2>
+<p>For the read model I chose to use a NoSQL database. This however could easily be a 
+relational database. Though if you do choose to go for a traditional relational 
+database route, you should think about how to denormalize the data contained in the 
+events, such that the UI (or other consumers of the read model) will have 
+everything they need by querying as fewer tables as possible. Ideally the real 
+model should have everything needed for a particular view in the UI (or a report 
+if some sort of reporting software is the read model consumer) in a single 
+table. There may be duplicated data in this table, but that is ok, speed is what 
+we care about here, everything we need in a read only format as quickly as 
+possible.</p>
+<p>One thing if you do go for raditional relational database, you may find that some sort of projection library may be helpful. There 
+is a good one on GitHub called <a href="https://github.com/yreynhout/Projac/blob/master/Sql.md" target="_blank">
+Projac</a>. Which allows you to take in some type <code>T</code> and project that out to some 
+SQL code.</p>
+<p>&nbsp;</p>
+<p>Though as I say, I am using a NoSQL database for the read model, namely
+<a href="ravendb.net" target="_blank">RavenDB</a> embedded, which I chose for 2 
+reasons:</p>
+<ol>
+	<li>The read model I needed was quite suited to a document database</li>
+	<li>By using <a href="ravendb.net" target="_blank">RavenDB</a> embedded I 
+	could just install it via NuGet, and it was no extra burden on you guys</li>
+</ol>
+<p>&nbsp;</p>
+<p>The read model for the demo app is realised using a very simple repository. I 
+could have gone crazy with this and created a unit of work implementation (since
+<a href="ravendb.net" target="_blank">RavenDB</a> is based on the NHibernate
+<code>ISession </code>concepe, in fact I have that code if anyone is interested 
+let me know) pretty easily, but for the sake of brevity 
+decided to keep things as simple as possible.</p>
+<p>&nbsp;Anyway here is the read model repository</p>
+<pre lang="cs">
+public interface IReadModelRepository
+{
+    Task&lt;bool&gt; CreateFreshDb();
+    Task&lt;bool&gt; SeedProducts();
+    Task&lt;List&lt;T&gt;&gt; GetAll&lt;T&gt;();
+    Task&lt;bool&gt; AddOrder(Order order);
+    Task&lt;bool&gt; DeleteOrder(Guid orderId);
+    Task&lt;bool&gt; UpdateOrderAddress(Guid orderId, string newAddress, int version);
+    Task&lt;Order&gt; GetOrder(Guid orderId);
+}
+
+
+public class ReadModelRepository : IReadModelRepository
+{
+
+    private IDocumentStore documentStore = null;
+    private string dataDir = @"C:\temp\RavenDb";
+
+    public ReadModelRepository()
+    {
+       
+    }
+
+    public async Task&lt;bool&gt; CreateFreshDb()
+    {
+
+        documentStore = new EmbeddableDocumentStore
+        {
+            DataDirectory = dataDir,
+            UseEmbeddedHttpServer = true
+        };
+
+        documentStore.Initialize();
+
+        //Add order Index
+        if (documentStore.DatabaseCommands.GetIndex("Order/ById") == null)
+        {
+            documentStore.DatabaseCommands.PutIndex(
+                "Order/ById",
+                new IndexDefinitionBuilder&lt;Order&gt;
+                {
+                    Map = ords =&gt; from order in ords 
+                                    select new { Id = order.Id }
+                });
+        }
+
+        var storeItems = await this.GetAll&lt;StoreItem&gt;();
+        if (!storeItems.Any())
+        {
+            await SeedProducts();
+        }
+        await DeleteAllOrders();
+        return true;
+    }
+
+    public Task&lt;bool&gt; SeedProducts()
+    {
+        return Task.Run(() =&gt;
+            {
+                using (IDocumentSession session = documentStore.OpenSession())
+                {
+                        CreateStoreItem(session,"RatGood.jpg","Rat God");
+                        CreateStoreItem(session, "NeverBoy.jpg", "Never Boy");
+                        CreateStoreItem(session, "Witcher.jpg", "Witcher");
+                        CreateStoreItem(session, "Eight.jpg", "Eight");
+                        CreateStoreItem(session, "MisterX.jpg", "Mister X");
+                        CreateStoreItem(session, "CaptainMidnight.jpg", "Captain Midnight");
+                    session.SaveChanges();
+                }
+                return true;
+            });
+    }
+
+    public Task&lt;List&lt;T&gt;&gt; GetAll&lt;T&gt;()
+    {
+        List&lt;T&gt; items = new List&lt;T&gt;();
+
+        return Task.Run(() =&gt;
+            {
+                using (IDocumentSession session = documentStore.OpenSession())
+                {
+                    int start = 0;
+                    while (true)
+                    {
+                        var current = session.Query&lt;T&gt;()
+                            .Customize(x =&gt; x.WaitForNonStaleResults())
+                            .Take(1024).Skip(start).ToList();
+                        if (current.Count == 0) break;
+
+                        start += current.Count;
+                        items.AddRange(current);
+
+                    }
+                }
+                return items;
+            });
+    }
+
+    public Task&lt;bool&gt; AddOrder(Order order)
+    {
+        return Task.Run(() =&gt;
+            {
+                using (IDocumentSession session = documentStore.OpenSession())
+                {
+                    session.Store(order);
+                    session.SaveChanges();
+                }
+                return true;
+            });
+    }
+
+    public Task&lt;bool&gt; DeleteOrder(Guid orderId)
+    {
+        return Task.Run(() =&gt;
+        {
+            using (IDocumentSession session = documentStore.OpenSession())
+            {
+                var order = session.Query&lt;Order&gt;()
+                    .SingleOrDefault(x =&gt; x.OrderId == orderId);
+                session.Delete(order);
+                session.SaveChanges();
+            }
+            return true;
+        });
+    }
+
+    public Task&lt;bool&gt; UpdateOrderAddress(Guid orderId, string newAddress, int version)
+    {
+        return Task.Run(() =&gt;
+        {
+            using (IDocumentSession session = documentStore.OpenSession())
+            {
+                var order = session.Query&lt;Order&gt;()
+                    .SingleOrDefault(x =&gt; x.OrderId == orderId);
+                order.Address = newAddress;
+                order.Version = version;
+                session.SaveChanges();
+            }
+            return true;
+        });
+    }
+
+
+    public Task&lt;Order&gt; GetOrder(Guid orderId)
+    {
+        return Task.Run(() =&gt;
+        {
+            using (IDocumentSession session = documentStore.OpenSession())
+            {
+                return session.Query&lt;Order&gt;()
+                    .SingleOrDefault(x =&gt; x.OrderId == orderId);
+            }
+        });
+    }
+
+
+
+
+    private void CreateStoreItem(IDocumentSession session, string imageUrl, 
+        string description)
+    {
+        StoreItem newStoreItem = new StoreItem
+        {
+            StoreItemId = Guid.NewGuid(),
+            ImageUrl = imageUrl,
+            Description = description
+        };
+        session.Store(newStoreItem);
+    }
+
+    private async Task&lt;bool&gt; DeleteAllOrders()
+    {
+        await Task.Run(() =&gt;
+        {
+            var staleIndexesWaitAction = new Action(() =&gt;
+                {
+                    while (documentStore.DatabaseCommands.GetStatistics()
+                        .StaleIndexes.Length != 0)
+                    {
+                        Thread.Sleep(10);
+                    }
+                });
+            staleIndexesWaitAction.Invoke();
+            documentStore.DatabaseCommands
+                .DeleteByIndex("Order/ById", new IndexQuery());
+            staleIndexesWaitAction.Invoke();
+        });
+        return true;
+    }
+}</pre>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<h2>Notifying The UI Of Changes</h2>
+<p>As I have stated on&nbsp; numerous occassions in this text, the decision I took 
+with this article, was to go for a fully 
+asynchronous system, just so I could see what difficulties one would come up 
+against in real life (I know I am a masichist). As such we need a way of 
+notifying the read model consumers (UI in the demo apps case) that something has 
+happened to the read model, and that the read model consumer should refresh its 
+data based on this incoming notification (or it could choose not to, that is the 
+consumers call).</p>
+<p>I decided to use <a href="https://www.rabbitmq.com/install-windows.html" target="_blank">RabbitMQ</a> 
+for this job. You could use other technologies, but I chose
+<a href="https://www.rabbitmq.com/install-windows.html" target="_blank">RabbitMQ</a>.
+</p>
+<p>I chose to send a simple notification message (event name as a <code>string</code>) 
+rather than some DTO. This way the consumer can decide what they need to read 
+from the read model. </p>
+<p>There are obviously 2 parts to this communication of events from read model 
+to the read model consumer, interprocess notification producer/comsumer. We will look at each of these parts here.</p>
+<p>&nbsp;</p>
+<h3>InterProcessBus (Producer)</h3>
+<p>This would typically be called at the end of an event handler in the domain 
+model, right after the read model has been updated. As I say, this for me, is a 
+simple string, which states what type of event just changed the read mode. There 
+is not too much to say here, we simply publish a string (the name of the event 
+that just changed the read model) on a queue using <a href="https://www.rabbitmq.com/install-windows.html" target="_blank">RabbitMQ</a></p>
+<pre lang="cs">
+public class InterProcessBus : IInterProcessBus
+{
+
+    private readonly string busName;
+    private readonly string connectionString;
+
+    public InterProcessBus()
+    {
+        this.busName = "InterProcessBus";
+        this.connectionString = ConfigurationManager.AppSettings["RabbitMqHost"];
+    }
+
+    public void SendMessage(string message)
+    {
+        var factory = new ConnectionFactory() { HostName = connectionString };
+        using (var connection = factory.CreateConnection())
+        {
+            using (var channel = connection.CreateModel())
+            {
+                var bytes = Encoding.ASCII.GetBytes(message);
+                channel.ExchangeDeclare(busName, "fanout");
+                channel.BasicPublish(busName, string.Empty, null, bytes);
+            }
+        }
+    }
+}
+</pre>
+<p>&nbsp;</p>
+<p>So that is the read model (domain model) side, but what about the read model 
+consumer. As I say in the demo apps case this is a UI. So lets see what that 
+looks like next.</p>
+<p>&nbsp;</p>
+<h3>How The UI Reads The ReadModel (Consumer)</h3>
+<p>The first part of this is to use a <a href="https://www.rabbitmq.com/install-windows.html" target="_blank">RabbitMQ</a> 
+subscriber that is listening for messages from the <a href="https://www.rabbitmq.com/install-windows.html" target="_blank">RabbitMQ</a> 
+publisher. This is shown below in the <code>InterProcessBusSubscriber </code>
+code</p>
+<p>&nbsp;</p>
+<pre lang="cs">
+public class InterProcessBusSubscriber : IInterProcessBusSubscriber, IDisposable
+{
+
+    private readonly string busName;
+    private readonly string connectionString;
+    private CancellationTokenSource cancellationToken;
+    private Task workerTask;
+    private Subject&lt;string&gt; eventsSubject = new Subject&lt;string&gt;();
+
+    public InterProcessBusSubscriber()
+    {
+        this.busName = "InterProcessBus";
+        this.connectionString = 
+            ConfigurationManager.AppSettings["RabbitMqHost"];
+        StartMessageListener();
+    }
+
+    private void StartMessageListener()
+    {
+        cancellationToken = new CancellationTokenSource();
+        workerTask = Task.Factory.StartNew(
+            () =&gt; ListenForMessage(), cancellationToken.Token);
+    }
+
+    public void Dispose()
+    {
+        CancelWorkerTask();
+    }
+
+    private void CancelWorkerTask()
+    {
+        if (workerTask == null) return;
+        cancellationToken.Cancel();
+        workerTask.Wait();
+        workerTask.Dispose();
+    }
+
+    private void ListenForMessage()
+    {
+        var factory = new ConnectionFactory() { HostName = connectionString };
+        using (var connection = factory.CreateConnection())
+        {
+            using (var channel = connection.CreateModel())
+            {
+                channel.ExchangeDeclare(busName, "fanout");
+
+                bool durable = true;
+                bool exclusive = false;
+                bool autoDelete = false;
+
+                var queue = channel.QueueDeclare(
+                    Assembly.GetEntryAssembly().GetName().Name,
+                    durable, exclusive, autoDelete, null);
+                channel.QueueBind(queue.QueueName, busName, string.Empty);
+                var consumer = new QueueingBasicConsumer(channel);
+
+                channel.BasicConsume(queue.QueueName, false, string.Empty, consumer);
+
+                while (true)
+                {
+                    if (cancellationToken.IsCancellationRequested)
+                        break;
+                    BasicDeliverEventArgs ea;
+                    consumer.Queue.Dequeue(10, out ea);
+
+                    if (ea == null)
+                        continue;
+
+                    var message = Encoding.ASCII.GetString(ea.Body);
+                    Task.Run(async () =&gt;
+                        {
+                            await Task.Run(() =&gt;
+                                {
+                                    eventsSubject.OnNext(message);
+                                });
+                        });
+                    channel.BasicAck(ea.DeliveryTag, false);
+                }
+
+            }
+
+        }
+    }
+
+
+    public IObservable&lt;string&gt; GetEventStream()
+    {
+        return eventsSubject.AsObservable();
+    }
+}
+</pre>
+<p>&nbsp;</p>
+<p>I have taken the decision to expose an RX <code>IObservable&lt;string&gt;</code> 
+from this <a href="https://www.rabbitmq.com/install-windows.html" target="_blank">RabbitMQ</a> 
+subscriber. This is nice as that means that any ViewModel that makes use of this <a href="https://www.rabbitmq.com/install-windows.html" target="_blank">RabbitMQ</a> 
+subscriber, can also subscribe (using RX) to the <code>IObservable&lt;string&gt;,
+</code>where it may choose to use any of the standard RX/LINQ operators, which is pretty useful. Here is an example of how 
+this process works.</p>
+<p>&nbsp;</p>
+<pre lang="cs">
+public OrdersViewModel(
+        IInterProcessBusSubscriber interProcessBusSubscriber,
+        OrderServiceInvoker orderServiceInvoker,
+        IMessageBoxService messageBoxService)
+    {
+        orderEvents = new List&lt;string&gt;()
+        {
+            "OrderCreatedEvent","OrderAddressChangedEvent","OrderDeletedEvent"
+        };
+
+        growlNotifications.Top = SystemParameters.WorkArea.Top + topOffset;
+        growlNotifications.Left = SystemParameters.WorkArea.Left + 
+            SystemParameters.WorkArea.Width - leftOffset;
+
+        var stream = interProcessBusSubscriber.GetEventStream();
+
+
+        disposables.Add(stream.Where(x =&gt; orderEvents.Contains(x))
+            .Subscribe(async x =&gt;
+            {
+                var newOrders = await orderServiceInvoker.CallService(service =&gt;
+                            service.GetAllOrdersAsync());
+
+                this.Orders = new List&lt;OrderViewModel&gt;(
+                    newOrders.Select(ord =&gt; new OrderViewModel(
+				ord, messageBoxService, orderServiceInvoker)));
+                this.HasOrders = Orders.Any();
+
+                if (this.HasOrders)
+                {
+                    growlNotifications.AddNotification(new Notification
+                    {
+                        Title = "Orders changed",
+                        ImageUrl = "pack://application:,,,/Images/metroInfo.png",
+                        Message =
+                            "New/modified orders have been obtained from the ReadModel. " + 
+			    "Click on the right hand side panel to see them"
+                    });
+                }
+            })
+        );
+           
+    }
+
+}</pre>
+<p>&nbsp;</p>
+<p>There are a couple of take away points in this ViewModel code.</p>
+<ol>
+	<li>By using RX, we are able to only react to events of interest to the 
+	actual ViewModel we are in</li>
+	<li>We can use the event name to determine what action to perform in the 
+	ViewModel. In this case ALL of the events simply cause the ViewModel to 
+	refresh the list of orders by reading from the read model again (via a 
+	simple WCF call <code>orderServiceInvoker.CallService(service =&gt; service.GetAllOrdersAsync())</code>) 
+	which simple uses the <code>ReadModelRepository </code>we saw earlier. IDue 
+	to the way I want to clean out the
+<a href="ravendb.net" target="_blank">RavenDB</a> when the app was run, I needed 
+	one place where this would happen, so had to have the acess to the read 
+	model behind a service (WCF) layer call. f were using a relational database 
+	we could simply have the client call into some ADO / micro orm code 
+	directly. </li>
+</ol>
+<p>&nbsp;</p>
+<p>And that is pretty much how the demo app updates after a change to the read 
+model.</p>
+<p>&nbsp;</p>
 <p>&nbsp;</p>
 <p>&nbsp;</p>
 <h1>Further Considerations</h1>
 <p>The following 2 points are things that I was aware of, but did not implement 
-in the demo that goes along with this article. </p>
+in the demo </p>
 <ul>
 	<li>Event Versioning</li>
 	<li>Snapshoting</li>
 </ul>
 <p>That said I am not a complete 
-deuche bag and will certainly talk you through these items, and shall also point 
+deuche bag, and will certainly talk you through these items, and shall also point 
 you at some good resources that talk you through them in a bit more detail.</p>
 <p>&nbsp;</p>
 <h2>Event Versioning</h2>
@@ -292,7 +1867,7 @@ http://cre8ivethought.com/blog/2010/02/09/cqrs-event-versioning</a></p>
 <p>
 &nbsp;</p>
 <p>
-Mark shows you one approach that would work for working with multiple versions 
+Mark shows you one approach that would work when you have a need for multiple versions 
 of events. That is a great place to start.</p>
 <p>
 &nbsp;</p>
@@ -327,8 +1902,8 @@ do the following:</p>
 	<li>Swap to using a SnapshotRepository instead of a regular Repository</li>
 </ul>
 <p>&nbsp;</p>
-<p>There is some example of snapshots working in one of the test cases, that 
-would be a good place to start if you wanted to also include snaopshotting.</p>
+<p>There is some examples of snapshots working in one of the test cases, that 
+would be a good place to start if you wanted to also include snapshotting.</p>
 <p>&nbsp;</p>
 <p>&nbsp;</p>
 <h1>That's It</h1>
@@ -341,10 +1916,11 @@ experts that may stumble across this article, and read it would correct anything
 I have got completly wrong. </p>
 <p>&nbsp;</p>
 <p>That said I have spent quite a bit of time on this one, so I am optimistic 
+(perhaps falsely) 
 that I have done a semi-reasonable job on it.</p>
 <p>&nbsp;</p>
 <p>Anyway if you like what you see, feel free to leave a comment, or even better 
-a vote, that would be freekin awesome.</p>
+a vote, that would be freeking awesome.</p>
 <p>&nbsp;</p>
 <p>&nbsp;</p>
 <p>&nbsp;</p>

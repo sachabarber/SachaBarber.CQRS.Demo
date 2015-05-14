@@ -65,7 +65,7 @@ namespace SachaBarber.CQRS.Demo.WPFClient.ViewModels.Orders
                         });
                     }
                 })
-          );
+            );
            
         }
 
