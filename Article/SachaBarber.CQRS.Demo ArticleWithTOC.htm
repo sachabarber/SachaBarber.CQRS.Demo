@@ -1,8 +1,145 @@
+ï»¿
 
-<head>
-</head>
 
-<h1>Introduction</h1>
+<ul>
+<li><a href="#Introduction">Introduction</a>
+<ul>
+<li><a href="#So-What-Exactly-Is-CQRS?">So What Exactly Is CQRS?</a></li>
+
+<li><a href="#So-What-Exactly-Is-Event-Sourcing?">So What Exactly Is Event Sourcing?</a></li>
+
+
+<li><a href="#So-Why-Might-We-Use-CQRS?">So Why Might We Use CQRS?</a></li>
+
+<li><a href="#Is-It-A-Golden-Bullet?">Is It A Golden Bullet?</a></li>
+
+</ul>
+
+<li><a href="#Where-Is-The-Code">Where Is The Code</a></li>
+
+<li><a href="#Prerequisites">Prerequisites</a></li>
+
+<li><a href="#The-Building-Blocks-Of-A-CQRS-Architected-Application">The Building Blocks Of A CQRS Architected Application</a>
+<ul>
+<li><a href="#Client">Client</a></li>
+
+<li><a href="#Command-Bus">Command Bus</a></li>
+
+<li><a href="#Command-Handlers">Command Handlers</a></li>
+
+<li><a href="#Domain">Domain</a></li>
+
+<li><a href="#Services">Services</a></li>
+
+<li><a href="#Repository">Repository</a></li>
+
+<li><a href="#Event-Bus">Event Bus</a></li>
+
+<li><a href="#Event-Handlers">Event Handlers</a></li>
+
+<li><a href="#Thin-Data-Layer">Thin Data Layer</a></li>
+
+<li><a href="#Query-Facade">Query Facade</a></li>
+
+</ul>
+
+
+<li><a href="#Synchronous-vs-Asynchronous-(Eventual-Consistency)">Synchronous vs Asynchronous (Eventual Consistency)</a>
+<ul>
+<li><a href="#Synchronous-Code-(Pseudo-Code)">Synchronous Code (Pseudo Code)</a></li>
+
+<li><a href="#Asynchronous-Code-(Pseudo-Code)">Asynchronous Code (Pseudo Code)</a></li>
+
+</ul>
+
+
+<li><a href="#To-Framework-Or-NOT?">To Framework Or NOT?</a></li>
+
+<li><a href="#The-Demo-App">The Demo App</a>
+<ul>
+<li><a href="#How-To-Run-The-Demo-App">How To Run The Demo App</a></li>
+
+<li><a href="#What's-Included-In-The-Demo-App?">What's Included In The Demo App?</a>
+<ul>
+<li><a href="#Create-A-New-Order">Create A New Order</a></li>
+
+<li><a href="#Delete-An-Order">Delete An Order</a></li>
+
+<li><a href="#Change-Address-Of-An-Order">Change Address Of An Order</a></li>
+
+</ul>
+
+</ul>
+
+
+<li><a href="#The-Write-Model">The Write Model</a>
+<ul>
+<li><a href="#How-The-Demo-UI-Issues-Commands">How The Demo UI Issues Commands</a>
+<ul>
+<li><a href="#Seperate-Commands">Seperate Commands</a></li>
+
+<li><a href="#How-Are-Command-Handlers-Called?">How Are Command Handlers Called?</a></li>
+
+
+<li><a href="#What-Does-A-Command-Actually-Do?">What Does A Command Actually Do?</a>
+<ul>
+<li><a href="#ISession-Implementation">ISession Implementation</a></li>
+
+<li><a href="#CacheRepository-">CacheRepository </a></li>
+
+<li><a href="#Repository-Class">Repository Class</a></li>
+
+<li><a href="#WOWSERS.-That-Was-Quite-The-Diversion,-Getting-Back-On-Track">WOWSERS. That Was Quite The Diversion, Getting Back On Track</a></li>
+
+<li><a href="#Aggregate-Apply">Aggregate Apply</a></li>
+
+</ul>
+
+</ul>
+
+
+<li><a href="#The-Event-Store">The Event Store</a></li>
+
+</ul>
+
+<li><a href="#The-Read-Model">The Read Model</a>
+<ul>
+<li><a href="#Event-Handlers">Event Handlers</a>
+<ul>
+<li><a href="#ource-Of-Published-Events>Source Of Published Events</strong></a></li>
+
+
+<li><a href="#IEventPublisher">IEventPublisher</a></li>
+
+<li><a href="#Typical-Event-Handler-Implementation">Typical Event Handler Implementation</a></li>
+
+</ul>
+
+<li><a href="#The-Database">The Database</a></li>
+
+<li><a href="#Notifying-The-UI-Of-Changes">Notifying The UI Of Changes</a>
+<ul>
+<li><a href="#InterProcessBus-(Producer)">InterProcessBus (Producer)</a></li>
+
+<li><a href="#How-The-UI-Reads-The-ReadModel-(Consumer)">How The UI Reads The ReadModel (Consumer)</a></li>
+
+</ul>
+
+</ul>
+
+<li><a href="#Further-Considerations">Further Considerations</a>
+<ul>
+<li><a href="#Event-Versioning">Event Versioning</a></li>
+
+<li><a href="#Snapshoting">Snapshoting</a></li>
+
+</ul>
+
+<li><a href="#That's-It">That's It</a></li>
+
+</ul>
+
+<h1><a name="Introduction" id="Introduction">Introduction</a></h1>
 <p>About 3 years ago I went to a talk given my some dude on CQRS. At the time I 
 thought mmm that's a neat idea, but I could not really see how it applied to my 
 every day job. So I kind of forgot about it a bit. 2 years or so pass, and the 
@@ -33,7 +170,7 @@ the attached demo app.</p>
 article is about me trying to understand CQRS, and trying to explain it to 
 others.</p>
 <p>&nbsp;</p>
-<h2>So What Exactly Is CQRS?</h2>
+<h2><a name="So-What-Exactly-Is-CQRS?" id="So-What-Exactly-Is-CQRS?">So What Exactly Is CQRS?</a></h2>
 <p><em>In his book &quot;Object Oriented Software Construction,&quot; Bertrand Meyer 
 introduced the term &quot;Command Query Separation&quot; to describe the principle that an 
 object's methods should be either commands or queries. A query returns data and 
@@ -47,7 +184,7 @@ previously only one. The separation occurs based upon whether the methods are a
 command or a query (the same definition that is used by Meyer in Command and 
 Query Separation: a command is any method that mutates state and a query is any 
 method that returns a value).&quot;</em></p>
-<p><em><br>—Greg Young, CQRS, Task Based UIs, Event Sourcing age!</em></p>
+<p><em><br>ï¿½Greg Young, CQRS, Task Based UIs, Event Sourcing age!</em></p>
 <p><em><br>What is important and interesting about this simple pattern is how, 
 where, and why you use it when you build enterprise systems. Using this simple 
 pattern enables you to meet a wide range of architectural challenges, such as 
@@ -64,7 +201,7 @@ read access. In simple terms, you don't service queries via the same module of a
 service that you process commands through. In REST terminology, GET requests 
 wire up to a different thing from what PUT, POST, and DELETE requests wire up 
 to.&quot;<br></em></p>
-<p><em>—Clemens Vasters (CQRS Advisors Mail List)</em></p>
+<p><em>ï¿½Clemens Vasters (CQRS Advisors Mail List)</em></p>
 <p>&nbsp;</p>
 <p>
 <strong>Some Good CQRS Resources</strong></p>
@@ -81,7 +218,7 @@ to.&quot;<br></em></p>
 <p>&nbsp;</p>
 <p>&nbsp;</p>
 <p>&nbsp;</p>
-<h2>So What Exactly Is Event Sourcing?</h2>
+<h2><a name="So-What-Exactly-Is-Event-Sourcing?" id="So-What-Exactly-Is-Event-Sourcing?">So What Exactly Is Event Sourcing?</a></h2>
 <p>I quite like the way Martin Fowler describes this one:</p>
 <p><em>We can query an application's state to find out the current state 
 of the world, and this answers many questions. However there are times when we 
@@ -106,8 +243,8 @@ In a nutshell that is how event sourcing works.</p>
 use CQRS, but if you want to create a CQRS system you don't necessarily need 
 CQRS.</p>
 <p>&nbsp;</p>
-<h2>&nbsp;</h2>
-<h2><strong>So Why Might We Use CQRS?</strong></h2>
+<h2><a name="&nbsp;" id="&nbsp;">&nbsp;</a></h2>
+<h2><a name="<strong>So-Why-Might-We-Use-CQRS?</strong>" id="<strong>So-Why-Might-We-Use-CQRS?</strong>"><strong>So Why Might We Use CQRS?</strong></a></h2>
 <p>In most applications I have seen I think it is fair to say that you may have 
 something like this</p>
 <ul>
@@ -136,7 +273,7 @@ them on the aggregate.</p>
 <p>These are 2 compelling reasons to use CQRS.</p>
 <p>&nbsp;</p>
 <p>&nbsp;</p>
-<h2>Is It A Golden Bullet?</h2>
+<h2><a name="Is-It-A-Golden-Bullet?" id="Is-It-A-Golden-Bullet?">Is It A Golden Bullet?</a></h2>
 <p>I personally do not think it is suitable for every part of your application. 
 For example imagine this quite common web based scenario:&nbsp;</p>
 <p><em>&quot;The user must type their username and password into some input fields, 
@@ -173,13 +310,13 @@ details. </p>
 <p>Albeit there may be other hairy issues raised by doing the CQRS operation 
 fully asynchrounsly, I will talk about that next. </p>
 <p>&nbsp;</p>
-<h1>Where Is The Code</h1>
+<h1><a name="Where-Is-The-Code" id="Where-Is-The-Code">Where Is The Code</a></h1>
 <p>The demo code for this article can be obtained from my github account : </p>
 <p>
 <a href="https://github.com/sachabarber/SachaBarber.CQRS.Demo" target="_blank">
 https://github.com/sachabarber/SachaBarber.CQRS.Demo</a></p>
 <p>&nbsp;</p>
-<h1>Prerequisites</h1>
+<h1><a name="Prerequisites" id="Prerequisites">Prerequisites</a></h1>
 <p>I have tried my hardest to keep the prerequisites of the demo code down to 
 the bare minimum. I have been good to you by using RavenDB embedded for the read 
 model, and by creating an in memory event store, there is still however a need 
@@ -199,7 +336,7 @@ for the following bits to be installed:</p>
 service automatically using the system account.</p>
 <p>&nbsp;</p>
 <p>&nbsp;</p>
-<h1>The Building Blocks Of A CQRS Architected Application</h1>
+<h1><a name="The-Building-Blocks-Of-A-CQRS-Architected-Application" id="The-Building-Blocks-Of-A-CQRS-Architected-Application">The Building Blocks Of A CQRS Architected Application</a></h1>
 <p>The diagram below shows the typical building blocks/process flows of a CQRS 
 application.</p>
 <p><a href="BuildingBlocksLarge.png" target="_blank"><img alt="" height="455" src="BuildingBlocksSmall.png" width="630"></a></p>
@@ -211,35 +348,35 @@ building CQRS apps. I will describe each of the blocks above in bit of detail
 below, but we will revisit these in much more detail when we discuss the demo 
 app as a whole.</p>
 <p>&nbsp;</p>
-<h2>Client</h2>
+<h2><a name="Client" id="Client">Client</a></h2>
 <p>The client could be any form of client really, as win forms app, wife app, web 
 site etc <span lang="en-gb"></span>As long as it can send a command it could be a client the data 
 model.</p>
 <p>The demo app I use here is a WPF client that utilises WCF to send commands to 
 the domain model.</p>
 <p>&nbsp;</p>
-<h2>Command Bus</h2>
+<h2><a name="Command-Bus" id="Command-Bus">Command Bus</a></h2>
 <p>The command bus is really just used to obtain a handler for the incoming 
 command. There are some cool libraries around that do things like this, such as 
 Jimmy Bogard's <a href="https://github.com/jbogard/Mediatr">MediatR</a>. Thing 
 is with that is that library is that it is a bit overkill for the requirements. 
 As such I have used a simple bit of reflection.</p>
 <p>&nbsp;</p>
-<h2>Command Handlers</h2>
+<h2><a name="Command-Handlers" id="Command-Handlers">Command Handlers</a></h2>
 <p>These are the handlers that will deal with executing the command logic. There 
 should be a 1:1 mapping between an incoming command and command handler.</p>
 <p>&nbsp;</p>
-<h2>Domain</h2>
+<h2><a name="Domain" id="Domain">Domain</a></h2>
 <p>The domain model is the central part of the system, and it this that will 
 have any historical events from the event store played against the domain model 
 aggregates. Or have any new events (via incoming commands) applied to the 
 aggregates, before any new events are persisted to the events store.</p>
 <p>&nbsp;</p>
-<h2>Services</h2>
+<h2><a name="Services" id="Services">Services</a></h2>
 <p>These are any domain services that do not fit with aggregate roots or value 
 types that are part of the domain.</p>
 <p>&nbsp;</p>
-<h2>Repository</h2>
+<h2><a name="Repository" id="Repository">Repository</a></h2>
 <p>The repository pattern is used for 2 main purposes:</p>
 <ul>
 	<li>To store any uncommitted events to the event store. </li>
@@ -252,10 +389,10 @@ types that are part of the domain.</p>
 store the events in the event store. This is due to the fact that this article 
 uses CQRS with Event Sourcing. </strong></p>
 <p>&nbsp;</p>
-<h2>Event Bus</h2>
+<h2><a name="Event-Bus" id="Event-Bus">Event Bus</a></h2>
 <p>This is used to publish out events that been applied to the domain model.</p>
 <p>&nbsp;</p>
-<h2>Event Handlers</h2>
+<h2><a name="Event-Handlers" id="Event-Handlers">Event Handlers</a></h2>
 <p>These are handlers that will deal with executing the event logic. There 
 should be a 1:1 mapping between a domain event and event handler. It is usually 
 at this bit of the process that the read model is updated. The read model may be 
@@ -270,26 +407,26 @@ required to transform the data in some way. This may also be known as
 <p><strong>NOTE :&nbsp; This is writing to the &quot;Read&quot; model (but only internally 
 in the domain, the client may NOT write to the read model only read from it)</strong></p>
 <p>&nbsp;</p>
-<h2>Thin Data Layer</h2>
+<h2><a name="Thin-Data-Layer" id="Thin-Data-Layer">Thin Data Layer</a></h2>
 <p>As previously stated we want to read model to be as easy to deal with as 
 possible, as such a simple data access layer is all that is needed. Perhaps some 
 uber simple repository is needed, but that would be all, no validation/no 
 business logic, just a way of getting stuff out of the read model.</p>
 <p>&nbsp;</p>
-<h2>Query Facade</h2>
+<h2><a name="Query-Facade" id="Query-Facade">Query Facade</a></h2>
 <p>We should allow queries to be executed almost directly over the read model. 
 Remember from the clients point of view, its a read ONLY model. As such the 
 client may even read directly from the read model.</p>
 <p>&nbsp;</p>
-<h1>&nbsp;</h1>
-<h1>Synchronous vs Asynchronous (Eventual Consistency)</h1>
+<h1><a name="&nbsp;" id="&nbsp;">&nbsp;</a></h1>
+<h1><a name="Synchronous-vs-Asynchronous-(Eventual-Consistency)" id="Synchronous-vs-Asynchronous-(Eventual-Consistency)">Synchronous vs Asynchronous (Eventual Consistency)</a></h1>
 <p>One of the things that I immediately realised when I started this demo app, 
 was that there is a tremendous difference in the complexities if you choose to 
 go with everything asynchronous versus synchronous. What I mean by that is that 
 if you go down the synchronous route you may have something like this (pseudo 
 code)</p>
 <p>&nbsp;</p>
-<h2>Synchronous Code (Pseudo Code)</h2>
+<h2><a name="Synchronous-Code-(Pseudo-Code)" id="Synchronous-Code-(Pseudo-Code)">Synchronous Code (Pseudo Code)</a></h2>
 <p>If we assume that the&nbsp; knowledge that all parts of the system are 
 synchronous. That is the internals of the CQRS architecture that we using are 
 fully synchronous components. T</p>
@@ -302,7 +439,7 @@ write model of the CQRS domain model), and let that run to completion, and then
 read from the read model, at which point we would expect our new order to be 
 there. All good</p>
 <p>&nbsp;</p>
-<h2>Asynchronous Code (Pseudo Code)</h2>
+<h2><a name="Asynchronous-Code-(Pseudo-Code)" id="Asynchronous-Code-(Pseudo-Code)">Asynchronous Code (Pseudo Code)</a></h2>
 <p>This approach uses the idea of eventual consistency, where we make a write to 
 the domain model (initiated via a command), but we do this with the knowledge 
 that all parts of the system are asynchronous. That is the internals of the CQRS 
@@ -352,8 +489,8 @@ data will <strong>eventually be consistent,</strong> or it may end up in a error
 state that may even require some manual intervention to make it consistent again 
 (that is worst error case though).</p>
 <p>&nbsp;</p>
-<h1>&nbsp;</h1>
-<h1>To Framework Or NOT?</h1>
+<h1><a name="&nbsp;" id="&nbsp;">&nbsp;</a></h1>
+<h1><a name="To-Framework-Or-NOT?" id="To-Framework-Or-NOT?">To Framework Or NOT?</a></h1>
 <p>Now Ashic that I work with, has always stated that he thinks using a 
 framework for CQRS is not a great way to go, as you may need more control than a 
 framework offers sometimes. This is certainly true, and is a common problem. 
@@ -382,7 +519,7 @@ decision to use it.</p>
 <p>&nbsp;</p>
 <p>&nbsp;</p>
 <p>&nbsp;</p>
-<h1>The Demo App</h1>
+<h1><a name="The-Demo-App" id="The-Demo-App">The Demo App</a></h1>
 <p>The demo app is a small WPF app. We will not be dissecting any code in this 
 section, that will be discussed in a while. In this section I just wanted to 
 cover the main scenarios that we will cover, and how the UI allows for them.</p>
@@ -408,7 +545,7 @@ all the time, so this fake delay would not be needed.</p>
 	stuff they saved before. This is by design, and it is for your own good </p>
 </div>
 <p>&nbsp;</p>
-<h2>How To Run The Demo App</h2>
+<h2><a name="How-To-Run-The-Demo-App" id="How-To-Run-The-Demo-App">How To Run The Demo App</a></h2>
 <p>Once you have the codebase and have installed the prerequisites you should 
 open the Visual Studio (as an Administrator) and ensure that the following 2 
 projects are set to run:</p>
@@ -419,10 +556,10 @@ projects are set to run:</p>
 <p>&nbsp;</p>
 <p>&nbsp;</p>
 <p>&nbsp;</p>
-<h2>What's Included In The Demo App?</h2>
+<h2><a name="What's-Included-In-The-Demo-App?" id="What's-Included-In-The-Demo-App?">What's Included In The Demo App?</a></h2>
 <p>The demo app that this article offers the following scenarios:</p>
 <p>&nbsp;</p>
-<h3>Create A New Order</h3>
+<h3><a name="Create-A-New-Order" id="Create-A-New-Order">Create A New Order</a></h3>
 <p>The demo app starts up with a bunch of comics. Where you may select the 
 comics you want, and then click the add button, which will allow some minimal 
 information. This will eventually create a new order (via the write model) which 
@@ -458,7 +595,7 @@ side button.</p>
 <p>This is the orders view, that shows the orders from the read model.</p>
 <p>&nbsp;</p>
 <p>&nbsp;</p>
-<h3>Delete An Order</h3>
+<h3><a name="Delete-An-Order" id="Delete-An-Order">Delete An Order</a></h3>
 <p>From the current order(s) view the user may choose to delete an order. This 
 will eventually delete the requested order (via the write model) which will 
 cause an <strong>OrderDeletedEvent</strong> notification to come back to the UI 
@@ -467,7 +604,7 @@ and will update itself by reading from the read model. </p>
 <p><img alt="" height="665" src="DeleteOrderButton.png" width="630"></p>
 <p>&nbsp;</p>
 <p>&nbsp;</p>
-<h3>Change Address Of An Order</h3>
+<h3><a name="Change-Address-Of-An-Order" id="Change-Address-Of-An-Order">Change Address Of An Order</a></h3>
 <p>From the current order(s) view the user may choose to go into edit mode (the 
 user may also cancel edit mode) for the selected order. &nbsp;</p>
 <p><img alt="" height="668" src="EditMode.png" width="630"></p>
@@ -496,13 +633,13 @@ know :</p>
 <p>&nbsp;</p>
 <p>So its about time to start examining some code then.</p>
 <p>&nbsp;</p>
-<h1>&nbsp;</h1>
-<h1>The Write Model</h1>
+<h1><a name="&nbsp;" id="&nbsp;">&nbsp;</a></h1>
+<h1><a name="The-Write-Model" id="The-Write-Model">The Write Model</a></h1>
 <p>This section discusses the write model. Which comes into play when a client 
 of the domain model issues a command. For the demo app this means that a UI will 
 be issuing the commands.</p>
 <p>&nbsp;</p>
-<h2>How The Demo UI Issues Commands</h2>
+<h2><a name="How-The-Demo-UI-Issues-Commands" id="How-The-Demo-UI-Issues-Commands">How The Demo UI Issues Commands</a></h2>
 <p>The demo app calls a async/await enabled WCF service. There is the standard 
 WCF stuff, a proxy/ClientChannel etc etc. I will not bore you with that, but 
 this is what typical usage of the WCF service looks like from the UI to send 
@@ -560,7 +697,7 @@ public class OrderService : IOrderService
     }
 }</pre>
 <p>&nbsp;</p>
-<h3>Seperate Commands</h3>
+<h3><a name="Seperate-Commands" id="Seperate-Commands">Seperate Commands</a></h3>
 <p>Note that 
 there is a single <code>SendCommandAsync(Command command)</code> method. So how 
 does that work? That is standard WCF stuff actually. If we examine the <code>Command
@@ -580,7 +717,7 @@ public abstract class Command : ICommand
     public int ExpectedVersion { get; set; }
 }</pre>
 <p>&nbsp;</p>
-<h3>How Are Command Handlers Called?</h3>
+<h3><a name="How-Are-Command-Handlers-Called?" id="How-Are-Command-Handlers-Called?">How Are Command Handlers Called?</a></h3>
 <p>Within the demo app <code>OrderService</code>, there is an IOC satisified 
 constructor dependency for <code>OrderCommandHandlers</code>. This object 
 contains all the command handlers for the demo app. This is just how I have done it for 
@@ -638,8 +775,8 @@ public class OrderCommandHandlers : ICommandHandler&lt;CreateOrderCommand&gt;,
     }
 }
 </pre>
-<h3>&nbsp;</h3>
-<h3>What Does A Command Actually Do?</h3>
+<h3><a name="&nbsp;" id="&nbsp;">&nbsp;</a></h3>
+<h3><a name="What-Does-A-Command-Actually-Do?" id="What-Does-A-Command-Actually-Do?">What Does A Command Actually Do?</a></h3>
 <p>Well that depends, but before we get into the the possible scenarios, lets 
 talk about something that happens inn all the command handle methods. Whicb is 
 to use the <code>ISession </code>object to <code>Add()</code>/<code>Get()</code> 
@@ -647,7 +784,7 @@ and <code>Commit()</code> methods. Shown below is the <code>ISession </code>
 implementation (this is part of the <a href="https://github.com/gautema/CQRSlite" target="_blank">CQRSlite</a> 
 framework)</p>
 <p>&nbsp;</p>
-<h4>ISession Implementation</h4>
+<h4><a name="ISession-Implementation" id="ISession-Implementation">ISession Implementation</a></h4>
 <pre lang="cs">
 public class Session : ISession
 {
@@ -727,7 +864,7 @@ public class Session : ISession
 	<li>The ability to commit changes made during the current session</li>
 </ul>
 <p>&nbsp;</p>
-<h4>CacheRepository </h4>
+<h4><a name="CacheRepository-" id="CacheRepository-">CacheRepository </a></h4>
 <p>The exact <code>IRepository </code>that the <code>ISession </code>implementation uses in the demo app 
 is a <code>CacheRepository</code>, which decorates a regular <code>IRepository
 </code>implementation. Anyway 
@@ -838,7 +975,7 @@ the aggregate state based on past events.</p>
 <p>The other thing that the above code doe is to cache any aggregates it sees for some 
 time period. After all it is a <strong>Cache</strong>Repository.</p>
 <p>&nbsp;</p>
-<h4><strong>Repository Class</strong></h4>
+<h4><a name="<strong>Repository-Class</strong>" id="<strong>Repository-Class</strong>"><strong>Repository Class</strong></a></h4>
 <p>The regular <code>Repository </code>implementation (ie non caching), deals with storing uncommitted aggregate 
 events to the event store, and notifying the read model via the <code>
 IEventPublisher </code>implementation (internal application bus) that is IOCd in 
@@ -910,7 +1047,7 @@ public class Repository : IRepository
 </pre>
 <p>&nbsp;</p>
 <p>&nbsp;</p>
-<h4><strong>WOWSERS. That Was Quite The Diversion, Getting Back On Track</strong></h4>
+<h4><a name="<strong>WOWSERS.-That-Was-Quite-The-Diversion,-Getting-Back-On-Track</strong>" id="<strong>WOWSERS.-That-Was-Quite-The-Diversion,-Getting-Back-On-Track</strong>"><strong>WOWSERS. That Was Quite The Diversion, Getting Back On Track</strong></a></h4>
 <p>Ok sorry about that, as I say that was a bit of a diversion. We were talking about 
 how 
 commands were handled, before we started looking onto how the <code>ISession
@@ -977,7 +1114,7 @@ public class OrderCommandHandlers : ICommandHandler&lt;CreateOrderCommand&gt;,
 I want to show you now is what happens when we handle a command for an existing 
 aggregate. Lets take the <code>DeleteOrderCommand </code>for example.</p>
 <p>&nbsp;</p>
-<h4>Aggregate Apply</h4>
+<h4><a name="Aggregate-Apply" id="Aggregate-Apply">Aggregate Apply</a></h4>
 <p>So lets follow the flow for <code>DeleteOrderCommand </code>, which so far 
 has given us an aggregate, where we call the <code>Order </code>aggregate <code>
 Delete()</code> method. Lets see that method shall we.</p>
@@ -1125,9 +1262,9 @@ private void Apply(OrderDeletedEvent e)
 }</pre>
 <p>This workflow is pretty hairy, so you may need to read all of the above again (and again), to get a correct understanding</p>
 
-<h2>&nbsp;</h2>
-<h2>&nbsp;</h2>
-<h2>The Event Store</h2>
+<h2><a name="&nbsp;" id="&nbsp;">&nbsp;</a></h2>
+<h2><a name="&nbsp;" id="&nbsp;">&nbsp;</a></h2>
+<h2><a name="The-Event-Store" id="The-Event-Store">The Event Store</a></h2>
 <p>The <a href="https://github.com/gautema/CQRSlite" target="_blank">CQRSlite</a> 
 framework contains the following interface for the event store.</p>
 <pre lang="cs">
@@ -1186,13 +1323,13 @@ public class InMemoryEventStore : IEventStore
 <code>Dictionary&lt;TKey,TValue&gt;</code>, so I think its fine.</p>
 <p>&nbsp;</p>
 <p>&nbsp;</p>
-<h1>The Read Model</h1>
+<h1><a name="The-Read-Model" id="The-Read-Model">The Read Model</a></h1>
 <p>This section discusses the read model. Which comes into play after the new 
 events have been stored in the event store, and published internally within the 
 domain model by the the <code>Repository </code>class which is part of the <a href="https://github.com/gautema/CQRSlite" target="_blank">CQRSlite</a> 
 framework.</p>
 <p>&nbsp;</p>
-<h2>Event Handlers</h2>
+<h2><a name="Event-Handlers" id="Event-Handlers">Event Handlers</a></h2>
 <p>Any events that are stored in the current session and that end up being 
 persisted to the event store, and also published internally within the domain 
 model using a simple internal process publisher. There are then 
@@ -1208,7 +1345,7 @@ read model that something has changed. For the demo app this is the job of the
 event handler(s).</p>
 <p>Lets see the pieces that make this happen.</p>
 <p>&nbsp;</p>
-<h3><strong>Source Of Published Events</strong></h3>
+<h3><a name="<strong>Source-Of-Published-Events</strong>" id="<strong>Source-Of-Published-Events</strong>"><strong>Source Of Published Events</strong></a></h3>
 <p>Within the <a href="https://github.com/gautema/CQRSlite" target="_blank">CQRSlite</a> 
 framework there is the following code inside of the regular <code>IRepository </code>implemenation code, where it can be seen that there is a line that publishes out 
 any events (see this line <code>_publisher.Publish(@event)</code> ) that are saved to the event store. 
@@ -1240,8 +1377,8 @@ public void Save&lt;T&gt;(T aggregate, int? expectedVersion = null)
     }
     aggregate.MarkChangesAsCommitted();
 }</pre>
-<h3>&nbsp;</h3>
-<h3>IEventPublisher</h3>
+<h3><a name="&nbsp;" id="&nbsp;">&nbsp;</a></h3>
+<h3><a name="IEventPublisher" id="IEventPublisher">IEventPublisher</a></h3>
 <p>The call to the <code>IEventPublisher.Publish(..)</code> made within the <a href="https://github.com/gautema/CQRSlite" target="_blank">CQRSlite</a> 
 framework regular <code>IRepository, </code>should result in a event handler being called 
 that will handle the published 
@@ -1306,7 +1443,7 @@ public class BusEventPublisher : IEventPublisher
     }
 }</pre>
 <p>&nbsp;</p>
-<h3>Typical Event Handler Implementation</h3>
+<h3><a name="Typical-Event-Handler-Implementation" id="Typical-Event-Handler-Implementation">Typical Event Handler Implementation</a></h3>
 <p>Lets take a moment here.....where are we?</p>
 <p>&nbsp;</p>
 <p>We have seen who is the source of the new domain events that need to be acted 
@@ -1383,7 +1520,7 @@ changes to the read model. This is discussed in a bit more detail below.</p>
 <p>&nbsp;</p>
 <p>&nbsp;</p>
 <p>&nbsp;</p>
-<h2>The Database</h2>
+<h2><a name="The-Database" id="The-Database">The Database</a></h2>
 <p>For the read model I chose to use a NoSQL database. This however could easily be a 
 relational database. Though if you do choose to go for a traditional relational 
 database route, you should think about how to denormalize the data contained in the 
@@ -1608,7 +1745,7 @@ public class ReadModelRepository : IReadModelRepository
 }</pre>
 <p>&nbsp;</p>
 <p>&nbsp;</p>
-<h2>Notifying The UI Of Changes</h2>
+<h2><a name="Notifying-The-UI-Of-Changes" id="Notifying-The-UI-Of-Changes">Notifying The UI Of Changes</a></h2>
 <p>As I have stated on&nbsp; numerous occassions in this text, the decision I took 
 with this article, was to go for a fully 
 asynchronous system, just so I could see what difficulties one would come up 
@@ -1627,7 +1764,7 @@ from the read model. </p>
 <p>There are obviously 2 parts to this communication of events from read model 
 to the read model consumer, interprocess notification producer/comsumer. We will look at each of these parts here.</p>
 <p>&nbsp;</p>
-<h3>InterProcessBus (Producer)</h3>
+<h3><a name="InterProcessBus-(Producer)" id="InterProcessBus-(Producer)">InterProcessBus (Producer)</a></h3>
 <p>This would typically be called at the end of an event handler in the domain 
 model, right after the read model has been updated. As I say, this for me, is a 
 simple string, which states what type of event just changed the read mode. There 
@@ -1666,7 +1803,7 @@ public class InterProcessBus : IInterProcessBus
 consumer. As I say in the demo apps case this is a UI. So lets see what that 
 looks like next.</p>
 <p>&nbsp;</p>
-<h3>How The UI Reads The ReadModel (Consumer)</h3>
+<h3><a name="How-The-UI-Reads-The-ReadModel-(Consumer)" id="How-The-UI-Reads-The-ReadModel-(Consumer)">How The UI Reads The ReadModel (Consumer)</a></h3>
 <p>The first part of this is to use a <a href="https://www.rabbitmq.com/install-windows.html" target="_blank">RabbitMQ</a> 
 subscriber that is listening for messages from the <a href="https://www.rabbitmq.com/install-windows.html" target="_blank">RabbitMQ</a> 
 publisher. This is shown below in the <code>InterProcessBusSubscriber </code>
@@ -1841,7 +1978,7 @@ model.</p>
 <p>&nbsp;</p>
 <p>&nbsp;</p>
 <p>&nbsp;</p>
-<h1>Further Considerations</h1>
+<h1><a name="Further-Considerations" id="Further-Considerations">Further Considerations</a></h1>
 <p>The following 2 points are things that I was aware of, but did not implement 
 in the demo </p>
 <ul>
@@ -1852,7 +1989,7 @@ in the demo </p>
 deuche bag, and will certainly talk you through these items, and shall also point 
 you at some good resources that talk you through them in a bit more detail.</p>
 <p>&nbsp;</p>
-<h2>Event Versioning</h2>
+<h2><a name="Event-Versioning" id="Event-Versioning">Event Versioning</a></h2>
 <p><em>When using Event Sourcing you store your events in an Event Store. This 
 Event Store can only insert new events and read historical events, nothing more 
 nothing less. So when you change your domain logic and also the events belonging 
@@ -1871,7 +2008,7 @@ Mark shows you one approach that would work when you have a need for multiple ve
 of events. That is a great place to start.</p>
 <p>
 &nbsp;</p>
-<h2>Snapshoting</h2>
+<h2><a name="Snapshoting" id="Snapshoting">Snapshoting</a></h2>
 <p><em>One part of Event Sourcing that could become problematic is those objects 
 with long, complex lifetimes. In virtually all cases, an object's lifetime is 
 relatively short--perhaps a dozen events or so. But there are cases in which an 
@@ -1906,7 +2043,7 @@ do the following:</p>
 would be a good place to start if you wanted to also include snapshotting.</p>
 <p>&nbsp;</p>
 <p>&nbsp;</p>
-<h1>That's It</h1>
+<h1><a name="That's-It" id="That's-It">That's It</a></h1>
 <p>That is all I wanted to say this time. I do hope this is useful for some of you out there. I have certainly 
 learned a hell of a lot by wanting to write an article about this. I honestly 
 believe if you can learn enough to explain something to someone else you have 
