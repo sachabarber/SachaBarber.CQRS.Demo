@@ -11,6 +11,7 @@ using SachaBarber.CQRS.Demo.Orders;
 using SachaBarber.CQRS.Demo.Orders.ReadModel;
 using SachaBarber.CQRS.Demo.WPFClient.Services;
 using SachaBarber.CQRS.Demo.WPFClient.ViewModels;
+using SachaBarber.CQRS.Demo.SharedCore.Services;
 
 namespace SachaBarber.CQRS.Demo.WPFClient
 {
@@ -24,7 +25,7 @@ namespace SachaBarber.CQRS.Demo.WPFClient
             Container.RegisterType<IDialogService, DialogService>(new TransientLifetimeManager());
             Container.RegisterType<ISchedulerService, SchedulerService>(new TransientLifetimeManager());
             Container.RegisterType<CreateOrderDialogViewModelFactory>(new ContainerControlledLifetimeManager());
-            Container.RegisterType<IInterProcessBusSubscriber, InterProcessBusSubscriber>(new ContainerControlledLifetimeManager());
+            Container.RegisterType<IInterProcessBusSubscriber, MSMQAdapter.BusSubscriber>(new ContainerControlledLifetimeManager());
             Container.RegisterType<OrderServiceInvoker>(new ContainerControlledLifetimeManager());
         }
 

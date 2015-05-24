@@ -14,8 +14,8 @@ using SachaBarber.CQRS.Demo.SharedCore.WCF;
 namespace SachaBarber.CQRS.Demo.Orders.Domain
 {
     [ServiceBehavior(InstanceContextMode = InstanceContextMode.PerCall)]
-    //Useful when debugging, see App.Config too
-    //[ErrorHandlerBehavior]
+    // Useful when debugging, see App.Config too
+    [ErrorHandlerBehavior]
     public class OrderService : IOrderService
     {
         private readonly OrderCommandHandlers commandHandlers;

@@ -16,7 +16,9 @@ namespace SachaBarber.CQRS.Demo.Orders.Domain.Bus
     {
         private readonly IBusEventHandler[] _handlers;
         private Dictionary<Type,MethodInfo> methodLookups = 
-            new Dictionary<Type, MethodInfo>(); 
+            new Dictionary<Type, MethodInfo>();
+
+        private NLog.Logger logger = NLog.LogManager.GetLogger("BusEventPublisher");
 
         public BusEventPublisher(IBusEventHandler[] handlers)
         {
@@ -44,6 +46,7 @@ namespace SachaBarber.CQRS.Demo.Orders.Domain.Bus
 
         public void Publish<T>(T @event) where T : IEvent
         {
+            logger.Info("Publish event {0} {1}({2})", @event.GetType(), @event.Id, @event.Version);
 
             var theHandler = _handlers.SingleOrDefault(
                 x => x.HandlerType == @event.GetType());
@@ -55,10 +58,10 @@ namespace SachaBarber.CQRS.Demo.Orders.Domain.Bus
 
             Task.Run(() =>
             {
-                methodLookups[@event.GetType()].Invoke(
-                    theHandler, new[] {(object) @event});
-            }).Wait();
-
+                methodLookups[@event.GetType()].Invoke(theHandler, new[] {(object) @event});
+            })
+            //.ContinueWith(t => logger.Error("Error occurred while publishing event", t.Exception), TaskContinuationOptions.OnlyOnFaulted)
+            .Wait();
         }
     }
 }
