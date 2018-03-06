@@ -13,6 +13,8 @@ using SachaBarber.CQRS.Demo.Orders.ReadModel.Models;
 using SachaBarber.CQRS.Demo.WPFClient.Services;
 using System.Windows.Input;
 using SachaBarber.CQRS.Demo.WPFClient.Commands;
+using SachaBarber.CQRS.Demo.SharedCore.Services;
+using NLog;
 
 namespace SachaBarber.CQRS.Demo.WPFClient.ViewModels.Orders
 {
@@ -25,7 +27,8 @@ namespace SachaBarber.CQRS.Demo.WPFClient.ViewModels.Orders
         private const double leftOffset = 380;
         private readonly GrowlNotifications growlNotifications = new GrowlNotifications();
         private List<string> orderEvents;
-        
+        private Logger logger = LogManager.GetLogger("OrdersViewModel");
+
 
         public OrdersViewModel(
             IInterProcessBusSubscriber interProcessBusSubscriber,
@@ -43,12 +46,17 @@ namespace SachaBarber.CQRS.Demo.WPFClient.ViewModels.Orders
 
             var stream = interProcessBusSubscriber.GetEventStream();
 
-
-            disposables.Add(stream.Where(x => orderEvents.Contains(x))
+            disposables.Add(stream
+                .Do(x =>
+                {
+                    logger.Info("{0} in Rx stream", x);
+                })
+                .Where(x => orderEvents.Contains(x))
                 .Subscribe(async x =>
                 {
-                    var newOrders = await orderServiceInvoker.CallService(service =>
-                                service.GetAllOrdersAsync());
+                    logger.Info("Refreshing orders on {0}", x);
+
+                    var newOrders = await orderServiceInvoker.CallService(service => service.GetAllOrdersAsync());
 
                     this.Orders = new List<OrderViewModel>(
                         newOrders.Select(ord => new OrderViewModel(ord, messageBoxService, orderServiceInvoker)));

@@ -11,12 +11,13 @@ namespace SachaBarber.CQRS.Demo.Orders
 {
     public class OrderServiceInvoker
     {
-        public TR CallService<TR>(Func<IOrderService, TR> requestAction)
+        public async Task<TR> CallService<TR>(Func<IOrderService, Task<TR>> requestAction)
         {
+            OrderServiceClient proxy = null;
             try
             {
-                OrderServiceClient proxy = new OrderServiceClient(); 
-                return requestAction(proxy);
+                proxy = new OrderServiceClient();
+                return await requestAction(proxy);
             }
             catch (FaultException<GenericFault> gf)
             {
@@ -29,6 +30,13 @@ namespace SachaBarber.CQRS.Demo.Orders
             catch (Exception ex)
             {
                 throw new Exception("A Exception occured", ex);
+            }
+            finally
+            {
+                if (proxy != null)
+                {
+                    proxy.Close();
+                }
             }
         }
     }

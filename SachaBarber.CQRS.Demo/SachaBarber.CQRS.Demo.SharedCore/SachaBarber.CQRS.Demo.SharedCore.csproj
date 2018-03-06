@@ -72,6 +72,8 @@
     <Compile Include="Faults\StandardFaultsAttribute.cs" />
     <Compile Include="IOC\LifestyleApplier.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Services\IInterProcessBus.cs" />
+    <Compile Include="Services\IInterProcessBusSubscriber.cs" />
     <Compile Include="WCF\ErrorHandler.cs" />
     <Compile Include="WCF\ErrorHandlerBehaviorExtension.cs" />
     <Compile Include="WeakEventHandler.cs" />

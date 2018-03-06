@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
+using SachaBarber.CQRS.Demo.SharedCore.Services;
 using SachaBarber.CQRS.Demo.Orders.Domain.Bus;
 using SachaBarber.CQRS.Demo.Orders.ReadModel;
 

@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2013
-VisualStudioVersion = 12.0.31101.0
+# Visual Studio 15
+VisualStudioVersion = 15.0.27130.2020
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SachaBarber.CQRS.Demo.Orders.Domain", "SachaBarber.CQRS.Demo.Domain\SachaBarber.CQRS.Demo.Orders.Domain.csproj", "{65357DC1-482E-4EBA-8588-6012240E6954}"
 EndProject
@@ -42,6 +42,12 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{F70F8B
 		.nuget\NuGet.targets = .nuget\NuGet.targets
 	EndProjectSection
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Bus", "Bus", "{4B3F891E-A478-48CD-AB9E-F2A13F4B8347}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SachaBarber.CQRS.Demo.RabbitMQAdapter", "BusAdapters\SachaBarber.CQRS.Demo.RabbitMQAdapter\SachaBarber.CQRS.Demo.RabbitMQAdapter.csproj", "{D3EDAA15-2C68-42BE-96E6-3164FA1379D0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SachaBarber.CQRS.Demo.MSQMAdapter", "BusAdapters\SachaBarber.CQRS.Demo.MSQMAdapter\SachaBarber.CQRS.Demo.MSQMAdapter.csproj", "{4068D2DA-F0B6-40A8-BAA2-F4A93A36C1F6}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -72,6 +78,14 @@ Global
 		{7EB95C96-8F69-46A1-B810-BFEABA0B2973}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7EB95C96-8F69-46A1-B810-BFEABA0B2973}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7EB95C96-8F69-46A1-B810-BFEABA0B2973}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D3EDAA15-2C68-42BE-96E6-3164FA1379D0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D3EDAA15-2C68-42BE-96E6-3164FA1379D0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D3EDAA15-2C68-42BE-96E6-3164FA1379D0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D3EDAA15-2C68-42BE-96E6-3164FA1379D0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4068D2DA-F0B6-40A8-BAA2-F4A93A36C1F6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4068D2DA-F0B6-40A8-BAA2-F4A93A36C1F6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4068D2DA-F0B6-40A8-BAA2-F4A93A36C1F6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4068D2DA-F0B6-40A8-BAA2-F4A93A36C1F6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -83,5 +97,10 @@ Global
 		{DAFD2A8A-D6B0-4433-8DDF-B98460C64EC6} = {4507460F-83D4-4C4A-B0D0-F9A7ACB0276B}
 		{07D50F29-6482-49EA-A165-66F487F8E128} = {77BE359B-1975-46D9-8E4A-7987534E5206}
 		{7EB95C96-8F69-46A1-B810-BFEABA0B2973} = {45FCFD30-F3B7-465C-B238-74ED32357A4A}
+		{D3EDAA15-2C68-42BE-96E6-3164FA1379D0} = {4B3F891E-A478-48CD-AB9E-F2A13F4B8347}
+		{4068D2DA-F0B6-40A8-BAA2-F4A93A36C1F6} = {4B3F891E-A478-48CD-AB9E-F2A13F4B8347}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {8BB890E8-D865-4C45-A4B8-5F09B0D9CBAC}
 	EndGlobalSection
 EndGlobal

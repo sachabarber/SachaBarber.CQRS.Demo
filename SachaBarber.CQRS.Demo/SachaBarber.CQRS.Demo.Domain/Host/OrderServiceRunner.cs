@@ -47,7 +47,7 @@ namespace SachaBarber.CQRS.Demo.Orders.Domain.Host
             }
             catch (Exception ex)
             {
-                logger.Error("Error stating SachaBarber CQRS Demo OrderService", ex);
+                logger.Error("Error starting SachaBarber CQRS Demo OrderService", ex);
                 throw;
             }
         }

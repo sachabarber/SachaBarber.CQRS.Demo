@@ -15,10 +15,12 @@ using SachaBarber.CQRS.Demo.Orders.Domain.Commands;
 using SachaBarber.CQRS.Demo.Orders.Domain.Events.Handlers;
 using SachaBarber.CQRS.Demo.Orders.Domain.EventStore;
 using SachaBarber.CQRS.Demo.Orders.ReadModel;
+using SachaBarber.CQRS.Demo.MSMQAdapter;
 using SachaBarber.CQRS.Demo.SharedCore.ExtensionMethods;
 using SachaBarber.CQRS.Demo.SharedCore.IOC;
-
-
+using SachaBarber.CQRS.Demo.SharedCore.Services;
+using NLog;
+using System.Threading.Tasks;
 
 namespace SachaBarber.CQRS.Demo.Orders.Domain.IOC
 {
@@ -27,6 +29,7 @@ namespace SachaBarber.CQRS.Demo.Orders.Domain.IOC
     public class DomainInstaller : IWindsorInstaller
     {
         private readonly ILifestyleApplier lifestyleApplier;
+        private Logger logger = LogManager.GetLogger("DomainInstaller");
 
         public DomainInstaller(ILifestyleApplier lifestyleApplier)
         {
@@ -70,6 +73,15 @@ namespace SachaBarber.CQRS.Demo.Orders.Domain.IOC
                         })
 
             );
+
+            logger.Info("Using " + container.Resolve<IInterProcessBus>());
+
+            TaskScheduler.UnobservedTaskException += TaskScheduler_UnobservedTaskException;
+        }
+
+        private void TaskScheduler_UnobservedTaskException(object sender, UnobservedTaskExceptionEventArgs e)
+        {
+            logger.Error("Unobserved task exception was thrown.", e.Exception);
         }
     }
 }

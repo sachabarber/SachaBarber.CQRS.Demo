@@ -17,6 +17,7 @@ namespace SachaBarber.CQRS.Demo.Orders.Domain.Commands
                                         ICommandHandler<DeleteOrderCommand>
     {
         private readonly ISession _session;
+        private NLog.Logger logger = NLog.LogManager.GetLogger("OrderCommandHandlers");
 
         public OrderCommandHandlers(ISession session)
         {
@@ -41,19 +42,30 @@ namespace SachaBarber.CQRS.Demo.Orders.Domain.Commands
             _session.Commit();
         }
 
+        private T Get<T>(Guid id, int? expectedVersion = null) where T : AggregateRoot
+        {
+            try
+            {
+                return _session.Get<T>(id, expectedVersion);
+            }
+            catch (Exception e)
+            {
+                logger.Error("Cannot get object of type {0} with id:{1} ({2}) from session", typeof(T), id, expectedVersion);
+                throw e;
+            }
+        }
 
         public void Handle(ChangeOrderAddressCommand command)
         {
-            Order item = _session.Get<Order>(
-                command.Id, command.ExpectedVersion);
+            logger.Info("Handle ChangeOrderAddressCommand {0} ({1})", command.Id, command.ExpectedVersion);
+            Order item = Get<Order>(command.Id, command.ExpectedVersion);
             item.ChangeAddress(command.NewAddress);
             _session.Commit();
         }
 
         public void Handle(DeleteOrderCommand command)
         {
-            Order item = _session.Get<Order>(
-                command.Id, command.ExpectedVersion);
+            Order item = Get<Order>(command.Id, command.ExpectedVersion);
             item.Delete();
             _session.Commit();
         }

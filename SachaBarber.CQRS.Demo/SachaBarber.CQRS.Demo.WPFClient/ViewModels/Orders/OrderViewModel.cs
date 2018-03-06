@@ -93,7 +93,7 @@ namespace SachaBarber.CQRS.Demo.WPFClient.ViewModels.Orders
             }
             catch (Exception e)
             {
-                messageBoxService.ShowError("There was an error deleting the order");
+                messageBoxService.ShowError("There was an error deleting the order: " + e.Message);
             }
             finally
             {
